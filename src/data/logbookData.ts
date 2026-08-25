@@ -109,8 +109,8 @@ export const LOGBOOK_ENTRIES: LogEntry[] = [
     date: "14/07/26",
     tag: "BRAIN",
     tagType: "build",
-    title: "Raspberry Pi 5 Hub Integration",
-    desc: "Connected a borrowed Raspberry Pi 5 to act as the main brain, coordinating the camera, Wi-Fi messages, and motor controller."
+    title: "Raspberry Pi 4 Hub Integration",
+    desc: "Connected a borrowed Raspberry Pi 4 to act as the main brain, coordinating the camera, Wi-Fi messages, and motor controller."
   },
   {
     date: "19/07/26",
