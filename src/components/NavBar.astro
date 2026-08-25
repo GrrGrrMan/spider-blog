@@ -1,23 +1,47 @@
 ---
 const pathname = new URL(Astro.request.url).pathname;
-const currentPath = pathname.slice(1); // remove the leading slash
+const cleanPath = pathname.replace(/\/$/, ""); // Normalize trailing slashes
 ---
 
-<nav class="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/80 border-b border-white/10">
-  <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-    <a href="/" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-      <span class="text-emerald-400">AI</span>Spider
-    </a>
-    <ul class="flex space-x-6 text-sm font-medium">
-      <li>
-        <a href="/hardware" class={`transition-colors hover:text-emerald-400 ${currentPath.includes('hardware') ? 'text-emerald-400' : 'text-slate-300'}`}>Hardware</a>
-      </li>
-      <li>
-        <a href="/software" class={`transition-colors hover:text-emerald-400 ${currentPath.includes('software') ? 'text-emerald-400' : 'text-slate-300'}`}>Software</a>
-      </li>
-      <li>
-        <a href="/logbook" class={`transition-colors hover:text-emerald-400 ${currentPath.includes('logbook') ? 'text-emerald-400' : 'text-slate-300'}`}>Logbook</a>
-      </li>
-    </ul>
+<header class="sticky top-0 z-50 w-full bg-zinc-950/95 backdrop-blur border-b border-zinc-800/80">
+  <div class="max-w-4xl mx-auto px-4 py-2.5">
+    <!-- Top Row: Brand & Status -->
+    <div class="flex items-center justify-between mb-2">
+      <a href="/" class="flex items-center gap-2 font-mono text-xs sm:text-sm font-semibold tracking-wider text-zinc-100 uppercase">
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+        AI_SPIDER <span class="text-zinc-500">//</span> v2.0
+      </a>
+      <span class="font-mono text-[10px] sm:text-xs text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+        18-DOF HEXAPOD
+      </span>
+    </div>
+
+    <!-- Bottom Row: Segmented Tab Bar -->
+    <nav class="grid grid-cols-4 gap-1 p-1 bg-zinc-900/90 border border-zinc-800/80 rounded-lg text-center text-xs font-mono">
+      <a 
+        href="/" 
+        class={`py-1.5 rounded transition-all ${cleanPath === '' ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+      >
+        Overview
+      </a>
+      <a 
+        href="/hardware" 
+        class={`py-1.5 rounded transition-all ${cleanPath.includes('hardware') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+      >
+        Hardware
+      </a>
+      <a 
+        href="/software" 
+        class={`py-1.5 rounded transition-all ${cleanPath.includes('software') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+      >
+        Software
+      </a>
+      <a 
+        href="/logbook" 
+        class={`py-1.5 rounded transition-all ${cleanPath.includes('logbook') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+      >
+        Logbook
+      </a>
+    </nav>
   </div>
-</nav>
+</header>

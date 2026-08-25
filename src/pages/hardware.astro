@@ -1,84 +1,132 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import TechBadge from '../components/TechBadge.astro';
+import { PRODUCT_LINKS } from '../data/links';
 ---
 
-<MainLayout title="Hardware & Engineering">
-  <div class="mb-12">
-    <h1 class="text-4xl font-bold text-white mb-4">Hardware Engineering</h1>
-    <p class="text-slate-400 text-lg">From acrylic sketches to an enclosed 3D-printed chassis.</p>
-  </div>
+<MainLayout title="Hardware & 3D CAD">
+  <section class="border-b border-zinc-800 pb-5 mb-6">
+    <div class="font-mono text-xs text-sky-400 mb-1">// MECHANICAL_DESIGN</div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Hardware & 3D CAD Models</h1>
+    <p class="text-xs sm:text-sm text-zinc-400">
+      Click any CAD model below to open the interactive 3D assembly in Onshape.
+    </p>
+  </section>
 
-  <div class="space-y-16">
-    <!-- Mechanics -->
-    <section class="grid md:grid-cols-3 gap-6">
-      <div class="col-span-1 bg-slate-900/50 border border-white/10 p-4 rounded-xl flex flex-col">
-        <img src="/images/coxa_model.png" alt="Coxa CAD Model" class="w-full h-48 object-contain mb-6 bg-slate-950 rounded-lg border border-white/5 p-2" />
-        <div class="border-l-2 border-emerald-500 pl-3 mt-auto">
-          <h3 class="text-xl font-bold text-white mb-2">Coxa (X-Axis)</h3>
-          <p class="text-sm text-slate-400">Rotates the entire leg horizontally (left/right). Determines the leg's placement around the body radius.</p>
+  <!-- 3 Leg Joints with Overlay CAD Links -->
+  <section class="mb-8">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+        // 3-DOF Leg Anatomy (Hip, Thigh, Shin)
+      </h2>
+      <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="font-mono text-xs text-sky-400 hover:underline">
+        Open Full Leg CAD &rarr;
+      </a>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <!-- Coxa (Hip) -->
+      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
+          <span>01_COXA (HIP)</span>
+          <span class="text-sky-400 text-[10px]">TURNS LEFT/RIGHT</span>
+        </div>
+        <div class="p-3 bg-zinc-950/80 flex flex-col items-center justify-center border-b border-zinc-800/80 h-44 relative group">
+          <img src="/images/coxa_model.png" alt="Coxa CAD" class="max-h-28 w-auto object-contain mb-2" />
+          <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="text-[11px] font-mono text-sky-400 bg-zinc-900 border border-zinc-700 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors">
+            🔗 View in Onshape 3D
+          </a>
+        </div>
+        <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow">
+          Rotates the entire leg horizontally (yaw). Controls steering and lets the spider spin in place.
         </div>
       </div>
-      <div class="col-span-1 bg-slate-900/50 border border-white/10 p-4 rounded-xl flex flex-col">
-        <img src="/images/femur_model.png" alt="Femur CAD Model" class="w-full h-48 object-contain mb-6 bg-slate-950 rounded-lg border border-white/5 p-2" />
-        <div class="border-l-2 border-emerald-500 pl-3 mt-auto">
-          <h3 class="text-xl font-bold text-white mb-2">Femur (Y-Axis)</h3>
-          <p class="text-sm text-slate-400">Raises the foot off the ground during a step and supports the robot's main weight payload.</p>
+
+      <!-- Femur (Thigh) -->
+      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
+          <span>02_FEMUR (THIGH)</span>
+          <span class="text-sky-400 text-[10px]">LIFTS UP/DOWN</span>
+        </div>
+        <div class="p-3 bg-zinc-950/80 flex flex-col items-center justify-center border-b border-zinc-800/80 h-44 relative group">
+          <img src="/images/femur_model.png" alt="Femur CAD" class="max-h-28 w-auto object-contain mb-2" />
+          <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="text-[11px] font-mono text-sky-400 bg-zinc-900 border border-zinc-700 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors">
+            🔗 View in Onshape 3D
+          </a>
+        </div>
+        <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow">
+          Lifts the foot off the ground during each step. Carries the main weight of the robot.
         </div>
       </div>
-      <div class="col-span-1 bg-slate-900/50 border border-white/10 p-4 rounded-xl flex flex-col">
-        <img src="/images/tibia_model.png" alt="Tibia CAD Model" class="w-full h-48 object-contain mb-6 bg-slate-950 rounded-lg border border-white/5 p-2" />
-        <div class="border-l-2 border-emerald-500 pl-3 mt-auto">
-          <h3 class="text-xl font-bold text-white mb-2">Tibia (Z-Axis)</h3>
-          <p class="text-sm text-slate-400">Extends/retracts the lower leg, adjusting the reach and allowing precise foot placement on uneven terrain.</p>
+
+      <!-- Tibia (Shin/Foot) -->
+      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
+          <span>03_TIBIA (SHIN)</span>
+          <span class="text-sky-400 text-[10px]">REACHES FORWARD</span>
+        </div>
+        <div class="p-3 bg-zinc-950/80 flex flex-col items-center justify-center border-b border-zinc-800/80 h-44 relative group">
+          <img src="/images/tibia_model.png" alt="Tibia CAD" class="max-h-28 w-auto object-contain mb-2" />
+          <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="text-[11px] font-mono text-sky-400 bg-zinc-900 border border-zinc-700 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors">
+            🔗 View in Onshape 3D
+          </a>
+        </div>
+        <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow">
+          Extends the lower leg to touch the ground smoothly, adapting to bumps and obstacles.
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Prototypes -->
-    <section>
-      <h2 class="text-2xl font-bold text-white mb-8">Evolution & Prototypes</h2>
-      <div class="space-y-8">
-        <!-- Prototype 1 -->
-        <div class="bg-slate-900/50 border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6">
-          <div class="md:w-1/3">
-            <div class="text-emerald-400 font-bold mb-1">Iteration 1</div>
-            <h3 class="text-2xl font-bold text-white mb-2">Acrylic Skeleton</h3>
-          </div>
-          <div class="md:w-2/3 text-slate-300 text-sm space-y-3">
-            <p>Focused on testing basic geometry and proportions using cut acrylic and hot glue. Basic PCA9685 servo movements were tested.</p>
-            <p><strong class="text-white">Issue:</strong> Acrylic joints were incredibly weak and connections routinely failed, preventing load-bearing tests.</p>
-          </div>
-        </div>
+  <!-- Prototype Evolution Cards -->
+  <section class="space-y-4">
+    <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+      // Chassis Evolution (3 Iterations)
+    </h2>
 
-        <!-- Prototype 2 -->
-        <div class="bg-slate-900/50 border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6">
-          <div class="md:w-1/3">
-            <div class="text-emerald-400 font-bold mb-1">Iteration 2</div>
-            <h3 class="text-2xl font-bold text-white mb-2">Flat 3D Platform</h3>
-          </div>
-          <div class="md:w-2/3 text-slate-300 text-sm space-y-3">
-            <p>Transitioned to CAD models and 3D printing (PETG). Mounted an ESP board and introduced Inverse Kinematics code for accurate XYZ targeting.</p>
-            <p><strong class="text-white">Issue:</strong> Once batteries and components were loaded, servo torque limits were exceeded. A single flat body plate was inadequate for protecting wiring.</p>
-          </div>
-        </div>
-
-        <!-- Prototype 3 -->
-        <div class="bg-slate-900/50 border border-emerald-500/20 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(52,211,153,0.05)]">
-          <div class="bg-slate-950 p-4 border-b border-emerald-500/20">
-            <img src="/images/main_body.png" alt="Final Enclosed Body CAD" class="w-full h-64 object-contain" />
-          </div>
-          <div class="p-6 md:p-8 flex flex-col md:flex-row gap-6">
-            <div class="md:w-1/3">
-              <div class="text-emerald-400 font-bold mb-1">Final Iteration</div>
-              <h3 class="text-2xl font-bold text-white mb-2">Enclosed Core</h3>
-            </div>
-            <div class="md:w-2/3 text-slate-300 text-sm space-y-3">
-              <p>Shortened leg lengths to reduce mechanical leverage (lowering torque requirements). Designed a fully enclosed 3D chassis to protect electronics. Shifted heavy battery packs off-board to a wired umbilical to ensure the robot could demonstrate IK maneuvers.</p>
-              <p><strong class="text-white">Outcome:</strong> Stable platform capable of processing AI inputs and executing Tripod Gaits.</p>
-            </div>
-          </div>
-        </div>
+    <!-- Prototype 1 -->
+    <div class="border border-zinc-800 bg-zinc-900/40 rounded-xl p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 1.0 &bull; Acrylic Sheets & Hot Glue</h3>
+        <TechBadge text="Physical Test" />
       </div>
-    </section>
-  </div>
+      <p class="text-xs text-zinc-400 leading-relaxed">
+        Built a quick mockup out of acrylic sheets and hot glue. The joints snapped under motor force, proving we needed high-strength 3D printed parts.
+      </p>
+    </div>
+
+    <!-- Prototype 2 -->
+    <div class="border border-zinc-800 bg-zinc-900/40 rounded-xl p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 2.0 &bull; Flat 3D Plate Platform</h3>
+        <a href={PRODUCT_LINKS.cad.body1} target="_blank" class="font-mono text-[11px] text-sky-400 hover:underline">
+          View Body 1.0 CAD &rarr;
+        </a>
+      </div>
+      <p class="text-xs text-zinc-400 leading-relaxed">
+        3D printed PETG legs on a flat plate. Validated our Inverse Kinematics math, but the open design left wires unprotected and onboard batteries made it too heavy.
+      </p>
+    </div>
+
+    <!-- Prototype 3 (Final Release) -->
+    <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden">
+      <div class="bg-zinc-900 px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
+        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 3.0 &bull; Enclosed 3D Chassis</h3>
+        <span class="font-mono text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+          CURRENT RELEASE
+        </span>
+      </div>
+      <div class="p-4 bg-zinc-950 flex flex-col items-center justify-center border-b border-zinc-800">
+        <img src="/images/main_body.png" alt="Enclosed Body CAD" class="max-h-48 w-auto object-contain mb-3" />
+        <a href={PRODUCT_LINKS.cad.body2} target="_blank" class="font-mono text-xs text-sky-300 bg-sky-950/60 border border-sky-800 px-3 py-1.5 rounded hover:bg-sky-500/20 transition-colors">
+          🔗 Open Enclosed Body 2.0 CAD in Onshape
+        </a>
+      </div>
+      <div class="p-4 text-xs text-zinc-300 leading-relaxed space-y-2">
+        <p>
+          Shortened the legs to reduce strain on the motors and created a closed 3D shell protecting the dual microcontrollers and wiring. Tested on an external power stand at 5.3V.
+        </p>
+      </div>
+    </div>
+  </section>
 </MainLayout>
