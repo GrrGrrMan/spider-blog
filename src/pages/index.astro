@@ -1,0 +1,43 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import TechBadge from '../components/TechBadge.astro';
+---
+
+<MainLayout title="Overview">
+  <header class="mb-16">
+    <h1 class="text-5xl font-extrabold tracking-tight text-white sm:text-6xl mb-6">
+      The Multimodal <br>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">AI Hexapod.</span>
+    </h1>
+    <p class="text-lg text-slate-400 max-w-2xl leading-relaxed mb-8">
+      A low-cost, 18-servo spider robot designed to explore hazardous environments. Powered by dual microcontrollers, real-time inverse kinematics, and an active voice-to-movement AI pipeline.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <TechBadge text="Llama 3.3 70B (Groq)" />
+      <TechBadge text="ESP32-S3 & ESP-CAM" />
+      <TechBadge text="FreeRTOS" />
+      <TechBadge text="Inverse Kinematics" />
+    </div>
+  </header>
+
+  <div class="grid md:grid-cols-2 gap-8 mt-12">
+    <section class="bg-slate-900/50 border border-white/5 p-8 rounded-2xl">
+      <h2 class="text-2xl font-bold text-white mb-4">The Aim</h2>
+      <p class="text-slate-300 leading-relaxed text-sm">
+        Many jobs require humans to risk their lives in dangerous environments (damaged buildings, toxic sites). Advanced robots are expensive and inaccessible to small organizations. 
+        <br><br>
+        This project investigates whether a low-cost, AI-powered hexapod can act as a viable alternative. It features voice/text commands translated dynamically into real-time gaits via inverse kinematics.
+      </p>
+    </section>
+
+    <section class="bg-slate-900/50 border border-emerald-500/20 p-8 rounded-2xl shadow-[0_0_30px_rgba(52,211,153,0.05)]">
+      <h2 class="text-2xl font-bold text-white mb-4">The Result</h2>
+      <p class="text-slate-300 leading-relaxed text-sm mb-4">
+        We successfully combined 18 servo motors, cameras, sensors, and a multimodal AI to create a functional prototype capable of receiving voice commands and calculating precise leg joints.
+      </p>
+      <p class="text-slate-300 leading-relaxed text-sm">
+        While the current prototype's physical walking is limited by servo torque constraints and battery weight (1.3kg), it proves the software architecture—from the Web Speech API to the FreeRTOS motor management—is highly effective.
+      </p>
+    </section>
+  </div>
+</MainLayout>

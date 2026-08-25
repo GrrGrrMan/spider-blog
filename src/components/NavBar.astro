@@ -1,0 +1,23 @@
+---
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1); // remove the leading slash
+---
+
+<nav class="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/80 border-b border-white/10">
+  <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+      <span class="text-emerald-400">AI</span>Spider
+    </a>
+    <ul class="flex space-x-6 text-sm font-medium">
+      <li>
+        <a href="/hardware" class={`transition-colors hover:text-emerald-400 ${currentPath.includes('hardware') ? 'text-emerald-400' : 'text-slate-300'}`}>Hardware</a>
+      </li>
+      <li>
+        <a href="/software" class={`transition-colors hover:text-emerald-400 ${currentPath.includes('software') ? 'text-emerald-400' : 'text-slate-300'}`}>Software</a>
+      </li>
+      <li>
+        <a href="/logbook" class={`transition-colors hover:text-emerald-400 ${currentPath.includes('logbook') ? 'text-emerald-400' : 'text-slate-300'}`}>Logbook</a>
+      </li>
+    </ul>
+  </div>
+</nav>
