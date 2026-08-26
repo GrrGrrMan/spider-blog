@@ -30,11 +30,14 @@ const { title, description, slug, section, headings } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#09090b" />
     <title>{title} | AI Spider V2 Docs</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     
-    <!-- Instant Module Preload (Zero-latency cached script) -->
+    <!-- Instant Module Preload for CDN Mermaid -->
     <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs" />
     <ViewTransitions />
   </head>
@@ -72,7 +75,10 @@ const { title, description, slug, section, headings } = Astro.props;
     </div>
 
     <!-- Fullscreen Diagram Modal -->
-    <dialog id="diagram-modal" class="backdrop:bg-zinc-950/90 backdrop:backdrop-blur-md bg-zinc-900 border border-zinc-800 text-zinc-100 p-0 rounded-2xl w-[95vw] h-[90vh] max-w-7xl shadow-2xl overflow-hidden">
+    <dialog
+      id="diagram-modal"
+      class="backdrop:bg-zinc-950/90 backdrop:backdrop-blur-md bg-zinc-900 border border-zinc-800 text-zinc-100 p-0 rounded-2xl w-[95vw] h-[90vh] max-w-7xl shadow-2xl overflow-hidden"
+    >
       <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-800 bg-zinc-950 font-mono text-xs">
         <span class="text-sky-400 font-semibold flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -89,41 +95,48 @@ const { title, description, slug, section, headings } = Astro.props;
           </button>
         </div>
       </div>
-      <div id="modal-diagram-viewport" class="w-full h-[calc(100%-48px)] relative overflow-hidden bg-zinc-950/50 cursor-grab select-none p-4 flex items-center justify-center">
-      </div>
+      <div id="modal-diagram-viewport" class="w-full h-[calc(100%-48px)] relative overflow-hidden bg-zinc-950/50 cursor-grab select-none p-4 flex items-center justify-center"></div>
     </dialog>
 
     <Footer />
 
-    <!-- Client-Side Mermaid Renderer with Subgraph Tour & Click-to-Focus ViewBox Engine -->
+    <!-- Robust Production Mermaid Renderer -->
     <script is:inline type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: 'dark',
-        securityLevel: 'loose',
-        themeVariables: {
-          darkMode: true,
-          background: '#09090b',
-          mainBkg: '#09090b',
-          primaryColor: '#0369a1',
-          primaryTextColor: '#f4f4f5',
-          primaryBorderColor: '#38bdf8',
-          lineColor: '#38bdf8',
-          secondaryColor: '#18181b',
-          tertiaryColor: '#18181b',
-          border1: '#27272a',
-          border2: '#3f3f46',
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: '15px'
-        }
-      });
+      let isInitialized = false;
 
-      /**
-       * Uses SVG getScreenCTM().inverse() for exact screen-to-viewbox coordinate projection.
-       * Eliminates all letterboxing pan offset errors on wide/horizontal diagrams.
-       */
+      function initMermaidOnce() {
+        if (isInitialized) return;
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          securityLevel: 'loose',
+          fontFamily: 'JetBrains Mono, monospace',
+          themeVariables: {
+            darkMode: true,
+            background: '#09090b',
+            mainBkg: '#09090b',
+            primaryColor: '#0369a1',
+            primaryTextColor: '#f4f4f5',
+            primaryBorderColor: '#38bdf8',
+            lineColor: '#38bdf8',
+            secondaryColor: '#18181b',
+            tertiaryColor: '#18181b',
+            border1: '#27272a',
+            border2: '#3f3f46',
+            fontSize: '15px',
+          },
+        });
+        isInitialized = true;
+      }
+
+      function decodeEntities(str) {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = str;
+        return txt.value;
+      }
+
       function getElementRootBounds(svgEl, el) {
         const elRect = el.getBoundingClientRect();
         if (!elRect.width || !elRect.height) return null;
@@ -151,14 +164,14 @@ const { title, description, slug, section, headings } = Astro.props;
           x: minX,
           y: minY,
           width: maxX - minX,
-          height: maxY - minY
+          height: maxY - minY,
         };
       }
 
       function attachViewBoxPanZoom(viewportEl, svgEl, controls = {}) {
         const origAttr = svgEl.getAttribute('viewBox');
         let origX = 0, origY = 0, origW = 1000, origH = 500;
-        
+
         if (origAttr) {
           const parts = origAttr.trim().split(/[\s,]+/).map(Number);
           if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
@@ -223,28 +236,30 @@ const { title, description, slug, section, headings } = Astro.props;
           currentTourIndex = -1;
         }
 
-        // --- DISCOVERY: Include Leaf Clusters + Uncontained Parent Nodes (e.g. RobotContext, HEXAPOD) ---
         const allClusters = Array.from(svgEl.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph'));
-        const leafClusters = allClusters.filter(c => c.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph').length === 0);
+        const leafClusters = allClusters.filter((c) => c.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph').length === 0);
         const clustersToUse = leafClusters.length > 0 ? leafClusters : allClusters;
 
         const allNodes = Array.from(svgEl.querySelectorAll('.node'));
-        const uncontainedNodes = allNodes.filter(node => !clustersToUse.some(cluster => cluster.contains(node)));
+        const uncontainedNodes = allNodes.filter((node) => !clustersToUse.some((cluster) => cluster.contains(node)));
 
         const candidateElements = [...clustersToUse, ...uncontainedNodes];
 
-        const tourElements = candidateElements.map(el => {
-          const r = el.getBoundingClientRect();
-          return { el, top: r.top, left: r.left };
-        }).sort((a, b) => {
-          const rowDiff = Math.round(a.top / 35) - Math.round(b.top / 35);
-          return rowDiff !== 0 ? rowDiff : (a.left - b.left);
-        }).map(item => item.el);
+        const tourElements = candidateElements
+          .map((el) => {
+            const r = el.getBoundingClientRect();
+            return { el, top: r.top, left: r.left };
+          })
+          .sort((a, b) => {
+            const rowDiff = Math.round(a.top / 35) - Math.round(b.top / 35);
+            return rowDiff !== 0 ? rowDiff : a.left - b.left;
+          })
+          .map((item) => item.el);
 
         let currentTourIndex = 0;
 
         function clearHighlights() {
-          svgEl.querySelectorAll('.cluster, .node').forEach(node => {
+          svgEl.querySelectorAll('.cluster, .node').forEach((node) => {
             node.style.opacity = '1';
             node.style.filter = '';
           });
@@ -258,8 +273,8 @@ const { title, description, slug, section, headings } = Astro.props;
           const cx = bounds.x + bounds.width / 2;
           const cy = bounds.y + bounds.height / 2;
 
-          const paddedW = bounds.width + (pad * 2);
-          const paddedH = bounds.height + (pad * 2);
+          const paddedW = bounds.width + pad * 2;
+          const paddedH = bounds.height + pad * 2;
 
           const vWidth = viewportEl.clientWidth || 800;
           const vHeight = viewportEl.clientHeight || 440;
@@ -274,11 +289,11 @@ const { title, description, slug, section, headings } = Astro.props;
             targetH = targetW / vAspect;
           }
 
-          const targetX = cx - (targetW / 2);
-          const targetY = cy - (targetH / 2);
+          const targetX = cx - targetW / 2;
+          const targetY = cy - targetH / 2;
 
           clearHighlights();
-          svgEl.querySelectorAll('.cluster, .node').forEach(node => {
+          svgEl.querySelectorAll('.cluster, .node').forEach((node) => {
             if (node !== el && !el.contains(node)) {
               node.style.opacity = '0.4';
             }
@@ -304,7 +319,7 @@ const { title, description, slug, section, headings } = Astro.props;
           } else {
             currentTourIndex = (currentTourIndex - 1 + tourElements.length) % tourElements.length;
           }
-          
+
           const target = tourElements[currentTourIndex];
           focusElement(target);
 
@@ -313,7 +328,6 @@ const { title, description, slug, section, headings } = Astro.props;
           }
         }
 
-        // Direct Click-to-Focus
         svgEl.style.cursor = 'pointer';
         svgEl.addEventListener('click', (e) => {
           const clickedTarget = e.target.closest('.cluster, .node, g[id^="subGraph"]');
@@ -328,7 +342,6 @@ const { title, description, slug, section, headings } = Astro.props;
           }
         });
 
-        // Pointer Dragging / Panning
         let isDragging = false;
         let startX = 0, startY = 0;
         let startVbX = 0, startVbY = 0;
@@ -368,28 +381,31 @@ const { title, description, slug, section, headings } = Astro.props;
         viewportEl.addEventListener('pointerup', stopDrag);
         viewportEl.addEventListener('pointercancel', stopDrag);
 
-        // Wheel Zoom
-        viewportEl.addEventListener('wheel', (e) => {
-          e.preventDefault();
-          if (animFrameId) cancelAnimationFrame(animFrameId);
-          const rect = viewportEl.getBoundingClientRect();
-          const u = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-          const v = Math.min(Math.max((e.clientY - rect.top) / rect.height, 0), 1);
+        viewportEl.addEventListener(
+          'wheel',
+          (e) => {
+            e.preventDefault();
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            const rect = viewportEl.getBoundingClientRect();
+            const u = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+            const v = Math.min(Math.max((e.clientY - rect.top) / rect.height, 0), 1);
 
-          const svgX = current.x + u * current.w;
-          const svgY = current.y + v * current.h;
-          const factor = e.deltaY < 0 ? 0.85 : 1.18;
-          const newW = current.w * factor;
-          const newH = current.h * factor;
+            const svgX = current.x + u * current.w;
+            const svgY = current.y + v * current.h;
+            const factor = e.deltaY < 0 ? 0.85 : 1.18;
+            const newW = current.w * factor;
+            const newH = current.h * factor;
 
-          if (newW < origW * 0.10 || newW > origW * 8.0) return;
+            if (newW < origW * 0.1 || newW > origW * 8.0) return;
 
-          current.x = svgX - u * newW;
-          current.y = svgY - v * newH;
-          current.w = newW;
-          current.h = newH;
-          applyViewBox();
-        }, { passive: false });
+            current.x = svgX - u * newW;
+            current.y = svgY - v * newH;
+            current.w = newW;
+            current.h = newH;
+            applyViewBox();
+          },
+          { passive: false }
+        );
 
         if (controls.zoomInBtn) {
           controls.zoomInBtn.addEventListener('click', () => {
@@ -398,7 +414,7 @@ const { title, description, slug, section, headings } = Astro.props;
             const cy = current.y + 0.5 * current.h;
             const newW = current.w * 0.8;
             const newH = current.h * 0.8;
-            if (newW < origW * 0.10) return;
+            if (newW < origW * 0.1) return;
             current.x = cx - 0.5 * newW;
             current.y = cy - 0.5 * newH;
             current.w = newW;
@@ -439,7 +455,6 @@ const { title, description, slug, section, headings } = Astro.props;
           controls.tourNavWrapper.style.display = tourElements.length >= 2 ? 'flex' : 'none';
         }
 
-        // --- AUTO-INITIALIZE ON STEP 1 (1/X) INSTEAD OF FIT ---
         if (tourElements.length >= 2) {
           currentTourIndex = 0;
           setTimeout(() => {
@@ -455,25 +470,47 @@ const { title, description, slug, section, headings } = Astro.props;
         return { resetToFit, stepTour, focusElement };
       }
 
+      function setupModalEvents() {
+        const modal = document.getElementById('diagram-modal');
+        const closeBtn = document.getElementById('close-modal-btn');
+        if (closeBtn && modal) {
+          closeBtn.onclick = () => modal.close();
+          modal.onclick = (e) => {
+            if (e.target === modal) modal.close();
+          };
+        }
+      }
+
       async function renderMermaid() {
-        const codeBlocks = document.querySelectorAll(
-          'pre code.language-mermaid, pre[data-language="mermaid"] code, .language-mermaid'
+        initMermaidOnce();
+        setupModalEvents();
+
+        const codeBlocks = Array.from(
+          document.querySelectorAll(
+            'pre[data-language="mermaid"], pre:has(code.language-mermaid), pre.astro-code[data-language="mermaid"], .language-mermaid'
+          )
         );
 
         if (codeBlocks.length === 0) return;
 
-        for (const [idx, codeEl] of codeBlocks.entries()) {
-          const preEl = codeEl.closest('pre') || codeEl;
-          
-          const lines = codeEl.querySelectorAll('.line');
+        for (const [idx, targetEl] of codeBlocks.entries()) {
+          const preEl = targetEl.closest('pre') || targetEl;
+          if (preEl.dataset.mermaidProcessed === 'true') continue;
+          preEl.dataset.mermaidProcessed = 'true';
+
+          const lines = preEl.querySelectorAll('.line');
           let rawCode = '';
           if (lines.length > 0) {
             rawCode = Array.from(lines).map((l) => l.textContent).join('\n');
           } else {
-            rawCode = codeEl.innerText || codeEl.textContent || '';
+            rawCode = preEl.textContent || '';
           }
-          
-          if (!rawCode.trim()) continue;
+          rawCode = decodeEntities(rawCode).trim();
+
+          if (!rawCode) {
+            preEl.classList.remove('diagram-loading-skeleton');
+            continue;
+          }
 
           const card = document.createElement('div');
           card.className = 'diagram-card my-8 bg-zinc-900/70 border border-zinc-800 rounded-xl overflow-hidden shadow-lg';
@@ -509,8 +546,8 @@ const { title, description, slug, section, headings } = Astro.props;
 
           let renderedSvgEl = null;
           try {
-            const diagramId = `mermaid-svg-${idx}-${Math.random().toString(36).substring(2, 8)}`;
-            const { svg } = await mermaid.render(diagramId, rawCode.trim());
+            const diagramId = `mermaid-svg-${Date.now()}-${idx}-${Math.random().toString(36).substring(2, 6)}`;
+            const { svg } = await mermaid.render(diagramId, rawCode);
             viewport.innerHTML = svg;
             renderedSvgEl = viewport.querySelector('svg');
           } catch (err) {
@@ -527,7 +564,10 @@ const { title, description, slug, section, headings } = Astro.props;
             let w = 800, h = 400;
             if (vbAttr) {
               const parts = vbAttr.trim().split(/[\s,]+/).map(Number);
-              if (parts.length === 4) { w = parts[2]; h = parts[3]; }
+              if (parts.length === 4) {
+                w = parts[2];
+                h = parts[3];
+              }
             }
             const aspectRatio = w / h;
             const colWidth = Math.min(card.clientWidth || 760, 840);
@@ -567,17 +607,15 @@ const { title, description, slug, section, headings } = Astro.props;
         }
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('diagram-modal');
-        const closeBtn = document.getElementById('close-modal-btn');
-        if (closeBtn && modal) {
-          closeBtn.addEventListener('click', () => modal.close());
-          modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.close();
-          });
-        }
-      });
+      // 1. Execute immediately as soon as module finishes downloading (Resolves Netlify CDN race condition)
+      renderMermaid();
 
+      // 2. Execute on initial DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderMermaid);
+      }
+
+      // 3. Execute on client-side route navigations via Astro ViewTransitions
       document.addEventListener('astro:page-load', renderMermaid);
     </script>
   </body>
@@ -605,13 +643,10 @@ const { title, description, slug, section, headings } = Astro.props;
     background-color: rgba(39, 39, 42, 0.4);
   }
 
-  /* 
-   * SKELETON PRE-RENDER GUARD:
-   * Masks raw Mermaid code markdown with a cyber skeleton placeholder before JS executes.
-   * Completely eliminates the 2-second flash of raw code.
-   */
+  /* Skeleton Pre-Render Guard: Masks raw code blocks while loading */
   pre:has(code.language-mermaid),
-  pre[data-language="mermaid"] {
+  pre[data-language="mermaid"],
+  pre.astro-code[data-language="mermaid"] {
     position: relative;
     min-height: 280px;
     background: rgba(9, 9, 11, 0.8) !important;
@@ -622,11 +657,13 @@ const { title, description, slug, section, headings } = Astro.props;
     overflow: hidden;
   }
   pre:has(code.language-mermaid) code,
-  pre[data-language="mermaid"] code {
+  pre[data-language="mermaid"] code,
+  pre.astro-code[data-language="mermaid"] code {
     display: none !important;
   }
   pre:has(code.language-mermaid)::after,
-  pre[data-language="mermaid"]::after {
+  pre[data-language="mermaid"]::after,
+  pre.astro-code[data-language="mermaid"]::after {
     content: '📐 Initializing Architecture Diagram...';
     position: absolute;
     inset: 0;
