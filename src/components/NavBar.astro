@@ -1,68 +1,131 @@
 ---
+import { PRODUCT_LINKS } from '../data/links';
+
 const pathname = new URL(Astro.request.url).pathname;
 const cleanPath = pathname.replace(/\/$/, "");
+
+const navLinks = [
+  { href: "/", label: "Overview", active: cleanPath === "" },
+  { href: "/docs/01-system-overview", label: "Documentation", active: cleanPath.startsWith("/docs") },
+  { href: "/methodology", label: "Methodology", active: cleanPath.includes("methodology") },
+  { href: "/hardware", label: "CAD & Parts", active: cleanPath.includes("hardware") },
+  { href: "/logbook", label: "Logbook", active: cleanPath.includes("logbook") },
+];
 ---
 
 <header class="sticky top-0 z-50 w-full bg-zinc-950/95 backdrop-blur border-b border-zinc-800/80">
   <div class="max-w-7xl mx-auto px-4 py-2.5">
     <div class="flex items-center justify-between">
       <!-- Brand -->
-      <a href="/" class="flex items-center gap-2.5 font-mono text-xs sm:text-sm font-bold tracking-wider text-zinc-100 uppercase">
+      <a href="/" class="flex items-center gap-2 font-mono text-xs sm:text-sm font-bold tracking-wider text-zinc-100 uppercase">
         <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></span>
         AI_SPIDER <span class="text-zinc-600">//</span> <span class="text-sky-400">DOCS_INDEX</span>
       </a>
 
-      <!-- Central Nav Links -->
+      <!-- Desktop Nav Links -->
       <nav class="hidden md:flex items-center gap-1 font-mono text-xs">
-        <a
-          href="/"
-          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath === '' ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
-        >
-          Overview
-        </a>
-        <a
-          href="/docs/01-system-overview"
-          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.startsWith('/docs') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
-        >
-          Documentation
-        </a>
-        <a
-          href="/methodology"
-          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.includes('methodology') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
-        >
-          Methodology
-        </a>
-        <a
-          href="/hardware"
-          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.includes('hardware') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
-        >
-          CAD & Parts
-        </a>
-        <a
-          href="/logbook"
-          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.includes('logbook') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
-        >
-          Logbook
-        </a>
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class={`px-3 py-1.5 rounded-md transition-colors ${
+              link.active ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'
+            }`}
+          >
+            {link.label}
+          </a>
+        ))}
       </nav>
 
       <!-- Right Header Actions -->
       <div class="flex items-center gap-2">
         <a
-          href="https://spiderbot-playground.netlify.app/"
+          href={PRODUCT_LINKS.playgroundDemo}
           target="_blank"
-          class="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-sky-300 bg-sky-950/60 border border-sky-800 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors"
+          class="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-sky-300 bg-sky-950/60 border border-sky-800 px-2.5 py-1.5 rounded hover:bg-sky-500/20 transition-colors"
         >
           <span>⚡ Live 3D Sim</span>
         </a>
         <a
-          href="https://github.com/GrrGrrMan/spiderbot-firmware"
+          href={PRODUCT_LINKS.repos.firmware}
           target="_blank"
-          class="font-mono text-[11px] text-zinc-300 bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded hover:border-zinc-700 transition-colors"
+          class="hidden sm:inline-flex font-mono text-[11px] text-zinc-300 bg-zinc-900 border border-zinc-800 px-2.5 py-1.5 rounded hover:border-zinc-700 transition-colors"
         >
           GitHub &rarr;
         </a>
+
+        <!-- Mobile Hamburger Toggle Button (44x44px touch target) -->
+        <button
+          id="mobile-nav-toggle"
+          class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-sky-400 hover:border-zinc-700 transition-colors focus:outline-none"
+          aria-label="Toggle Navigation Menu"
+          aria-expanded="false"
+        >
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg id="close-icon" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div
+    id="mobile-nav-menu"
+    class="hidden md:hidden border-t border-zinc-800/80 bg-zinc-950 px-4 py-3 space-y-1.5 font-mono text-xs shadow-2xl"
+  >
+    {navLinks.map((link) => (
+      <a
+        href={link.href}
+        class={`block px-3 py-2.5 rounded-lg transition-colors ${
+          link.active
+            ? 'bg-sky-950/60 border border-sky-800 text-sky-300 font-bold'
+            : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100'
+        }`}
+      >
+        {link.label}
+      </a>
+    ))}
+
+    <div class="pt-2.5 mt-2 border-t border-zinc-800/80 grid grid-cols-2 gap-2 text-center text-[11px]">
+      <a
+        href={PRODUCT_LINKS.playgroundDemo}
+        target="_blank"
+        class="p-2.5 rounded bg-sky-950/60 border border-sky-800 text-sky-300 font-semibold"
+      >
+        ⚡ Live 3D Sim
+      </a>
+      <a
+        href={PRODUCT_LINKS.repos.firmware}
+        target="_blank"
+        class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300"
+      >
+        GitHub Repo &rarr;
+      </a>
+    </div>
+  </div>
 </header>
+
+<script>
+  function setupMobileNav() {
+    const toggleBtn = document.getElementById('mobile-nav-toggle');
+    const menu = document.getElementById('mobile-nav-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (!toggleBtn || !menu) return;
+
+    toggleBtn.onclick = () => {
+      const isHidden = menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !isHidden);
+      hamburgerIcon?.classList.toggle('hidden', isHidden);
+      closeIcon?.classList.toggle('hidden', !isHidden);
+      toggleBtn.setAttribute('aria-expanded', String(isHidden));
+    };
+  }
+
+  setupMobileNav();
+  document.addEventListener('astro:page-load', setupMobileNav);
+</script>

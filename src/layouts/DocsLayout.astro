@@ -4,7 +4,10 @@ import Footer from '../components/Footer.astro';
 import Sidebar from '../components/Sidebar.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import Pagination from '../components/Pagination.astro';
+import DiagramModal from '../components/diagram/DiagramModal.astro';
+import { DOCS_NAVIGATION } from '../data/docsNav';
 import { ViewTransitions } from 'astro:transitions';
+import '../styles/docs.css';
 
 interface Heading {
   depth: number;
@@ -21,6 +24,7 @@ interface Props {
 }
 
 const { title, description, slug, section, headings } = Astro.props;
+const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
 ---
 
 <!doctype html>
@@ -36,21 +40,60 @@ const { title, description, slug, section, headings } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    
-    <!-- Instant Module Preload for CDN Mermaid -->
-    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs" />
     <ViewTransitions />
   </head>
   <body class="bg-zinc-950 text-zinc-300 font-['Plus_Jakarta_Sans',sans-serif] antialiased min-h-screen flex flex-col">
     <NavBar />
 
-    <div class="max-w-7xl w-full mx-auto px-4 flex-grow flex">
-      <!-- Left Sticky Sidebar -->
+    <div class="max-w-7xl w-full mx-auto px-3.5 sm:px-6 flex-grow flex">
       <Sidebar currentSlug={slug} />
 
-      <!-- Center Main Content -->
-      <main class="flex-1 min-w-0 py-8 px-0 sm:px-6 lg:px-8 max-w-4xl">
-        <div class="flex items-center gap-2 font-mono text-[11px] text-zinc-500 mb-2">
+      <main class="flex-1 min-w-0 py-6 sm:py-8 px-0 sm:px-6 lg:px-8 max-w-4xl">
+        <!-- Mobile Docs Navigation Selector (Hidden on Desktop) -->
+        <div class="lg:hidden mb-4">
+          <details class="group bg-zinc-900/80 border border-zinc-800 rounded-xl overflow-hidden font-mono text-xs">
+            <summary class="flex items-center justify-between p-3.5 cursor-pointer select-none text-sky-400 font-semibold list-none">
+              <span class="flex items-center gap-2">
+                <span>📖</span>
+                <span>DOCS EXPLORER ({totalDocsCount} SECTIONS)</span>
+              </span>
+              <span class="text-zinc-500 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div class="p-3.5 border-t border-zinc-800 bg-zinc-950/80 space-y-4 max-h-80 overflow-y-auto">
+              {DOCS_NAVIGATION.map((sec) => (
+                <div>
+                  <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-1.5 px-1">
+                    {sec.sectionTitle}
+                  </div>
+                  <ul class="space-y-1">
+                    {sec.items.map((item) => (
+                      <li>
+                        <a
+                          href={`/docs/${item.slug}`}
+                          class={`flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-colors ${
+                            slug === item.slug
+                              ? 'bg-sky-950/80 border border-sky-800 text-sky-300 font-bold'
+                              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                          }`}
+                        >
+                          <span class="truncate">{item.title}</span>
+                          {item.badge && (
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-sky-400 ml-1">
+                              {item.badge}
+                            </span>
+                          )}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </details>
+        </div>
+
+        <!-- Breadcrumbs -->
+        <div class="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 mb-2 overflow-x-auto whitespace-nowrap">
           <span>DOCS</span>
           <span>/</span>
           <span class="text-sky-400 uppercase">{section}</span>
@@ -59,631 +102,23 @@ const { title, description, slug, section, headings } = Astro.props;
         </div>
 
         <header class="border-b border-zinc-800/80 pb-4 mb-6">
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-100">{title}</h1>
-          {description && <p class="text-sm text-zinc-400 mt-1 font-sans">{description}</p>}
+          <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-zinc-100">{title}</h1>
+          {description && <p class="text-xs sm:text-sm text-zinc-400 mt-1 font-sans leading-relaxed">{description}</p>}
         </header>
 
-        <article class="prose prose-invert prose-zinc max-w-none prose-headings:font-mono prose-headings:text-zinc-100 prose-a:text-sky-400 prose-code:font-mono prose-code:text-sky-300 prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800 prose-table:font-mono prose-th:bg-zinc-900 prose-th:text-zinc-300">
+        <article class="prose prose-invert prose-zinc max-w-none prose-headings:font-mono prose-headings:text-zinc-100 prose-a:text-sky-400 prose-code:font-mono prose-code:text-sky-300 prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800">
           <slot />
         </article>
 
         <Pagination currentSlug={slug} />
       </main>
 
-      <!-- Right Table of Contents -->
       <TableOfContents headings={headings} />
     </div>
 
-    <!-- Fullscreen Diagram Modal -->
-    <dialog
-      id="diagram-modal"
-      class="backdrop:bg-zinc-950/90 backdrop:backdrop-blur-md bg-zinc-900 border border-zinc-800 text-zinc-100 p-0 rounded-2xl w-[95vw] h-[90vh] max-w-7xl shadow-2xl overflow-hidden"
-    >
-      <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-800 bg-zinc-950 font-mono text-xs">
-        <span class="text-sky-400 font-semibold flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-          // FULLSCREEN_VECTOR_VIEWPORT
-        </span>
-        <div class="flex items-center gap-1.5">
-          <button id="modal-zoom-out" class="px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300" title="Zoom Out">-</button>
-          <span id="modal-zoom-text" class="text-[10px] text-zinc-500 w-12 text-center">100%</span>
-          <button id="modal-zoom-in" class="px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300" title="Zoom In">+</button>
-          <button id="modal-zoom-reset" class="px-2.5 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300" title="Fit to Screen">⟲ Fit</button>
-          <span class="text-zinc-700">|</span>
-          <button id="close-modal-btn" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded border border-zinc-700 transition-colors">
-            ESC / Close ✕
-          </button>
-        </div>
-      </div>
-      <div id="modal-diagram-viewport" class="w-full h-[calc(100%-48px)] relative overflow-hidden bg-zinc-950/50 cursor-grab select-none p-4 flex items-center justify-center"></div>
-    </dialog>
-
+    <DiagramModal />
     <Footer />
 
-    <!-- Robust Production Mermaid Renderer -->
-    <script is:inline type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-
-      let isInitialized = false;
-
-      function initMermaidOnce() {
-        if (isInitialized) return;
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: 'dark',
-          securityLevel: 'loose',
-          fontFamily: 'JetBrains Mono, monospace',
-          themeVariables: {
-            darkMode: true,
-            background: '#09090b',
-            mainBkg: '#09090b',
-            primaryColor: '#0369a1',
-            primaryTextColor: '#f4f4f5',
-            primaryBorderColor: '#38bdf8',
-            lineColor: '#38bdf8',
-            secondaryColor: '#18181b',
-            tertiaryColor: '#18181b',
-            border1: '#27272a',
-            border2: '#3f3f46',
-            fontSize: '15px',
-          },
-        });
-        isInitialized = true;
-      }
-
-      function decodeEntities(str) {
-        const txt = document.createElement('textarea');
-        txt.innerHTML = str;
-        return txt.value;
-      }
-
-      function getElementRootBounds(svgEl, el) {
-        const elRect = el.getBoundingClientRect();
-        if (!elRect.width || !elRect.height) return null;
-
-        const ctm = svgEl.getScreenCTM();
-        if (!ctm) return null;
-
-        const inv = ctm.inverse();
-        const pt = svgEl.createSVGPoint();
-
-        pt.x = elRect.left;
-        pt.y = elRect.top;
-        const p1 = pt.matrixTransform(inv);
-
-        pt.x = elRect.right;
-        pt.y = elRect.bottom;
-        const p2 = pt.matrixTransform(inv);
-
-        const minX = Math.min(p1.x, p2.x);
-        const minY = Math.min(p1.y, p2.y);
-        const maxX = Math.max(p1.x, p2.x);
-        const maxY = Math.max(p1.y, p2.y);
-
-        return {
-          x: minX,
-          y: minY,
-          width: maxX - minX,
-          height: maxY - minY,
-        };
-      }
-
-      function attachViewBoxPanZoom(viewportEl, svgEl, controls = {}) {
-        const origAttr = svgEl.getAttribute('viewBox');
-        let origX = 0, origY = 0, origW = 1000, origH = 500;
-
-        if (origAttr) {
-          const parts = origAttr.trim().split(/[\s,]+/).map(Number);
-          if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
-            [origX, origY, origW, origH] = parts;
-          }
-        } else {
-          const bbox = svgEl.getBBox();
-          origX = bbox.x || 0;
-          origY = bbox.y || 0;
-          origW = bbox.width || 800;
-          origH = bbox.height || 400;
-        }
-
-        const current = { x: origX, y: origY, w: origW, h: origH };
-        let animFrameId = null;
-
-        svgEl.removeAttribute('width');
-        svgEl.removeAttribute('height');
-        svgEl.style.width = '100%';
-        svgEl.style.height = '100%';
-        svgEl.style.maxWidth = '100%';
-        svgEl.style.maxHeight = '100%';
-        svgEl.style.display = 'block';
-        svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-
-        function applyViewBox() {
-          svgEl.setAttribute('viewBox', `${current.x} ${current.y} ${current.w} ${current.h}`);
-          if (controls.zoomText) {
-            const zoomPercent = Math.round((origW / current.w) * 100);
-            controls.zoomText.textContent = `${zoomPercent}%`;
-          }
-        }
-
-        function animateCameraTo(targetX, targetY, targetW, targetH, duration = 400) {
-          if (animFrameId) cancelAnimationFrame(animFrameId);
-          const startX = current.x, startY = current.y, startW = current.w, startH = current.h;
-          const startTime = performance.now();
-
-          function step(now) {
-            const progress = Math.min((now - startTime) / duration, 1.0);
-            const ease = 1 - Math.pow(1 - progress, 3);
-
-            current.x = startX + (targetX - startX) * ease;
-            current.y = startY + (targetY - startY) * ease;
-            current.w = startW + (targetW - startW) * ease;
-            current.h = startH + (targetH - startH) * ease;
-            applyViewBox();
-
-            if (progress < 1.0) {
-              animFrameId = requestAnimationFrame(step);
-            }
-          }
-          animFrameId = requestAnimationFrame(step);
-        }
-
-        function resetToFit() {
-          clearHighlights();
-          animateCameraTo(origX, origY, origW, origH, 350);
-          if (controls.stepIndicator) {
-            controls.stepIndicator.textContent = `All (${tourElements.length})`;
-          }
-          currentTourIndex = -1;
-        }
-
-        const allClusters = Array.from(svgEl.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph'));
-        const leafClusters = allClusters.filter((c) => c.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph').length === 0);
-        const clustersToUse = leafClusters.length > 0 ? leafClusters : allClusters;
-
-        const allNodes = Array.from(svgEl.querySelectorAll('.node'));
-        const uncontainedNodes = allNodes.filter((node) => !clustersToUse.some((cluster) => cluster.contains(node)));
-
-        const candidateElements = [...clustersToUse, ...uncontainedNodes];
-
-        const tourElements = candidateElements
-          .map((el) => {
-            const r = el.getBoundingClientRect();
-            return { el, top: r.top, left: r.left };
-          })
-          .sort((a, b) => {
-            const rowDiff = Math.round(a.top / 35) - Math.round(b.top / 35);
-            return rowDiff !== 0 ? rowDiff : a.left - b.left;
-          })
-          .map((item) => item.el);
-
-        let currentTourIndex = 0;
-
-        function clearHighlights() {
-          svgEl.querySelectorAll('.cluster, .node').forEach((node) => {
-            node.style.opacity = '1';
-            node.style.filter = '';
-          });
-        }
-
-        function focusElement(el, instant = false) {
-          const bounds = getElementRootBounds(svgEl, el);
-          if (!bounds) return;
-
-          const pad = 36;
-          const cx = bounds.x + bounds.width / 2;
-          const cy = bounds.y + bounds.height / 2;
-
-          const paddedW = bounds.width + pad * 2;
-          const paddedH = bounds.height + pad * 2;
-
-          const vWidth = viewportEl.clientWidth || 800;
-          const vHeight = viewportEl.clientHeight || 440;
-          const vAspect = vWidth / vHeight;
-
-          let targetW = paddedW;
-          let targetH = paddedH;
-
-          if (targetW / targetH < vAspect) {
-            targetW = targetH * vAspect;
-          } else {
-            targetH = targetW / vAspect;
-          }
-
-          const targetX = cx - targetW / 2;
-          const targetY = cy - targetH / 2;
-
-          clearHighlights();
-          svgEl.querySelectorAll('.cluster, .node').forEach((node) => {
-            if (node !== el && !el.contains(node)) {
-              node.style.opacity = '0.4';
-            }
-          });
-          el.style.opacity = '1';
-          el.style.filter = 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.6))';
-
-          if (instant) {
-            current.x = targetX;
-            current.y = targetY;
-            current.w = targetW;
-            current.h = targetH;
-            applyViewBox();
-          } else {
-            animateCameraTo(targetX, targetY, targetW, targetH, 420);
-          }
-        }
-
-        function stepTour(direction) {
-          if (tourElements.length === 0) return;
-          if (direction === 'next') {
-            currentTourIndex = (currentTourIndex + 1) % tourElements.length;
-          } else {
-            currentTourIndex = (currentTourIndex - 1 + tourElements.length) % tourElements.length;
-          }
-
-          const target = tourElements[currentTourIndex];
-          focusElement(target);
-
-          if (controls.stepIndicator) {
-            controls.stepIndicator.textContent = `${currentTourIndex + 1}/${tourElements.length}`;
-          }
-        }
-
-        svgEl.style.cursor = 'pointer';
-        svgEl.addEventListener('click', (e) => {
-          const clickedTarget = e.target.closest('.cluster, .node, g[id^="subGraph"]');
-          if (clickedTarget) {
-            e.stopPropagation();
-            focusElement(clickedTarget);
-            const idx = tourElements.indexOf(clickedTarget);
-            if (idx !== -1 && controls.stepIndicator) {
-              currentTourIndex = idx;
-              controls.stepIndicator.textContent = `${idx + 1}/${tourElements.length}`;
-            }
-          }
-        });
-
-        let isDragging = false;
-        let startX = 0, startY = 0;
-        let startVbX = 0, startVbY = 0;
-
-        viewportEl.addEventListener('pointerdown', (e) => {
-          if (e.button !== 0 && e.button !== 1) return;
-          if (animFrameId) cancelAnimationFrame(animFrameId);
-          isDragging = true;
-          startX = e.clientX;
-          startY = e.clientY;
-          startVbX = current.x;
-          startVbY = current.y;
-          viewportEl.setPointerCapture(e.pointerId);
-          viewportEl.style.cursor = 'grabbing';
-        });
-
-        viewportEl.addEventListener('pointermove', (e) => {
-          if (!isDragging) return;
-          const rect = viewportEl.getBoundingClientRect();
-          const dx = e.clientX - startX;
-          const dy = e.clientY - startY;
-
-          current.x = startVbX - dx * (current.w / rect.width);
-          current.y = startVbY - dy * (current.h / rect.height);
-          applyViewBox();
-        });
-
-        const stopDrag = (e) => {
-          if (!isDragging) return;
-          isDragging = false;
-          if (viewportEl.hasPointerCapture(e.pointerId)) {
-            viewportEl.releasePointerCapture(e.pointerId);
-          }
-          viewportEl.style.cursor = 'grab';
-        };
-
-        viewportEl.addEventListener('pointerup', stopDrag);
-        viewportEl.addEventListener('pointercancel', stopDrag);
-
-        viewportEl.addEventListener(
-          'wheel',
-          (e) => {
-            e.preventDefault();
-            if (animFrameId) cancelAnimationFrame(animFrameId);
-            const rect = viewportEl.getBoundingClientRect();
-            const u = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-            const v = Math.min(Math.max((e.clientY - rect.top) / rect.height, 0), 1);
-
-            const svgX = current.x + u * current.w;
-            const svgY = current.y + v * current.h;
-            const factor = e.deltaY < 0 ? 0.85 : 1.18;
-            const newW = current.w * factor;
-            const newH = current.h * factor;
-
-            if (newW < origW * 0.1 || newW > origW * 8.0) return;
-
-            current.x = svgX - u * newW;
-            current.y = svgY - v * newH;
-            current.w = newW;
-            current.h = newH;
-            applyViewBox();
-          },
-          { passive: false }
-        );
-
-        if (controls.zoomInBtn) {
-          controls.zoomInBtn.addEventListener('click', () => {
-            if (animFrameId) cancelAnimationFrame(animFrameId);
-            const cx = current.x + 0.5 * current.w;
-            const cy = current.y + 0.5 * current.h;
-            const newW = current.w * 0.8;
-            const newH = current.h * 0.8;
-            if (newW < origW * 0.1) return;
-            current.x = cx - 0.5 * newW;
-            current.y = cy - 0.5 * newH;
-            current.w = newW;
-            current.h = newH;
-            applyViewBox();
-          });
-        }
-
-        if (controls.zoomOutBtn) {
-          controls.zoomOutBtn.addEventListener('click', () => {
-            if (animFrameId) cancelAnimationFrame(animFrameId);
-            const cx = current.x + 0.5 * current.w;
-            const cy = current.y + 0.5 * current.h;
-            const newW = current.w * 1.25;
-            const newH = current.h * 1.25;
-            if (newW > origW * 8.0) return;
-            current.x = cx - 0.5 * newW;
-            current.y = cy - 0.5 * newH;
-            current.w = newW;
-            current.h = newH;
-            applyViewBox();
-          });
-        }
-
-        if (controls.zoomResetBtn) {
-          controls.zoomResetBtn.addEventListener('click', resetToFit);
-        }
-
-        if (controls.tourPrevBtn) {
-          controls.tourPrevBtn.addEventListener('click', () => stepTour('prev'));
-        }
-
-        if (controls.tourNextBtn) {
-          controls.tourNextBtn.addEventListener('click', () => stepTour('next'));
-        }
-
-        if (controls.tourNavWrapper) {
-          controls.tourNavWrapper.style.display = tourElements.length >= 2 ? 'flex' : 'none';
-        }
-
-        if (tourElements.length >= 2) {
-          currentTourIndex = 0;
-          setTimeout(() => {
-            focusElement(tourElements[0], false);
-            if (controls.stepIndicator) {
-              controls.stepIndicator.textContent = `1/${tourElements.length}`;
-            }
-          }, 60);
-        } else {
-          resetToFit();
-        }
-
-        return { resetToFit, stepTour, focusElement };
-      }
-
-      function setupModalEvents() {
-        const modal = document.getElementById('diagram-modal');
-        const closeBtn = document.getElementById('close-modal-btn');
-        if (closeBtn && modal) {
-          closeBtn.onclick = () => modal.close();
-          modal.onclick = (e) => {
-            if (e.target === modal) modal.close();
-          };
-        }
-      }
-
-      async function renderMermaid() {
-        initMermaidOnce();
-        setupModalEvents();
-
-        const codeBlocks = Array.from(
-          document.querySelectorAll(
-            'pre[data-language="mermaid"], pre:has(code.language-mermaid), pre.astro-code[data-language="mermaid"], .language-mermaid'
-          )
-        );
-
-        if (codeBlocks.length === 0) return;
-
-        for (const [idx, targetEl] of codeBlocks.entries()) {
-          const preEl = targetEl.closest('pre') || targetEl;
-          if (preEl.dataset.mermaidProcessed === 'true') continue;
-          preEl.dataset.mermaidProcessed = 'true';
-
-          const lines = preEl.querySelectorAll('.line');
-          let rawCode = '';
-          if (lines.length > 0) {
-            rawCode = Array.from(lines).map((l) => l.textContent).join('\n');
-          } else {
-            rawCode = preEl.textContent || '';
-          }
-          rawCode = decodeEntities(rawCode).trim();
-
-          if (!rawCode) {
-            preEl.classList.remove('diagram-loading-skeleton');
-            continue;
-          }
-
-          const card = document.createElement('div');
-          card.className = 'diagram-card my-8 bg-zinc-900/70 border border-zinc-800 rounded-xl overflow-hidden shadow-lg';
-
-          const toolbar = document.createElement('div');
-          toolbar.className = 'flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 bg-zinc-950/90 border-b border-zinc-800 text-[11px] font-mono text-zinc-400';
-          toolbar.innerHTML = `
-            <div class="flex items-center gap-2 text-sky-400 font-semibold">
-              <span>📐 ARCHITECTURE_DIAGRAM</span>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <div class="tour-nav-wrapper flex items-center bg-zinc-900 border border-zinc-800 rounded px-1 py-0.5 gap-1">
-                <span class="text-[10px] text-zinc-500 uppercase px-1">Tour:</span>
-                <button class="tour-prev-btn px-1.5 py-0.2 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors" title="Previous Block">‹ Prev</button>
-                <span class="step-indicator text-[10px] text-sky-400 font-bold px-1 min-w-[32px] text-center">1/?</span>
-                <button class="tour-next-btn px-1.5 py-0.2 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors" title="Next Block">Next ›</button>
-              </div>
-
-              <div class="flex items-center gap-1">
-                <button class="zoom-out-btn px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300" title="Zoom Out">-</button>
-                <span class="zoom-level-text text-[10px] text-zinc-500 w-10 text-center">100%</span>
-                <button class="zoom-in-btn px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300" title="Zoom In">+</button>
-                <button class="zoom-reset-btn px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300" title="Fit to Screen">⟲ Fit</button>
-                <span class="text-zinc-700">|</span>
-                <button class="fullscreen-btn px-2.5 py-0.5 bg-sky-950/60 hover:bg-sky-900/60 border border-sky-800 text-sky-300 rounded transition-colors">⛶ Fullscreen</button>
-              </div>
-            </div>
-          `;
-
-          const viewport = document.createElement('div');
-          viewport.className = 'diagram-viewport w-full relative overflow-hidden bg-zinc-950/40 select-none p-3 sm:p-4 flex items-center justify-center';
-
-          let renderedSvgEl = null;
-          try {
-            const diagramId = `mermaid-svg-${Date.now()}-${idx}-${Math.random().toString(36).substring(2, 6)}`;
-            const { svg } = await mermaid.render(diagramId, rawCode);
-            viewport.innerHTML = svg;
-            renderedSvgEl = viewport.querySelector('svg');
-          } catch (err) {
-            console.error('Mermaid render error:', err);
-            viewport.innerHTML = `<div class="text-rose-400 text-xs font-mono p-4">Render error: ${err?.message || 'Syntax error'}</div>`;
-          }
-
-          card.appendChild(toolbar);
-          card.appendChild(viewport);
-          preEl.replaceWith(card);
-
-          if (renderedSvgEl) {
-            const vbAttr = renderedSvgEl.getAttribute('viewBox');
-            let w = 800, h = 400;
-            if (vbAttr) {
-              const parts = vbAttr.trim().split(/[\s,]+/).map(Number);
-              if (parts.length === 4) {
-                w = parts[2];
-                h = parts[3];
-              }
-            }
-            const aspectRatio = w / h;
-            const colWidth = Math.min(card.clientWidth || 760, 840);
-            const idealHeight = colWidth / aspectRatio;
-            const adaptiveHeight = Math.round(Math.min(Math.max(idealHeight + 35, 260), 540));
-            viewport.style.height = `${adaptiveHeight}px`;
-
-            attachViewBoxPanZoom(viewport, renderedSvgEl, {
-              zoomText: toolbar.querySelector('.zoom-level-text'),
-              zoomInBtn: toolbar.querySelector('.zoom-in-btn'),
-              zoomOutBtn: toolbar.querySelector('.zoom-out-btn'),
-              zoomResetBtn: toolbar.querySelector('.zoom-reset-btn'),
-              tourPrevBtn: toolbar.querySelector('.tour-prev-btn'),
-              tourNextBtn: toolbar.querySelector('.tour-next-btn'),
-              stepIndicator: toolbar.querySelector('.step-indicator'),
-              tourNavWrapper: toolbar.querySelector('.tour-nav-wrapper'),
-            });
-
-            const fullscreenBtn = toolbar.querySelector('.fullscreen-btn');
-            fullscreenBtn.addEventListener('click', () => {
-              const modal = document.getElementById('diagram-modal');
-              const modalViewport = document.getElementById('modal-diagram-viewport');
-              modalViewport.innerHTML = '';
-
-              const cloneSvg = renderedSvgEl.cloneNode(true);
-              modalViewport.appendChild(cloneSvg);
-              modal.showModal();
-
-              attachViewBoxPanZoom(modalViewport, cloneSvg, {
-                zoomText: document.getElementById('modal-zoom-text'),
-                zoomInBtn: document.getElementById('modal-zoom-in'),
-                zoomOutBtn: document.getElementById('modal-zoom-out'),
-                zoomResetBtn: document.getElementById('modal-zoom-reset'),
-              });
-            });
-          }
-        }
-      }
-
-      // 1. Execute immediately as soon as module finishes downloading (Resolves Netlify CDN race condition)
-      renderMermaid();
-
-      // 2. Execute on initial DOM ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', renderMermaid);
-      }
-
-      // 3. Execute on client-side route navigations via Astro ViewTransitions
-      document.addEventListener('astro:page-load', renderMermaid);
-    </script>
+    <script src="../lib/diagram/index.ts"></script>
   </body>
 </html>
-
-<style is:global>
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-    font-size: 0.8rem;
-  }
-  th, td {
-    padding: 0.6rem 0.75rem;
-    border: 1px solid #27272a;
-  }
-  th {
-    background-color: #18181b;
-    font-weight: 600;
-  }
-  tr:hover {
-    background-color: rgba(39, 39, 42, 0.4);
-  }
-
-  /* Skeleton Pre-Render Guard: Masks raw code blocks while loading */
-  pre:has(code.language-mermaid),
-  pre[data-language="mermaid"],
-  pre.astro-code[data-language="mermaid"] {
-    position: relative;
-    min-height: 280px;
-    background: rgba(9, 9, 11, 0.8) !important;
-    border: 1px solid rgba(39, 39, 42, 0.8) !important;
-    border-radius: 0.75rem;
-    color: transparent !important;
-    user-select: none;
-    overflow: hidden;
-  }
-  pre:has(code.language-mermaid) code,
-  pre[data-language="mermaid"] code,
-  pre.astro-code[data-language="mermaid"] code {
-    display: none !important;
-  }
-  pre:has(code.language-mermaid)::after,
-  pre[data-language="mermaid"]::after,
-  pre.astro-code[data-language="mermaid"]::after {
-    content: '📐 Initializing Architecture Diagram...';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    color: #38bdf8;
-    background: radial-gradient(circle, rgba(3, 105, 161, 0.12) 0%, rgba(9, 9, 11, 0.9) 70%);
-    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Interactive Subgraph Highlighting */
-  .diagram-viewport svg g.cluster,
-  .diagram-viewport svg .node {
-    transition: opacity 0.25s ease, filter 0.25s ease;
-  }
-  .diagram-viewport svg g.cluster:hover {
-    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.35));
-  }
-</style>

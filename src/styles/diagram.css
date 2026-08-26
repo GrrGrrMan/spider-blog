@@ -1,0 +1,46 @@
+/* SKELETON PRE-RENDER GUARD: Prevents layout shift while compiling */
+pre:has(code.language-mermaid),
+pre[data-language="mermaid"],
+pre.astro-code[data-language="mermaid"] {
+  position: relative;
+  min-height: 280px;
+  background: rgba(9, 9, 11, 0.8) !important;
+  border: 1px solid rgba(39, 39, 42, 0.8) !important;
+  border-radius: 0.75rem;
+  color: transparent !important;
+  user-select: none;
+  overflow: hidden;
+}
+
+pre:has(code.language-mermaid) code,
+pre[data-language="mermaid"] code,
+pre.astro-code[data-language="mermaid"] code {
+  display: none !important;
+}
+
+pre:has(code.language-mermaid)::after,
+pre[data-language="mermaid"]::after,
+pre.astro-code[data-language="mermaid"]::after {
+  content: '📐 Initializing Architecture Diagram...';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #38bdf8;
+  background: radial-gradient(circle, rgba(3, 105, 161, 0.12) 0%, rgba(9, 9, 11, 0.9) 70%);
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Interactive Subgraph Hover Highlighting */
+.diagram-viewport svg g.cluster,
+.diagram-viewport svg .node {
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.diagram-viewport svg g.cluster:hover {
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.35));
+}
