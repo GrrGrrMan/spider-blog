@@ -1,0 +1,344 @@
+---
+// src/pages/methodology.astro
+import MainLayout from '../layouts/MainLayout.astro';
+import TechBadge from '../components/TechBadge.astro';
+import { PRODUCT_LINKS } from '../data/links';
+---
+
+<MainLayout title="Methodology & Reproduction Guide">
+  <!-- Page Header -->
+  <section class="border-b border-zinc-800 pb-5 mb-6">
+    <div class="font-mono text-xs text-sky-400 mb-1">// SCIENTIFIC_REPRODUCIBILITY_PROTOCOL</div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Build & Reproduction Methodology</h1>
+    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+      A step-by-step technical guide to replicating the 18-DOF Hexapod: complete Bill of Materials (BOM), 3D printing parameters, electrical wiring matrix, and multi-repo software deployment.
+    </p>
+  </section>
+
+  <!-- Quick Index Navigator -->
+  <div class="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 mb-8">
+    <div class="font-mono text-xs font-semibold text-zinc-300 mb-2">// QUICK_SECTIONS</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+      <a href="#bom" class="p-2 rounded bg-zinc-950 border border-zinc-800 text-sky-400 hover:border-sky-500/50 transition-colors">
+        1. Bill of Materials &darr;
+      </a>
+      <a href="#fabrication" class="p-2 rounded bg-zinc-950 border border-zinc-800 text-sky-400 hover:border-sky-500/50 transition-colors">
+        2. 3D Fabrication &darr;
+      </a>
+      <a href="#wiring" class="p-2 rounded bg-zinc-950 border border-zinc-800 text-sky-400 hover:border-sky-500/50 transition-colors">
+        3. Wiring Matrix &darr;
+      </a>
+      <a href="#software-stack" class="p-2 rounded bg-zinc-950 border border-zinc-800 text-sky-400 hover:border-sky-500/50 transition-colors">
+        4. Software Stack &darr;
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 1: BILL OF MATERIALS (BOM) -->
+  <section id="bom" class="mb-10 scroll-mt-20">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="font-mono text-[10px] text-sky-400 uppercase">// SECTION_01</span>
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100">Bill of Materials (BOM)</h2>
+      </div>
+      <TechBadge text="Hardware Specs" />
+    </div>
+    <p class="text-xs text-zinc-400 mb-4">
+      All components required to construct the hexapod, including actuators, compute boards, power conditioning, and fasteners.
+    </p>
+
+    <div class="overflow-x-auto border border-zinc-800 rounded-xl bg-zinc-900/40">
+      <table class="w-full text-left text-xs font-mono text-zinc-300 min-w-[620px]">
+        <thead class="bg-zinc-900 border-b border-zinc-800 text-zinc-400 uppercase text-[10px]">
+          <tr>
+            <th class="py-2.5 px-3">Item / Component</th>
+            <th class="py-2.5 px-3">Specifications</th>
+            <th class="py-2.5 px-3 text-center">Qty</th>
+            <th class="py-2.5 px-3">Function / Role</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-800/60 text-[11px]">
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">ESP32-S3 Dev Board</td>
+            <td class="py-2 px-3 text-zinc-400">Dual-Core Xtensa LX7 @ 240MHz, Wi-Fi 4 + BLE 5</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">1</td>
+            <td class="py-2 px-3">Real-time 100Hz IK solver & PWM coordinator</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">Raspberry Pi 4B</td>
+            <td class="py-2 px-3 text-zinc-400">4GB / 8GB RAM, Broadcom BCM2711</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">1</td>
+            <td class="py-2 px-3">High-level AI bridge, voice STT/TTS pipeline, Wi-Fi host</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">ESP32-CAM</td>
+            <td class="py-2 px-3 text-zinc-400">OV2640 2MP Camera module</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">1</td>
+            <td class="py-2 px-3">Vision streamer for visual scene processing</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">PCA9685 I2C Drivers</td>
+            <td class="py-2 px-3 text-zinc-400">16-Channel 12-Bit PWM Driver, 40-1000Hz</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">2</td>
+            <td class="py-2 px-3">Drives 18 individual servo channels over I2C</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">Micro Servos (SG90 / MG90S)</td>
+            <td class="py-2 px-3 text-zinc-400">Metal-gear recommended, 1.8-2.2 kg·cm torque</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">18</td>
+            <td class="py-2 px-3">3 DOF per leg: Coxa (Yaw), Femur (Pitch), Tibia (Pitch)</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">LM2596 / XL4015 Buck Converter</td>
+            <td class="py-2 px-3 text-zinc-400">DC-DC Step Down, tuned to 5.30V DC / 5A+ peak</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">2</td>
+            <td class="py-2 px-3">Regulates servo motor power rail independently</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">PETG Filament</td>
+            <td class="py-2 px-3 text-zinc-400">1.75mm diameter, high-impact strength</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">~450g</td>
+            <td class="py-2 px-3">3D printed chassis body, leg links, and stand</td>
+          </tr>
+          <tr class="hover:bg-zinc-800/30">
+            <td class="py-2 px-3 font-semibold text-zinc-100">Fasteners & Standoffs</td>
+            <td class="py-2 px-3 text-zinc-400">M2x6mm, M2x8mm self-tapping, M3 brass standoffs</td>
+            <td class="py-2 px-3 text-center text-sky-400 font-bold">1 Kit</td>
+            <td class="py-2 px-3">Servo mounting horns, chassis closure & board stacks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 2: 3D FABRICATION & SLICER PARAMETERS -->
+  <section id="fabrication" class="mb-10 scroll-mt-20">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="font-mono text-[10px] text-sky-400 uppercase">// SECTION_02</span>
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100">3D CAD & Slicing Specifications</h2>
+      </div>
+      <a href={PRODUCT_LINKS.cad.body2} target="_blank" class="font-mono text-xs text-sky-400 hover:underline">
+        Open Onshape Model &rarr;
+      </a>
+    </div>
+
+    <!-- Slicing Parameters Table -->
+    <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 mb-4">
+      <h3 class="font-mono text-xs font-semibold text-zinc-200 uppercase mb-3">// Recommended Slicer Profile (PETG)</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs text-zinc-300">
+        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
+          <span class="text-zinc-500 text-[10px] block">LAYER HEIGHT</span>
+          0.20 mm
+        </div>
+        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
+          <span class="text-zinc-500 text-[10px] block">WALL PERIMETERS</span>
+          4 Walls (1.6mm)
+        </div>
+        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
+          <span class="text-zinc-500 text-[10px] block">INFILL DENSITY</span>
+          35% Gyroid
+        </div>
+        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
+          <span class="text-zinc-500 text-[10px] block">NOZZLE / BED TEMP</span>
+          240°C / 75°C
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Parts Manifest -->
+    <div class="overflow-x-auto border border-zinc-800 rounded-xl bg-zinc-900/40">
+      <table class="w-full text-left text-xs font-mono text-zinc-300 min-w-[560px]">
+        <thead class="bg-zinc-900 border-b border-zinc-800 text-zinc-400 uppercase text-[10px]">
+          <tr>
+            <th class="py-2 px-3">Part Name</th>
+            <th class="py-2 px-3 text-center">Print Qty</th>
+            <th class="py-2 px-3">Orientation & Supports</th>
+            <th class="py-2 px-3">Critical Notes</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-800/60 text-[11px]">
+          <tr>
+            <td class="py-2 px-3 text-zinc-100 font-semibold">Coxa (Hip Link)</td>
+            <td class="py-2 px-3 text-center text-sky-400">6</td>
+            <td class="py-2 px-3">Flat on servo pocket face, no supports</td>
+            <td class="py-2 px-3 text-zinc-400">Ensure tight friction fit for servo horn splines</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-zinc-100 font-semibold">Femur (Thigh Beam)</td>
+            <td class="py-2 px-3 text-center text-sky-400">6</td>
+            <td class="py-2 px-3">Side face flat on bed, tree supports on horn lip</td>
+            <td class="py-2 px-3 text-zinc-400">4 perimeters mandatory to resist rotational torsion</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-zinc-100 font-semibold">Tibia (Foot Link)</td>
+            <td class="py-2 px-3 text-center text-sky-400">6</td>
+            <td class="py-2 px-3">Side flat on bed, minimal tree supports</td>
+            <td class="py-2 px-3 text-zinc-400">Attach TPU or rubber tip for floor grip</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-zinc-100 font-semibold">Enclosed Chassis Body</td>
+            <td class="py-2 px-3 text-center text-sky-400">1 (Base + Lid)</td>
+            <td class="py-2 px-3">Base flat on build plate, no supports required</td>
+            <td class="py-2 px-3 text-zinc-400">Features wire escape channels & Pi standoff mounts</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 3: WIRING & POWER CONDITIONING MATRIX -->
+  <section id="wiring" class="mb-10 scroll-mt-20">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="font-mono text-[10px] text-sky-400 uppercase">// SECTION_03</span>
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100">Electrical Schematics & Pinout Matrix</h2>
+      </div>
+      <TechBadge text="Electronics" />
+    </div>
+
+    <!-- Power Safety Warning Callout -->
+    <div class="border border-amber-500/40 bg-amber-500/10 rounded-xl p-4 mb-4 text-xs font-mono text-amber-200">
+      <div class="flex items-center gap-2 font-bold mb-1 text-amber-300">
+        <span>⚠ ELECTRICAL WARNING: COMMON GROUND & VOLTAGE ISOLATION</span>
+      </div>
+      <p class="leading-relaxed">
+        Never power 18 servos directly from the ESP32-S3 5V pin. The servos draw up to 4.5A stall current. Power the servo rails from the 5.3V buck regulator while keeping a <strong>shared common GND</strong> between the ESP32, PCA9685, and power supply.
+      </p>
+    </div>
+
+    <!-- Pinout Matrix -->
+    <div class="overflow-x-auto border border-zinc-800 rounded-xl bg-zinc-900/40 mb-4">
+      <table class="w-full text-left text-xs font-mono text-zinc-300 min-w-[560px]">
+        <thead class="bg-zinc-900 border-b border-zinc-800 text-zinc-400 uppercase text-[10px]">
+          <tr>
+            <th class="py-2 px-3">ESP32-S3 Pin</th>
+            <th class="py-2 px-3">Target Device / Pin</th>
+            <th class="py-2 px-3">Bus / Protocol</th>
+            <th class="py-2 px-3">Electrical Level</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-800/60 text-[11px]">
+          <tr>
+            <td class="py-2 px-3 text-sky-400 font-semibold">GPIO 8 (SDA)</td>
+            <td class="py-2 px-3">PCA9685 #1 & #2 SDA</td>
+            <td class="py-2 px-3">I2C Data Bus (400kHz Fast Mode)</td>
+            <td class="py-2 px-3">3.3V Logic</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-sky-400 font-semibold">GPIO 9 (SCL)</td>
+            <td class="py-2 px-3">PCA9685 #1 & #2 SCL</td>
+            <td class="py-2 px-3">I2C Clock Bus</td>
+            <td class="py-2 px-3">3.3V Logic</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-sky-400 font-semibold">GPIO 4 (TXD1)</td>
+            <td class="py-2 px-3">Raspberry Pi 4 RXD (GPIO 15)</td>
+            <td class="py-2 px-3">UART Telemetry @ 115,200 Baud</td>
+            <td class="py-2 px-3">3.3V TTL</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-sky-400 font-semibold">GPIO 5 (RXD1)</td>
+            <td class="py-2 px-3">Raspberry Pi 4 TXD (GPIO 14)</td>
+            <td class="py-2 px-3">UART Kinematic Command Stream</td>
+            <td class="py-2 px-3">3.3V TTL</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-sky-400 font-semibold">GND Pin</td>
+            <td class="py-2 px-3">PCA9685 GND & Power Supply GND</td>
+            <td class="py-2 px-3">Common Ground Reference</td>
+            <td class="py-2 px-3">0V Reference</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SOFTWARE STACK & REPOSITORY INDEX -->
+  <section id="software-stack" class="mb-10 scroll-mt-20">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="font-mono text-[10px] text-sky-400 uppercase">// SECTION_04</span>
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100">Multi-Repo Software Setup & Deployment</h2>
+      </div>
+      <TechBadge text="Firmware + Cloud AI" />
+    </div>
+
+    <!-- Software Repos Index Cards -->
+    <div class="space-y-4 font-mono text-xs">
+      <!-- Repo 1: Firmware -->
+      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-zinc-800">
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">01_FIRMWARE</span>
+            <span class="text-zinc-200 font-semibold">spiderbot-firmware</span>
+          </div>
+          <a href={PRODUCT_LINKS.repos.firmware} target="_blank" class="text-sky-400 hover:underline text-[11px]">
+            View on GitHub &rarr;
+          </a>
+        </div>
+        <p class="text-zinc-400 mb-3 text-[11px]">
+          Runs on ESP32-S3. Manages 18-DOF Inverse Kinematics calculations on Core 1 and Wi-Fi/UART telemetry on Core 0.
+        </p>
+        <div class="bg-zinc-950 p-3 rounded border border-zinc-800 text-zinc-300 text-[11px]">
+          <span class="text-zinc-500 block mb-1"># Setup & Flash with PlatformIO CLI</span>
+          <code>git clone {PRODUCT_LINKS.repos.firmware}.git<br/>cd spiderbot-firmware<br/>pio run -e esp32-s3-devkitc-1 --target upload</code>
+        </div>
+      </div>
+
+      <!-- Repo 2: Pi Hub -->
+      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-zinc-800">
+          <div class="flex items-center gap-2">
+            <span class="text-purple-400 font-bold">02_AI_PI_HUB</span>
+            <span class="text-zinc-200 font-semibold">spiderbot-pi-hub</span>
+          </div>
+          <a href={PRODUCT_LINKS.repos.piHub} target="_blank" class="text-sky-400 hover:underline text-[11px]">
+            View on GitHub &rarr;
+          </a>
+        </div>
+        <p class="text-zinc-400 mb-3 text-[11px]">
+          Python hub on Raspberry Pi 4. Handles wake-word detection, Groq / Llama 3.3 LLM translation to kinematic JSON packets, and audio feedback.
+        </p>
+        <div class="bg-zinc-950 p-3 rounded border border-zinc-800 text-zinc-300 text-[11px]">
+          <span class="text-zinc-500 block mb-1"># Environment Setup on Raspberry Pi</span>
+          <code>git clone {PRODUCT_LINKS.repos.piHub}.git<br/>cd spiderbot-pi-hub<br/>python3 -m venv venv && source venv/bin/activate<br/>pip install -r requirements.txt<br/>python main.py --groq-api-key=$GROQ_KEY</code>
+        </div>
+      </div>
+
+      <!-- Repo 3: Web Dashboard -->
+      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-zinc-800">
+          <div class="flex items-center gap-2">
+            <span class="text-sky-400 font-bold">03_WEB_UI</span>
+            <span class="text-zinc-200 font-semibold">spiderbot-mithi-web</span>
+          </div>
+          <a href={PRODUCT_LINKS.repos.webUi} target="_blank" class="text-sky-400 hover:underline text-[11px]">
+            View on GitHub &rarr;
+          </a>
+        </div>
+        <p class="text-zinc-400 mb-3 text-[11px]">
+          React & Plotly 3D kinematic visualizer dashboard. Synchronizes with real robot joint angles over WebSocket.
+        </p>
+        <div class="bg-zinc-950 p-3 rounded border border-zinc-800 text-zinc-300 text-[11px]">
+          <span class="text-zinc-500 block mb-1"># Local Development Run</span>
+          <code>git clone {PRODUCT_LINKS.repos.webUi}.git<br/>cd spiderbot-mithi-web<br/>npm install<br/>npm run dev</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: METHODOLOGY & TESTING BENCHMARKS -->
+  <section class="border-t border-zinc-800 pt-6">
+    <div class="font-mono text-xs text-sky-400 mb-1">// EXPERIMENTAL_VERIFICATION</div>
+    <h2 class="text-lg sm:text-xl font-bold text-zinc-100 mb-2">Scientific Testing & Findings</h2>
+    <div class="text-xs text-zinc-300 space-y-3 leading-relaxed">
+      <p>
+        <strong>Mass vs. Actuation Torque Constraint:</strong> At total system integration (Dual MCUs, 18 servos, buck regulators, camera, wiring harness), the dry mass reached 1,310 grams. Given SG90/MG90S standard torque ratings of ~1.8 kg·cm and leg moment arms averaging 9.5 cm, the torque required during single-tripod stance exceeded the continuous thermal rating of budget servos on battery discharge.
+      </p>
+      <p>
+        <strong>Empirical Mitigation:</strong> We designed a custom DTC acrylic/PETG testing stand with an external regulated 5.30V DC power source. This validated the complete 18-DOF Inverse Kinematics math, 100Hz dual-core RTOS task scheduling, wake-word voice pipeline, and live 3D web synchronization without thermal overload.
+      </p>
+    </div>
+  </section>
+</MainLayout>

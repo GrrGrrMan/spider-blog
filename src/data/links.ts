@@ -1,9 +1,11 @@
+// src/data/links.ts
 export const PRODUCT_LINKS = {
   playgroundDemo: "https://spiderbot-playground.netlify.app/",
   repos: {
     firmware: "https://github.com/GrrGrrMan/spiderbot-firmware",
     piHub: "https://github.com/GrrGrrMan/spiderbot-pi-hub",
     webUi: "https://github.com/GrrGrrMan/spiderbot-mithi-web",
+    blog: "https://github.com/GrrGrrMan/spiderbot-blog",
   },
   cad: {
     body2: "https://cad.onshape.com/documents/97670e8943e0cc50e830c42a/w/00e0069e98a6590d172338eb/e/8904dbdba274489211ded1bf?renderMode=0&uiState=6a8cd46a6dfb0f4caeea9e32",
