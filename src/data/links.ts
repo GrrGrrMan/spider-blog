@@ -1,5 +1,5 @@
 export const PRODUCT_LINKS = {
-  liveDemo: "https://spiderbot-index.netlify.app/",
+  playgroundDemo: "https://spiderbot-playground.netlify.app/",
   repos: {
     firmware: "https://github.com/GrrGrrMan/spiderbot-firmware",
     piHub: "https://github.com/GrrGrrMan/spiderbot-pi-hub",

@@ -144,7 +144,7 @@ import { PRODUCT_LINKS } from '../data/links';
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
     <!-- Live Demo App -->
-    <a href={PRODUCT_LINKS.liveDemo} target="_blank" class="flex items-center justify-between p-2.5 rounded bg-zinc-950 border border-sky-500/30 text-sky-300 hover:bg-sky-500/10 transition-colors">
+    <a href={PRODUCT_LINKS.playgroundDemo} target="_blank" class="flex items-center justify-between p-2.5 rounded bg-zinc-950 border border-sky-500/30 text-sky-300 hover:bg-sky-500/10 transition-colors">
       <span>Live Interactive Web UI</span>
       <span class="text-zinc-500">&rarr;</span>
     </a>
@@ -242,7 +242,7 @@ Decided to move to CAD and 3D printing for the next prototype. The acrylic is de
 ================================================================================
 
 export const PRODUCT_LINKS = {
-  liveDemo: "https://spiderbot-index.netlify.app/",
+  playgroundDemo: "https://spiderbot-playground.netlify.app/",
   repos: {
     firmware: "https://github.com/GrrGrrMan/spiderbot-firmware",
     piHub: "https://github.com/GrrGrrMan/spiderbot-pi-hub",
@@ -781,7 +781,7 @@ import { PRODUCT_LINKS } from '../data/links';
   <section class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden mb-6">
     <div class="bg-zinc-900 px-3.5 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex items-center justify-between">
       <span>// OPERATOR_DASHBOARD</span>
-      <a href={PRODUCT_LINKS.liveDemo} target="_blank" class="text-sky-400 hover:underline text-[10px]">
+      <a href={PRODUCT_LINKS.playgroundDemo} target="_blank" class="text-sky-400 hover:underline text-[10px]">
         Launch Live Dashboard &rarr;
       </a>
     </div>
