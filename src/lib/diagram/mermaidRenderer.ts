@@ -41,7 +41,7 @@ export function createDiagramCard(): {
     'flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-3 sm:px-4 py-2.5 bg-zinc-950/90 border-b border-zinc-800 text-xs font-mono text-zinc-400';
   toolbar.innerHTML = `
     <div class="flex items-center gap-2 text-sky-400 font-semibold text-[11px] sm:text-xs">
-      <span>📐 ARCHITECTURE_DIAGRAM</span>
+      <span>// ARCHITECTURE_DIAGRAM</span>
     </div>
     <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-between sm:justify-end">
       <div class="tour-nav-wrapper flex items-center bg-zinc-900 border border-zinc-800 rounded px-1.5 py-1 gap-1">

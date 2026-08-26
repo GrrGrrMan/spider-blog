@@ -21,7 +21,7 @@ pre.astro-code[data-language="mermaid"] code {
 pre:has(code.language-mermaid)::after,
 pre[data-language="mermaid"]::after,
 pre.astro-code[data-language="mermaid"]::after {
-  content: '📐 Initializing Architecture Diagram...';
+  content: 'Initializing Architecture Diagram...';
   position: absolute;
   inset: 0;
   display: flex;

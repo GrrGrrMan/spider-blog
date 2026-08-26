@@ -515,7 +515,7 @@ import { PRODUCT_LINKS } from '../data/links';
         <div class="p-3 bg-zinc-950/80 flex flex-col items-center justify-center border-b border-zinc-800/80 h-44 relative group">
           <img src="/images/coxa_model.png" alt="Coxa CAD" class="max-h-28 w-auto object-contain mb-2" />
           <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="text-[11px] font-mono text-sky-400 bg-zinc-900 border border-zinc-700 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors">
-            🔗 View in Onshape 3D
+            View in Onshape 3D
           </a>
         </div>
         <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow">
@@ -532,7 +532,7 @@ import { PRODUCT_LINKS } from '../data/links';
         <div class="p-3 bg-zinc-950/80 flex flex-col items-center justify-center border-b border-zinc-800/80 h-44 relative group">
           <img src="/images/femur_model.png" alt="Femur CAD" class="max-h-28 w-auto object-contain mb-2" />
           <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="text-[11px] font-mono text-sky-400 bg-zinc-900 border border-zinc-700 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors">
-            🔗 View in Onshape 3D
+            View in Onshape 3D
           </a>
         </div>
         <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow">
@@ -549,7 +549,7 @@ import { PRODUCT_LINKS } from '../data/links';
         <div class="p-3 bg-zinc-950/80 flex flex-col items-center justify-center border-b border-zinc-800/80 h-44 relative group">
           <img src="/images/tibia_model.png" alt="Tibia CAD" class="max-h-28 w-auto object-contain mb-2" />
           <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="text-[11px] font-mono text-sky-400 bg-zinc-900 border border-zinc-700 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors">
-            🔗 View in Onshape 3D
+            View in Onshape 3D
           </a>
         </div>
         <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow">
