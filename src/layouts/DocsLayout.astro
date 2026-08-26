@@ -95,7 +95,7 @@ const { title, description, slug, section, headings } = Astro.props;
 
     <Footer />
 
-    <!-- Client-Side Mermaid Renderer -->
+    <!-- Client-Side Mermaid Renderer with Subgraph Tour & Click-to-Focus ViewBox Engine -->
     <script is:inline type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
@@ -120,20 +120,38 @@ const { title, description, slug, section, headings } = Astro.props;
         }
       });
 
-      function getElementRootBounds(svgEl, el, currentViewBox) {
+      /**
+       * Uses SVG getScreenCTM().inverse() for exact screen-to-viewbox coordinate projection.
+       * Eliminates all letterboxing pan offset errors on wide/horizontal diagrams.
+       */
+      function getElementRootBounds(svgEl, el) {
         const elRect = el.getBoundingClientRect();
-        const svgRect = svgEl.getBoundingClientRect();
-        
-        if (!svgRect.width || !svgRect.height) return null;
+        if (!elRect.width || !elRect.height) return null;
 
-        const scaleX = currentViewBox.w / svgRect.width;
-        const scaleY = currentViewBox.h / svgRect.height;
+        const ctm = svgEl.getScreenCTM();
+        if (!ctm) return null;
+
+        const inv = ctm.inverse();
+        const pt = svgEl.createSVGPoint();
+
+        pt.x = elRect.left;
+        pt.y = elRect.top;
+        const p1 = pt.matrixTransform(inv);
+
+        pt.x = elRect.right;
+        pt.y = elRect.bottom;
+        const p2 = pt.matrixTransform(inv);
+
+        const minX = Math.min(p1.x, p2.x);
+        const minY = Math.min(p1.y, p2.y);
+        const maxX = Math.max(p1.x, p2.x);
+        const maxY = Math.max(p1.y, p2.y);
 
         return {
-          x: currentViewBox.x + (elRect.left - svgRect.left) * scaleX,
-          y: currentViewBox.y + (elRect.top - svgRect.top) * scaleY,
-          width: elRect.width * scaleX,
-          height: elRect.height * scaleY
+          x: minX,
+          y: minY,
+          width: maxX - minX,
+          height: maxY - minY
         };
       }
 
@@ -174,7 +192,7 @@ const { title, description, slug, section, headings } = Astro.props;
           }
         }
 
-        function animateCameraTo(targetX, targetY, targetW, targetH, duration = 450) {
+        function animateCameraTo(targetX, targetY, targetW, targetH, duration = 400) {
           if (animFrameId) cancelAnimationFrame(animFrameId);
           const startX = current.x, startY = current.y, startW = current.w, startH = current.h;
           const startTime = performance.now();
@@ -205,18 +223,25 @@ const { title, description, slug, section, headings } = Astro.props;
           currentTourIndex = -1;
         }
 
-        const rawClusters = Array.from(svgEl.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph'));
-        let candidateElements = rawClusters.length >= 2 ? rawClusters : Array.from(svgEl.querySelectorAll('.node'));
-        
+        // --- DISCOVERY: Include Leaf Clusters + Uncontained Parent Nodes (e.g. RobotContext, HEXAPOD) ---
+        const allClusters = Array.from(svgEl.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph'));
+        const leafClusters = allClusters.filter(c => c.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph').length === 0);
+        const clustersToUse = leafClusters.length > 0 ? leafClusters : allClusters;
+
+        const allNodes = Array.from(svgEl.querySelectorAll('.node'));
+        const uncontainedNodes = allNodes.filter(node => !clustersToUse.some(cluster => cluster.contains(node)));
+
+        const candidateElements = [...clustersToUse, ...uncontainedNodes];
+
         const tourElements = candidateElements.map(el => {
           const r = el.getBoundingClientRect();
           return { el, top: r.top, left: r.left };
         }).sort((a, b) => {
-          const rowDiff = Math.round(a.top / 40) - Math.round(b.top / 40);
+          const rowDiff = Math.round(a.top / 35) - Math.round(b.top / 35);
           return rowDiff !== 0 ? rowDiff : (a.left - b.left);
         }).map(item => item.el);
 
-        let currentTourIndex = -1;
+        let currentTourIndex = 0;
 
         function clearHighlights() {
           svgEl.querySelectorAll('.cluster, .node').forEach(node => {
@@ -225,11 +250,11 @@ const { title, description, slug, section, headings } = Astro.props;
           });
         }
 
-        function focusElement(el) {
-          const bounds = getElementRootBounds(svgEl, el, current);
+        function focusElement(el, instant = false) {
+          const bounds = getElementRootBounds(svgEl, el);
           if (!bounds) return;
 
-          const pad = 40;
+          const pad = 36;
           const cx = bounds.x + bounds.width / 2;
           const cy = bounds.y + bounds.height / 2;
 
@@ -261,7 +286,15 @@ const { title, description, slug, section, headings } = Astro.props;
           el.style.opacity = '1';
           el.style.filter = 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.6))';
 
-          animateCameraTo(targetX, targetY, targetW, targetH, 450);
+          if (instant) {
+            current.x = targetX;
+            current.y = targetY;
+            current.w = targetW;
+            current.h = targetH;
+            applyViewBox();
+          } else {
+            animateCameraTo(targetX, targetY, targetW, targetH, 420);
+          }
         }
 
         function stepTour(direction) {
@@ -280,6 +313,7 @@ const { title, description, slug, section, headings } = Astro.props;
           }
         }
 
+        // Direct Click-to-Focus
         svgEl.style.cursor = 'pointer';
         svgEl.addEventListener('click', (e) => {
           const clickedTarget = e.target.closest('.cluster, .node, g[id^="subGraph"]');
@@ -294,6 +328,7 @@ const { title, description, slug, section, headings } = Astro.props;
           }
         });
 
+        // Pointer Dragging / Panning
         let isDragging = false;
         let startX = 0, startY = 0;
         let startVbX = 0, startVbY = 0;
@@ -333,6 +368,7 @@ const { title, description, slug, section, headings } = Astro.props;
         viewportEl.addEventListener('pointerup', stopDrag);
         viewportEl.addEventListener('pointercancel', stopDrag);
 
+        // Wheel Zoom
         viewportEl.addEventListener('wheel', (e) => {
           e.preventDefault();
           if (animFrameId) cancelAnimationFrame(animFrameId);
@@ -403,7 +439,19 @@ const { title, description, slug, section, headings } = Astro.props;
           controls.tourNavWrapper.style.display = tourElements.length >= 2 ? 'flex' : 'none';
         }
 
-        applyViewBox();
+        // --- AUTO-INITIALIZE ON STEP 1 (1/X) INSTEAD OF FIT ---
+        if (tourElements.length >= 2) {
+          currentTourIndex = 0;
+          setTimeout(() => {
+            focusElement(tourElements[0], false);
+            if (controls.stepIndicator) {
+              controls.stepIndicator.textContent = `1/${tourElements.length}`;
+            }
+          }, 60);
+        } else {
+          resetToFit();
+        }
+
         return { resetToFit, stepTour, focusElement };
       }
 
@@ -440,9 +488,9 @@ const { title, description, slug, section, headings } = Astro.props;
             <div class="flex items-center gap-2">
               <div class="tour-nav-wrapper flex items-center bg-zinc-900 border border-zinc-800 rounded px-1 py-0.5 gap-1">
                 <span class="text-[10px] text-zinc-500 uppercase px-1">Tour:</span>
-                <button class="tour-prev-btn px-1.5 py-0.2 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors" title="Previous Tier">‹ Prev</button>
-                <span class="step-indicator text-[10px] text-sky-400 font-bold px-1 min-w-[32px] text-center">All</span>
-                <button class="tour-next-btn px-1.5 py-0.2 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors" title="Next Tier">Next ›</button>
+                <button class="tour-prev-btn px-1.5 py-0.2 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors" title="Previous Block">‹ Prev</button>
+                <span class="step-indicator text-[10px] text-sky-400 font-bold px-1 min-w-[32px] text-center">1/?</span>
+                <button class="tour-next-btn px-1.5 py-0.2 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors" title="Next Block">Next ›</button>
               </div>
 
               <div class="flex items-center gap-1">
@@ -519,7 +567,6 @@ const { title, description, slug, section, headings } = Astro.props;
         }
       }
 
-      // Close modal events
       document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('diagram-modal');
         const closeBtn = document.getElementById('close-modal-btn');
@@ -531,7 +578,6 @@ const { title, description, slug, section, headings } = Astro.props;
         }
       });
 
-      // Execute automatically on initial load AND every client-side page navigation
       document.addEventListener('astro:page-load', renderMermaid);
     </script>
   </body>
