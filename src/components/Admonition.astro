@@ -1,0 +1,51 @@
+---
+interface Props {
+  type?: 'note' | 'important' | 'warning' | 'hazard';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+const styles = {
+  note: {
+    border: 'border-sky-500/60',
+    bg: 'bg-sky-950/20',
+    headerText: 'text-sky-400',
+    icon: 'ℹ',
+    defaultTitle: 'NOTE',
+  },
+  important: {
+    border: 'border-indigo-500/60',
+    bg: 'bg-indigo-950/20',
+    headerText: 'text-indigo-400',
+    icon: '✦',
+    defaultTitle: 'IMPORTANT',
+  },
+  warning: {
+    border: 'border-amber-500/60',
+    bg: 'bg-amber-950/20',
+    headerText: 'text-amber-400',
+    icon: '⚠',
+    defaultTitle: 'WARNING',
+  },
+  hazard: {
+    border: 'border-rose-600/70',
+    bg: 'bg-rose-950/30',
+    headerText: 'text-rose-400',
+    icon: '⚡',
+    defaultTitle: 'ELECTRICAL HAZARD',
+  },
+};
+
+const current = styles[type];
+---
+
+<div class={`border-l-4 ${current.border} ${current.bg} border-y border-r border-zinc-800/80 rounded-r-xl p-4 my-4 text-xs font-mono`}>
+  <div class={`flex items-center gap-2 font-bold mb-1.5 ${current.headerText} tracking-wider`}>
+    <span>{current.icon}</span>
+    <span>{title || current.defaultTitle}</span>
+  </div>
+  <div class="text-zinc-300 leading-relaxed font-sans text-[13px]">
+    <slot />
+  </div>
+</div>

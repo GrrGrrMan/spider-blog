@@ -1,0 +1,54 @@
+---
+import { DOCS_NAVIGATION } from '../data/docsNav';
+
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug = '' } = Astro.props;
+---
+
+<aside class="w-64 flex-shrink-0 hidden lg:block sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto pr-4 py-6 border-r border-zinc-800/80">
+  <div class="space-y-6">
+    <div class="px-2">
+      <span class="font-mono text-[10px] uppercase tracking-widest text-sky-400 font-bold block mb-1">
+        // DOCUMENTATION TREE
+      </span>
+      <p class="text-xs text-zinc-400 font-sans">AI Spider V2 Technical Manual</p>
+    </div>
+
+    <nav class="space-y-5">
+      {DOCS_NAVIGATION.map((sec) => (
+        <div>
+          <h3 class="font-mono text-[11px] font-semibold text-zinc-400 uppercase tracking-wider px-2 mb-1.5 flex items-center justify-between">
+            <span>{sec.sectionTitle}</span>
+          </h3>
+          <ul class="space-y-0.5">
+            {sec.items.map((item) => {
+              const isActive = currentSlug === item.slug;
+              return (
+                <li>
+                  <a
+                    href={`/docs/${item.slug}`}
+                    class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                      isActive
+                        ? 'bg-sky-950/60 border border-sky-800 text-sky-300 font-semibold shadow-sm'
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60'
+                    }`}
+                  >
+                    <span class="truncate">{item.title}</span>
+                    {item.badge && (
+                      <span class="text-[9px] px-1.5 py-0.2 rounded bg-zinc-900 border border-zinc-800 text-sky-400 ml-1">
+                        {item.badge}
+                      </span>
+                    )}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+</aside>

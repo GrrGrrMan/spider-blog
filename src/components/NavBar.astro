@@ -1,59 +1,68 @@
 ---
-// src/components/NavBar.astro
 const pathname = new URL(Astro.request.url).pathname;
 const cleanPath = pathname.replace(/\/$/, "");
 ---
 
 <header class="sticky top-0 z-50 w-full bg-zinc-950/95 backdrop-blur border-b border-zinc-800/80">
-  <div class="max-w-4xl mx-auto px-4 py-2.5">
-    <!-- Top Row: Brand & Status -->
-    <div class="flex items-center justify-between mb-2">
-      <a href="/" class="flex items-center gap-2 font-mono text-xs sm:text-sm font-semibold tracking-wider text-zinc-100 uppercase">
-        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-        AI_SPIDER <span class="text-zinc-500">//</span> v2.0
+  <div class="max-w-7xl mx-auto px-4 py-2.5">
+    <div class="flex items-center justify-between">
+      <!-- Brand -->
+      <a href="/" class="flex items-center gap-2.5 font-mono text-xs sm:text-sm font-bold tracking-wider text-zinc-100 uppercase">
+        <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></span>
+        AI_SPIDER <span class="text-zinc-600">//</span> <span class="text-sky-400">DOCS_INDEX</span>
       </a>
+
+      <!-- Central Nav Links -->
+      <nav class="hidden md:flex items-center gap-1 font-mono text-xs">
+        <a
+          href="/"
+          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath === '' ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
+        >
+          Overview
+        </a>
+        <a
+          href="/docs/01-system-overview"
+          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.startsWith('/docs') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
+        >
+          Documentation
+        </a>
+        <a
+          href="/methodology"
+          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.includes('methodology') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
+        >
+          Methodology
+        </a>
+        <a
+          href="/hardware"
+          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.includes('hardware') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
+        >
+          CAD & Parts
+        </a>
+        <a
+          href="/logbook"
+          class={`px-3 py-1.5 rounded-md transition-colors ${cleanPath.includes('logbook') ? 'bg-zinc-800 text-sky-400 font-semibold' : 'text-zinc-400 hover:text-zinc-100'}`}
+        >
+          Logbook
+        </a>
+      </nav>
+
+      <!-- Right Header Actions -->
       <div class="flex items-center gap-2">
-        <span class="font-mono text-[10px] text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
-          18-DOF HEXAPOD
-        </span>
-        <span class="hidden sm:inline font-mono text-[10px] text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded">
-          OPEN REPRODUCIBILITY
-        </span>
+        <a
+          href="https://spiderbot-playground.netlify.app/"
+          target="_blank"
+          class="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-sky-300 bg-sky-950/60 border border-sky-800 px-2.5 py-1 rounded hover:bg-sky-500/20 transition-colors"
+        >
+          <span>⚡ Live 3D Sim</span>
+        </a>
+        <a
+          href="https://github.com/GrrGrrMan/spiderbot-firmware"
+          target="_blank"
+          class="font-mono text-[11px] text-zinc-300 bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded hover:border-zinc-700 transition-colors"
+        >
+          GitHub &rarr;
+        </a>
       </div>
     </div>
-
-    <!-- Bottom Row: 5-Tab Segmented Bar -->
-    <nav class="grid grid-cols-5 gap-1 p-1 bg-zinc-900/90 border border-zinc-800/80 rounded-lg text-center text-xs font-mono">
-      <a 
-        href="/" 
-        class={`py-1.5 rounded transition-all ${cleanPath === '' ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
-      >
-        Overview
-      </a>
-      <a 
-        href="/methodology" 
-        class={`py-1.5 rounded transition-all ${cleanPath.includes('methodology') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
-      >
-        Methodology
-      </a>
-      <a 
-        href="/hardware" 
-        class={`py-1.5 rounded transition-all ${cleanPath.includes('hardware') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
-      >
-        Hardware
-      </a>
-      <a 
-        href="/software" 
-        class={`py-1.5 rounded transition-all ${cleanPath.includes('software') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
-      >
-        Software
-      </a>
-      <a 
-        href="/logbook" 
-        class={`py-1.5 rounded transition-all ${cleanPath.includes('logbook') ? 'bg-zinc-800 text-sky-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
-      >
-        Logbook
-      </a>
-    </nav>
   </div>
 </header>

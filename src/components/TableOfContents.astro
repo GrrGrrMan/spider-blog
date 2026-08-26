@@ -1,0 +1,71 @@
+---
+import { PRODUCT_LINKS } from '../data/links';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<aside class="w-60 flex-shrink-0 hidden xl:block sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto pl-4 py-6 border-l border-zinc-800/80">
+  <div class="space-y-5">
+    <div>
+      <span class="font-mono text-[10px] uppercase tracking-widest text-sky-400 font-bold block mb-2">
+        // ON THIS PAGE
+      </span>
+      {filteredHeadings.length === 0 ? (
+        <p class="text-xs font-mono text-zinc-500">No subheadings</p>
+      ) : (
+        <nav class="space-y-1 text-xs font-mono">
+          {filteredHeadings.map((h) => (
+            <a
+              href={`#${h.slug}`}
+              class={`block text-zinc-400 hover:text-sky-400 transition-colors py-0.5 truncate ${
+                h.depth === 3 ? 'pl-3 text-[11px] text-zinc-500' : 'text-zinc-300'
+              }`}
+            >
+              {h.text}
+            </a>
+          ))}
+        </nav>
+      )}
+    </div>
+
+    <!-- Quick External Assets -->
+    <div class="border-t border-zinc-800/80 pt-4 space-y-2 font-mono text-xs">
+      <span class="text-[10px] text-zinc-500 uppercase tracking-wider block">// QUICK ASSETS</span>
+      <a
+        href={PRODUCT_LINKS.cad.body2}
+        target="_blank"
+        class="flex items-center justify-between p-2 rounded bg-zinc-900/60 border border-zinc-800 text-sky-300 hover:bg-sky-950/40 text-[11px] transition-colors"
+      >
+        <span>🔗 Onshape 3D CAD</span>
+        <span>&rarr;</span>
+      </a>
+      <a
+        href={PRODUCT_LINKS.playgroundDemo}
+        target="_blank"
+        class="flex items-center justify-between p-2 rounded bg-zinc-900/60 border border-sky-500/30 text-sky-300 hover:bg-sky-950/40 text-[11px] transition-colors"
+      >
+        <span>⚡ Live Web Sim</span>
+        <span>&rarr;</span>
+      </a>
+      <a
+        href={PRODUCT_LINKS.repos.firmware}
+        target="_blank"
+        class="flex items-center justify-between p-2 rounded bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-[11px] transition-colors"
+      >
+        <span>📦 GitHub Repo</span>
+        <span>&rarr;</span>
+      </a>
+    </div>
+  </div>
+</aside>

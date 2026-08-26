@@ -4,87 +4,77 @@ import TechBadge from '../components/TechBadge.astro';
 import ProductLinks from '../components/ProductLinks.astro';
 ---
 
-<MainLayout title="Project Overview">
-  <!-- Title & Plain English Pitch -->
+<MainLayout title="Overview">
   <section class="border-b border-zinc-800 pb-6 mb-6">
     <div class="flex items-center gap-2 mb-3">
       <span class="font-mono text-[10px] tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded uppercase">
         Science Fair Project 2026
       </span>
-      <span class="font-mono text-[10px] text-zinc-500">Autonomous Robotics</span>
+      <span class="font-mono text-[10px] text-zinc-500">Autonomous Robotics &bull; 18-DOF Hexapod</span>
     </div>
     
-    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-100 mb-3">
-      Low-Cost AI Spider Robot
+    <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-100 mb-3">
+      Low-Cost Multimodal AI Spider Robot
     </h1>
     
     <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-4">
-      A 6-legged walking robot built with low-cost parts to explore hazardous areas (like damaged buildings or toxic sites) so humans don't have to risk their lives. Controlled using natural voice commands through an AI assistant.
+      An 18-degree-of-freedom hexapod robot engineered with accessible commodity hardware, real-time FreeRTOS dual-core embedded kinematics, and an embodied voice/vision AI reasoning loop powered by Llama 3.3 and Whisper.
     </p>
     
-    <div class="flex flex-wrap gap-1.5">
-      <TechBadge text="18 Motors (3 per leg)" />
-      <TechBadge text="Raspberry Pi 4 Brain" />
-      <TechBadge text="ESP32-S3 Motor Chip" />
-      <TechBadge text="Natural Voice AI" />
-      <TechBadge text="Live 3D Web UI" />
+    <div class="flex flex-wrap gap-1.5 mb-2">
+      <TechBadge text="18x Micro Servos" />
+      <TechBadge text="Dual-Core ESP32-S3 (100Hz IK)" />
+      <TechBadge text="Raspberry Pi 4 AI Gateway" />
+      <TechBadge text="ESP32-CAM MJPEG Video" />
+      <TechBadge text="Llama 3.3 Multimodal AI" />
+      <TechBadge text="React & Plotly 3D Web Twin" />
     </div>
   </section>
 
   <!-- Open-Source Product Hub Banner -->
   <ProductLinks />
 
-  <!-- Aim & Results in Simple English -->
+  <!-- Quick Entry into Full Documentation Tree -->
+  <div class="border border-sky-500/30 bg-sky-950/20 rounded-xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div>
+      <span class="font-mono text-[10px] text-sky-400 uppercase font-bold">// COMPREHENSIVE_REFERENCE</span>
+      <h2 class="text-base font-bold text-zinc-100 mt-0.5">Explore Full Technical Documentation</h2>
+      <p class="text-xs text-zinc-400 font-sans mt-1">Read the complete technical architecture, FreeRTOS pinout matrices, and IK derivations.</p>
+    </div>
+    <a
+      href="/docs/01-system-overview"
+      class="px-4 py-2 rounded-lg bg-sky-500 text-zinc-950 font-mono text-xs font-bold hover:bg-sky-400 transition-colors whitespace-nowrap"
+    >
+      Open Tech Docs &rarr;
+    </a>
+  </div>
+
+  <!-- Aim & Results Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-    <!-- The Aim -->
     <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 flex flex-col">
       <div class="font-mono text-xs font-semibold text-zinc-400 mb-2">// 01_PROJECT_AIM</div>
       <h2 class="text-sm sm:text-base font-bold text-zinc-100 mb-2">Why We Built This</h2>
-      <div class="text-xs text-zinc-300 leading-relaxed space-y-2 flex-grow">
+      <div class="text-xs text-zinc-300 leading-relaxed space-y-2 flex-grow font-sans">
         <p>
-          Emergency workers often enter dangerous collapsed buildings or chemical sites where wheeled robots get stuck. Commercial spider robots cost thousands of dollars.
+          Emergency search-and-rescue teams often face dangerous rubble, collapsed buildings, and hazardous material spills where wheeled rovers get stuck. Commercial multi-legged robots cost thousands of dollars.
         </p>
         <p>
-          Our goal was to design a budget-friendly 6-legged spider robot that can walk over uneven ground and respond to simple voice requests like <em>"Hey Spider, walk forward and check for obstacles"</em>.
+          Our goal was to design an open, low-cost 18-DOF hexapod robot that traverses complex terrain and responds to natural voice instructions like <em>"Hey Spider, walk forward and inspect for obstacles"</em>.
         </p>
       </div>
     </div>
 
-    <!-- The Result -->
     <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 flex flex-col">
       <div class="font-mono text-xs font-semibold text-sky-400 mb-2">// 02_THE_RESULT</div>
       <h2 class="text-sm sm:text-base font-bold text-zinc-100 mb-2">What We Achieved & Learned</h2>
-      <div class="text-xs text-zinc-300 leading-relaxed space-y-2 flex-grow">
+      <div class="text-xs text-zinc-300 leading-relaxed space-y-2 flex-grow font-sans">
         <p>
-          <strong>What worked:</strong> We successfully built and programmed all 18 motor joints, the live camera feed, the web dashboard, and the AI voice understanding pipeline.
+          <strong>What Worked:</strong> We successfully built and validated all 18 revolute motor joints, an analytical 100 Hz IK solver on FreeRTOS, live 1-to-N video relays, and an embodied LLM voice agent.
         </p>
         <p>
-          <strong>Key Limitation:</strong> Adding all the components brought total robot weight to 1.3kg. The budget motors could not carry this weight while walking independently on batteries, so we present the robot demonstrating all leg movements on a testing stand with external power.
+          <strong>Key Limitation:</strong> Full payload mass reached 1,310g (4.15 kg·cm torque demand), exceeding the continuous thermal limits of budget micro-gear servos. The system is presented on a custom DTC testing stand with external 5.3V power to demonstrate all 18-DOF motion and AI pipelines safely.
         </p>
       </div>
     </div>
   </div>
-
-  <!-- How It Walks (Simplified) -->
-  <section class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4">
-    <div class="font-mono text-xs font-semibold text-zinc-400 mb-3">// HOW_IT_WALKS (INVERSE KINEMATICS)</div>
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-center font-mono">
-      <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
-        <span class="text-sky-400 text-[10px] block">1. YOU SPEAK</span>
-        "Walk forward"
-      </div>
-      <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
-        <span class="text-sky-400 text-[10px] block">2. AI PROCESSES</span>
-        Chooses 3-leg step
-      </div>
-      <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
-        <span class="text-sky-400 text-[10px] block">3. GEOMETRY MATH</span>
-        Calculates joint angles
-      </div>
-      <div class="bg-zinc-950 p-2.5 rounded border border-sky-500/40 text-sky-300 font-semibold">
-        <span class="text-sky-400 text-[10px] block">4. 18 MOTORS MOVE</span>
-        Robot takes a step
-      </div>
-    </div>
-  </section>
 </MainLayout>

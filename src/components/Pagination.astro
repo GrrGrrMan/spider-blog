@@ -1,0 +1,37 @@
+---
+import { DOCS_NAVIGATION } from '../data/docsNav';
+
+interface Props {
+  currentSlug: string;
+}
+
+const { currentSlug } = Astro.props;
+
+const allItems = DOCS_NAVIGATION.flatMap((s) => s.items);
+const currentIndex = allItems.findIndex((item) => item.slug === currentSlug);
+
+const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
+const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
+---
+
+<div class="border-t border-zinc-800/80 pt-6 mt-12 grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+  {prevItem ? (
+    <a
+      href={`/docs/${prevItem.slug}`}
+      class="flex flex-col p-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 transition-colors"
+    >
+      <span class="text-[10px] text-zinc-500 mb-1">&larr; PREVIOUS SECTION</span>
+      <span class="text-zinc-200 font-semibold truncate">{prevItem.title}</span>
+    </a>
+  ) : <div />}
+
+  {nextItem ? (
+    <a
+      href={`/docs/${nextItem.slug}`}
+      class="flex flex-col p-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 text-right transition-colors"
+    >
+      <span class="text-[10px] text-zinc-500 mb-1">NEXT SECTION &rarr;</span>
+      <span class="text-zinc-200 font-semibold truncate">{nextItem.title}</span>
+    </a>
+  ) : <div />}
+</div>

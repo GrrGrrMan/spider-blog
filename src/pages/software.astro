@@ -13,7 +13,7 @@ import { PRODUCT_LINKS } from '../data/links';
     </p>
   </section>
 
-  <!-- Web Controller Live Viewport -->
+  <!-- Web Controller Live Viewport Card -->
   <section class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden mb-6">
     <div class="bg-zinc-900 px-3.5 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex items-center justify-between">
       <span>// OPERATOR_DASHBOARD</span>
@@ -22,24 +22,11 @@ import { PRODUCT_LINKS } from '../data/links';
       </a>
     </div>
     
-    <div class="p-3 bg-zinc-950 border-b border-zinc-800 flex items-center justify-center">
-      <img src="/images/hexapod_plot_sim_ui.png" alt="3D Kinematic Simulation Viewport" class="max-h-56 w-auto object-contain rounded border border-zinc-800" />
-    </div>
-    
-    <div class="p-4">
-      <p class="text-xs text-zinc-300 leading-relaxed mb-3">
-        Our custom browser dashboard shows a live 3D visual of the spider. When the robot moves in real life, the 3D model on screen moves with it at 10 updates per second over Wi-Fi.
-      </p>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <span class="font-mono text-[10px] text-zinc-500 block mb-1">GAIT_CONTROLLER</span>
-          <img src="/images/gait_controller_panel.png" alt="Gait Selector" class="rounded border border-zinc-800 w-full" />
-        </div>
-        <div>
-          <span class="font-mono text-[10px] text-zinc-500 block mb-1">JOINT_TUNER</span>
-          <img src="/images/ui_draggable_panel.png" alt="Draggable UI" class="rounded border border-zinc-800 w-full" />
-        </div>
-      </div>
+    <div class="p-6 bg-zinc-950 border-b border-zinc-800 flex flex-col items-center justify-center gap-3">
+      <span class="font-mono text-xs text-zinc-400">Interactive 3D WebGL Kinematic Twin</span>
+      <a href={PRODUCT_LINKS.playgroundDemo} target="_blank" class="font-mono text-xs text-sky-300 bg-sky-950/60 border border-sky-800 px-4 py-2 rounded hover:bg-sky-500/20 transition-colors">
+        ⚡ Open Live 3D Web Visualizer &rarr;
+      </a>
     </div>
   </section>
 
@@ -47,8 +34,8 @@ import { PRODUCT_LINKS } from '../data/links';
   <section class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 sm:p-5 mb-6">
     <div class="font-mono text-xs font-semibold text-zinc-400 mb-1">// 01_NATURAL_VOICE_AI</div>
     <h2 class="text-sm sm:text-base font-bold text-zinc-100 mb-2">How "Hey Spider" Works</h2>
-    <p class="text-xs text-zinc-300 mb-3 leading-relaxed">
-      The computer listens continuously for the wake word <strong>"Hey Spider"</strong>. When you speak a command (like <em>"Walk forward and look around"</em>), cloud AI turns your sentence into exact walking coordinates.
+    <p class="text-xs text-zinc-300 mb-3 leading-relaxed font-sans">
+      The Raspberry Pi listens continuously for the wake word <strong>"Hey Spider"</strong>. When you speak a command (like <em>"Walk forward and look around"</em>), cloud AI turns your sentence into exact walking coordinates.
     </p>
 
     <div class="bg-zinc-950 p-3 rounded font-mono text-[11px] text-zinc-300 border border-zinc-800 overflow-x-auto">
@@ -56,28 +43,26 @@ import { PRODUCT_LINKS } from '../data/links';
     </div>
   </section>
 
-  <!-- 2 Brain Cores Explained Simply -->
+  <!-- Dual Core Breakdown -->
   <section>
     <div class="font-mono text-xs font-semibold text-zinc-400 mb-2.5">// 02_DUAL_CORE_MOTOR_CONTROLLER</div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <!-- Core 0 -->
       <div class="border border-zinc-800 bg-zinc-900/40 rounded-xl p-4">
         <div class="flex items-center justify-between mb-2">
           <span class="font-mono text-xs font-semibold text-zinc-200">Core 0: Communications</span>
           <TechBadge text="Wi-Fi" />
         </div>
-        <p class="text-xs text-zinc-400 leading-relaxed">
+        <p class="text-xs text-zinc-400 leading-relaxed font-sans">
           Dedicated entirely to Wi-Fi messages and telemetry. If a Wi-Fi packet lags, it will never interrupt the robot's physical step.
         </p>
       </div>
 
-      <!-- Core 1 -->
       <div class="border border-zinc-800 bg-zinc-900/40 rounded-xl p-4">
         <div class="flex items-center justify-between mb-2">
           <span class="font-mono text-xs font-semibold text-zinc-200">Core 1: 100Hz Motion Loop</span>
           <TechBadge text="Motors" />
         </div>
-        <p class="text-xs text-zinc-400 leading-relaxed">
+        <p class="text-xs text-zinc-400 leading-relaxed font-sans">
           Dedicated 100% to calculating geometry and sending pulses to all 18 motor joints 100 times per second for smooth movement.
         </p>
       </div>

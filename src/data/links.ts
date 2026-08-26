@@ -1,4 +1,3 @@
-// src/data/links.ts
 export const PRODUCT_LINKS = {
   playgroundDemo: "https://spiderbot-playground.netlify.app/",
   repos: {
