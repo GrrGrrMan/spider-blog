@@ -1,3 +1,5 @@
+@import "tailwindcss";
+@config "../../tailwind.config.mjs";
 @import './diagram.css';
 
 /* Monospace standard */
@@ -25,13 +27,15 @@ code, pre, .font-mono {
 
 .prose a {
   color: #38bdf8;
-  text-decoration: none;
-  transition: color 0.15s ease;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: all 0.15s ease;
 }
 
 .prose a:hover {
   color: #7dd3fc;
-  text-decoration: underline;
+  text-decoration-color: #7dd3fc;
 }
 
 /* Headings */
@@ -154,15 +158,25 @@ code, pre, .font-mono {
 
 /* Code Blocks */
 .prose pre {
+  position: relative;
   margin: 1.25rem 0;
   border-radius: 0.75rem;
   border: 1px solid #27272a;
   background-color: #09090b !important;
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.25rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   font-size: 0.775rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  transition: border-color 0.2s ease;
+}
+
+.prose pre:hover {
+  border-color: #3f3f46;
+}
+
+.prose pre:hover .code-copy-btn {
+  opacity: 1;
 }
 
 /* Math Block Overflows */

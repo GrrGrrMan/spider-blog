@@ -11,28 +11,28 @@ const styles = {
     border: 'border-sky-500/60',
     bg: 'bg-sky-950/20',
     headerText: 'text-sky-400',
-    icon: 'ℹ',
+    iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
     defaultTitle: 'NOTE',
   },
   important: {
     border: 'border-indigo-500/60',
     bg: 'bg-indigo-950/20',
     headerText: 'text-indigo-400',
-    icon: '✦',
+    iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />',
     defaultTitle: 'IMPORTANT',
   },
   warning: {
     border: 'border-amber-500/60',
     bg: 'bg-amber-950/20',
     headerText: 'text-amber-400',
-    icon: '⚠',
+    iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />',
     defaultTitle: 'WARNING',
   },
   hazard: {
     border: 'border-rose-600/70',
     bg: 'bg-rose-950/30',
     headerText: 'text-rose-400',
-    icon: '[!]',
+    iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />',
     defaultTitle: 'ELECTRICAL HAZARD',
   },
 };
@@ -42,7 +42,7 @@ const current = styles[type];
 
 <div class={`border-l-4 ${current.border} ${current.bg} border-y border-r border-zinc-800/80 rounded-r-xl p-4 my-4 text-xs font-mono`}>
   <div class={`flex items-center gap-2 font-bold mb-1.5 ${current.headerText} tracking-wider`}>
-    <span>{current.icon}</span>
+    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" set:html={current.iconSvg} />
     <span>{title || current.defaultTitle}</span>
   </div>
   <div class="text-zinc-300 leading-relaxed font-sans text-[13px]">

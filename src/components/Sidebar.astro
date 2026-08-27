@@ -30,15 +30,16 @@ const { currentSlug = '' } = Astro.props;
                 <li>
                   <a
                     href={`/docs/${item.slug}`}
-                    class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                    aria-current={isActive ? 'page' : undefined}
+                    class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-mono transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
                       isActive
-                        ? 'bg-sky-950/60 border border-sky-800 text-sky-300 font-semibold shadow-sm'
-                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60'
+                        ? 'bg-sky-950/70 border border-sky-600/60 text-sky-300 font-semibold shadow-sm shadow-sky-950'
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/70 border border-transparent'
                     }`}
                   >
                     <span class="truncate">{item.title}</span>
                     {item.badge && (
-                      <span class="text-[9px] px-1.5 py-0.2 rounded bg-zinc-900 border border-zinc-800 text-sky-400 ml-1">
+                      <span class="text-[9px] px-1.5 py-0.5 rounded bg-zinc-900/90 border border-zinc-800 text-sky-400 ml-1 font-semibold">
                         {item.badge}
                       </span>
                     )}

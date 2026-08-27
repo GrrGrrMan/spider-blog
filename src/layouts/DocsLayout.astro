@@ -6,7 +6,7 @@ import TableOfContents from '../components/TableOfContents.astro';
 import Pagination from '../components/Pagination.astro';
 import DiagramModal from '../components/diagram/DiagramModal.astro';
 import { DOCS_NAVIGATION } from '../data/docsNav';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/docs.css';
 
 interface Heading {
@@ -40,7 +40,12 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <ViewTransitions />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      crossorigin="anonymous"
+    />
+    <ClientRouter />
   </head>
   <body class="bg-zinc-950 text-zinc-300 font-['Plus_Jakarta_Sans',sans-serif] antialiased min-h-screen flex flex-col">
     <NavBar />
@@ -109,6 +114,54 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
           <slot />
         </article>
 
+        <!-- Doc Footer Metadata & Feedback Widget -->
+        <div class="mt-12 pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-mono">
+          <a
+            href={`https://github.com/GrrGrrMan/spider-blog/edit/main/src/content/docs/${slug}.md`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 text-zinc-400 hover:text-sky-400 transition-colors"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>Edit this section on GitHub</span>
+          </a>
+
+          <!-- Enterprise Feedback Widget -->
+          <div id="feedback-container" class="flex items-center bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg min-h-[36px]">
+            <div id="feedback-prompt" class="flex items-center gap-2">
+              <span class="text-zinc-400 text-[11px]">Was this section helpful?</span>
+              <button
+                id="feedback-yes"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-emerald-950/60 hover:text-emerald-300 hover:border-emerald-700 border border-zinc-700 rounded transition-colors text-[11px] text-zinc-300"
+                aria-label="Yes, this section was helpful"
+              >
+                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                </svg>
+                <span>Yes</span>
+              </button>
+              <button
+                id="feedback-no"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-rose-950/60 hover:text-rose-300 hover:border-rose-700 border border-zinc-700 rounded transition-colors text-[11px] text-zinc-300"
+                aria-label="No, this section was not helpful"
+              >
+                <svg class="w-3.5 h-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76 1.04m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+                </svg>
+                <span>No</span>
+              </button>
+            </div>
+            <div id="feedback-ack" class="hidden items-center gap-1.5 text-emerald-400 text-[11px] font-semibold">
+              <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Thank you for your feedback!</span>
+            </div>
+          </div>
+        </div>
+
         <Pagination currentSlug={slug} />
       </main>
 
@@ -119,5 +172,74 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
     <Footer />
 
     <script src="../lib/diagram/index.ts"></script>
+
+    <!-- Client Script: Copy to Clipboard on Code Blocks & Feedback Handling -->
+    <script>
+      function setupDocsPageEnhancements() {
+        // 1. Code Block Copy Buttons
+        const preBlocks = document.querySelectorAll<HTMLPreElement>('article pre:not([data-language="mermaid"])');
+        
+        preBlocks.forEach((pre) => {
+          if (pre.querySelector('.code-copy-btn')) return;
+
+          pre.style.position = 'relative';
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'code-copy-btn absolute top-2.5 right-2.5 px-2.5 py-1 bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 rounded-md text-[11px] font-mono transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-sky-400 outline-none flex items-center gap-1.5 shadow-sm';
+          copyBtn.setAttribute('aria-label', 'Copy code to clipboard');
+          const defaultCopyHtml = `
+            <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <span>Copy</span>
+          `;
+          const copiedHtml = `
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-emerald-400 font-semibold">Copied</span>
+          `;
+
+          copyBtn.innerHTML = defaultCopyHtml;
+          pre.classList.add('group');
+          pre.appendChild(copyBtn);
+
+          copyBtn.addEventListener('click', async () => {
+            const codeEl = pre.querySelector('code');
+            const codeText = codeEl ? codeEl.innerText : pre.innerText;
+            try {
+              await navigator.clipboard.writeText(codeText.trim());
+              copyBtn.innerHTML = copiedHtml;
+              copyBtn.classList.add('border-emerald-600/70', 'bg-emerald-950/50');
+              setTimeout(() => {
+                copyBtn.innerHTML = defaultCopyHtml;
+                copyBtn.classList.remove('border-emerald-600/70', 'bg-emerald-950/50');
+              }, 2000);
+            } catch (err) {
+              copyBtn.innerText = 'Failed';
+            }
+          });
+        });
+
+        // 2. Feedback Widget Interaction
+        const yesBtn = document.getElementById('feedback-yes');
+        const noBtn = document.getElementById('feedback-no');
+        const promptContainer = document.getElementById('feedback-prompt');
+        const ack = document.getElementById('feedback-ack');
+
+        const handleFeedback = () => {
+          if (promptContainer) promptContainer.classList.add('hidden');
+          if (ack) {
+            ack.classList.remove('hidden');
+            ack.classList.add('flex');
+          }
+        };
+
+        yesBtn?.addEventListener('click', handleFeedback);
+        noBtn?.addEventListener('click', handleFeedback);
+      }
+
+      setupDocsPageEnhancements();
+      document.addEventListener('astro:page-load', setupDocsPageEnhancements);
+    </script>
   </body>
 </html>
