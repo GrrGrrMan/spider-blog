@@ -60,16 +60,16 @@ export async function bootstrapDiagrams(): Promise<void> {
       viewport.style.height = `${Math.round(Math.min(Math.max(idealHeight + 35, 260), 540))}px`;
 
       createPanZoomController(viewport, renderedSvg, {
-        zoomText: toolbar.querySelector('.zoom-level-text'),
-        zoomInBtn: toolbar.querySelector('.zoom-in-btn'),
-        zoomOutBtn: toolbar.querySelector('.zoom-out-btn'),
-        zoomResetBtn: toolbar.querySelector('.zoom-reset-btn'),
-        tourPrevBtn: toolbar.querySelector('.tour-prev-btn'),
-        tourNextBtn: toolbar.querySelector('.tour-next-btn'),
-        stepIndicator: toolbar.querySelector('.step-indicator'),
-        tourNavWrapper: toolbar.querySelector('.tour-nav-wrapper'),
+        zoomText: toolbar.querySelector<HTMLElement>('.zoom-level-text'),
+        zoomInBtn: toolbar.querySelector<HTMLElement>('.zoom-in-btn'),
+        zoomOutBtn: toolbar.querySelector<HTMLElement>('.zoom-out-btn'),
+        zoomResetBtn: toolbar.querySelector<HTMLElement>('.zoom-reset-btn'),
+        tourPrevBtn: toolbar.querySelector<HTMLElement>('.tour-prev-btn'),
+        tourNextBtn: toolbar.querySelector<HTMLElement>('.tour-next-btn'),
+        stepIndicator: toolbar.querySelector<HTMLElement>('.step-indicator'),
+        tourNavWrapper: toolbar.querySelector<HTMLElement>('.tour-nav-wrapper'),
       });
-
+      
       const fullscreenBtn = toolbar.querySelector<HTMLElement>('.fullscreen-btn');
       if (fullscreenBtn) {
         setupModalTriggers(renderedSvg, fullscreenBtn);
