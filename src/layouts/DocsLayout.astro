@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import Pagination from '../components/Pagination.astro';
 import DiagramModal from '../components/diagram/DiagramModal.astro';
-import { DOCS_NAVIGATION } from '../data/docsNav';
+import MobileSubNav from '../components/MobileSubNav.astro';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/docs.css';
 
@@ -24,7 +24,6 @@ interface Props {
 }
 
 const { title, description, slug, section, headings } = Astro.props;
-const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
 ---
 
 <!doctype html>
@@ -47,67 +46,30 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
     />
     <ClientRouter />
   </head>
-  <body class="bg-zinc-950 text-zinc-300 font-['Plus_Jakarta_Sans',sans-serif] antialiased min-h-screen flex flex-col">
+  <body class="bg-zinc-950 text-zinc-300 font-['Plus_Jakarta_Sans',sans-serif] antialiased min-h-screen flex flex-col selection:bg-sky-500/20 selection:text-sky-300">
     <NavBar />
+    
+    <!-- Mobile Sticky Sub-Nav (Image 2 Starlight Style) -->
+    <MobileSubNav headings={headings} section={section} />
 
     <div class="max-w-7xl w-full mx-auto px-3.5 sm:px-6 flex-grow flex">
+      <!-- Desktop Left Sidebar -->
       <Sidebar currentSlug={slug} />
 
+      <!-- Main Docs Content -->
       <main class="flex-1 min-w-0 py-6 sm:py-8 px-0 sm:px-6 lg:px-8 max-w-4xl">
-        <!-- Mobile Docs Navigation Selector (Hidden on Desktop) -->
-        <div class="lg:hidden mb-4">
-          <details class="group bg-zinc-900/80 border border-zinc-800 rounded-xl overflow-hidden font-mono text-xs">
-            <summary class="flex items-center justify-between p-3.5 cursor-pointer select-none text-sky-400 font-semibold list-none">
-              <span class="flex items-center gap-2">
-                <span>DOCS EXPLORER ({totalDocsCount} SECTIONS)</span>
-              </span>
-              <span class="text-zinc-500 group-open:rotate-180 transition-transform duration-200">▼</span>
-            </summary>
-            <div class="p-3.5 border-t border-zinc-800 bg-zinc-950/80 space-y-4 max-h-80 overflow-y-auto">
-              {DOCS_NAVIGATION.map((sec) => (
-                <div>
-                  <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-1.5 px-1">
-                    {sec.sectionTitle}
-                  </div>
-                  <ul class="space-y-1">
-                    {sec.items.map((item) => (
-                      <li>
-                        <a
-                          href={`/docs/${item.slug}`}
-                          class={`flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-colors ${
-                            slug === item.slug
-                              ? 'bg-sky-950/80 border border-sky-800 text-sky-300 font-bold'
-                              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
-                          }`}
-                        >
-                          <span class="truncate">{item.title}</span>
-                          {item.badge && (
-                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-sky-400 ml-1">
-                              {item.badge}
-                            </span>
-                          )}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </details>
-        </div>
-
-        <!-- Breadcrumbs -->
-        <div class="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 mb-2 overflow-x-auto whitespace-nowrap">
-          <span>DOCS</span>
+        <!-- Clean Context Breadcrumbs -->
+        <nav class="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 mb-3 overflow-x-auto whitespace-nowrap" aria-label="Breadcrumb">
+          <a href="/docs/01-system-overview" class="hover:text-zinc-300 transition-colors">DOCS</a>
           <span>/</span>
           <span class="text-sky-400 uppercase">{section}</span>
           <span>/</span>
           <span class="text-zinc-400 truncate">{title}</span>
-        </div>
+        </nav>
 
         <header class="border-b border-zinc-800/80 pb-4 mb-6">
-          <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-zinc-100">{title}</h1>
-          {description && <p class="text-xs sm:text-sm text-zinc-400 mt-1 font-sans leading-relaxed">{description}</p>}
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-100">{title}</h1>
+          {description && <p class="text-xs sm:text-sm text-zinc-400 mt-1.5 font-sans leading-relaxed">{description}</p>}
         </header>
 
         <article class="prose prose-invert prose-zinc max-w-none prose-headings:font-mono prose-headings:text-zinc-100 prose-a:text-sky-400 prose-code:font-mono prose-code:text-sky-300 prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800">
@@ -128,7 +90,7 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
             <span>Edit this section on GitHub</span>
           </a>
 
-          <!-- Enterprise Feedback Widget -->
+          <!-- Feedback Widget -->
           <div id="feedback-container" class="flex items-center bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg min-h-[36px]">
             <div id="feedback-prompt" class="flex items-center gap-2">
               <span class="text-zinc-400 text-[11px]">Was this section helpful?</span>
@@ -165,6 +127,7 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
         <Pagination currentSlug={slug} />
       </main>
 
+      <!-- Desktop Right Table of Contents -->
       <TableOfContents headings={headings} />
     </div>
 
@@ -173,10 +136,9 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
 
     <script src="../lib/diagram/index.ts"></script>
 
-    <!-- Client Script: Copy to Clipboard on Code Blocks & Feedback Handling -->
     <script>
       function setupDocsPageEnhancements() {
-        // 1. Code Block Copy Buttons
+        // Code Block Copy Buttons
         const preBlocks = document.querySelectorAll<HTMLPreElement>('article pre:not([data-language="mermaid"])');
         
         preBlocks.forEach((pre) => {
@@ -220,7 +182,7 @@ const totalDocsCount = DOCS_NAVIGATION.flatMap((s) => s.items).length;
           });
         });
 
-        // 2. Feedback Widget Interaction
+        // Feedback Widget
         const yesBtn = document.getElementById('feedback-yes');
         const noBtn = document.getElementById('feedback-no');
         const promptContainer = document.getElementById('feedback-prompt');

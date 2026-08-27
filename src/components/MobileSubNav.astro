@@ -1,0 +1,146 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+  section?: string;
+}
+
+const { headings, section } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<div class="lg:hidden sticky top-[53px] z-30 w-full bg-zinc-950/90 backdrop-blur border-b border-zinc-800/80 px-3.5 sm:px-6 py-2">
+  <div class="flex items-center justify-between gap-2 max-w-4xl mx-auto">
+    <!-- TOC Drawer Trigger Button -->
+    <button
+      id="mobile-toc-trigger"
+      type="button"
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-sky-400 hover:border-zinc-700 text-xs font-mono transition-colors focus-visible:ring-2 focus-visible:ring-sky-400"
+      aria-label="Open Table of Contents"
+      aria-expanded="false"
+      aria-controls="mobile-toc-dialog"
+    >
+      <span class="text-sky-400 font-semibold">On this page</span>
+      <span class="text-zinc-600">›</span>
+      <span id="mobile-toc-active-label" class="text-zinc-400 max-w-[140px] sm:max-w-[220px] truncate">
+        Overview
+      </span>
+      <svg class="w-3.5 h-3.5 text-zinc-500 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <!-- Context Section Badge -->
+    {section && (
+      <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider truncate max-w-[150px]">
+        {section}
+      </span>
+    )}
+  </div>
+</div>
+
+<!-- Mobile Table of Contents Modal Sheet -->
+<dialog
+  id="mobile-toc-dialog"
+  class="backdrop:bg-zinc-950/80 backdrop:backdrop-blur-sm bg-zinc-900 border border-zinc-800 text-zinc-100 p-0 rounded-2xl w-[94vw] max-w-md shadow-2xl overflow-hidden m-auto"
+>
+  <div class="p-3.5 border-b border-zinc-800 flex items-center justify-between bg-zinc-950 font-mono text-xs">
+    <div class="flex items-center gap-2 text-sky-400 font-semibold">
+      <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+      <span>// ON THIS PAGE</span>
+    </div>
+    <button
+      id="close-mobile-toc"
+      type="button"
+      class="text-zinc-400 hover:text-zinc-100 px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono"
+    >
+      ✕ Close
+    </button>
+  </div>
+
+  <div class="p-4 max-h-[70vh] overflow-y-auto space-y-1 font-mono text-xs">
+    {filteredHeadings.length === 0 ? (
+      <div class="text-zinc-500 py-4 text-center">No subheadings found on this page.</div>
+    ) : (
+      filteredHeadings.map((h) => (
+        <a
+          href={`#${h.slug}`}
+          data-mobile-heading-slug={h.slug}
+          class={`mobile-toc-link block py-2 px-3 rounded-lg transition-colors text-zinc-300 hover:bg-zinc-800 hover:text-sky-300 ${
+            h.depth === 3 ? 'pl-6 text-[11px] text-zinc-400' : 'font-medium'
+          }`}
+        >
+          {h.text}
+        </a>
+      ))
+    )}
+  </div>
+</dialog>
+
+<script>
+  function setupMobileToc() {
+    const trigger = document.getElementById('mobile-toc-trigger');
+    const dialog = document.getElementById('mobile-toc-dialog') as HTMLDialogElement | null;
+    const closeBtn = document.getElementById('close-mobile-toc');
+    const activeLabel = document.getElementById('mobile-toc-active-label');
+    const links = document.querySelectorAll<HTMLAnchorElement>('.mobile-toc-link');
+
+    if (!trigger || !dialog) return;
+
+    const openToc = () => {
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
+      trigger.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeToc = () => {
+      dialog.close();
+      document.body.style.overflow = '';
+      trigger.setAttribute('aria-expanded', 'false');
+    };
+
+    trigger.addEventListener('click', openToc);
+    closeBtn?.addEventListener('click', closeToc);
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) closeToc();
+    });
+
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        closeToc();
+      });
+    });
+
+    // Mobile Scrollspy observer
+    const headingElements: HTMLElement[] = [];
+    links.forEach((link) => {
+      const slug = link.getAttribute('data-mobile-heading-slug');
+      if (slug) {
+        const el = document.getElementById(slug);
+        if (el) headingElements.push(el);
+      }
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const text = entry.target.textContent || 'Overview';
+            if (activeLabel) activeLabel.textContent = text.trim();
+          }
+        });
+      },
+      { rootMargin: '-80px 0% -60% 0%', threshold: 0.1 }
+    );
+
+    headingElements.forEach((el) => observer.observe(el));
+  }
+
+  setupMobileToc();
+  document.addEventListener('astro:page-load', setupMobileToc);
+</script>
