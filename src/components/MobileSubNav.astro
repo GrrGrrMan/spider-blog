@@ -14,30 +14,30 @@ const { headings, section } = Astro.props;
 const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<div class="lg:hidden sticky top-[53px] z-30 w-full bg-zinc-950/90 backdrop-blur border-b border-zinc-800/80 px-3.5 sm:px-6 py-2">
+<div class="lg:hidden sticky top-[53px] sm:top-[57px] z-30 w-full bg-zinc-950 border-b border-zinc-800/80 px-3.5 sm:px-6 py-1.5 transform-gpu">
   <div class="flex items-center justify-between gap-2 max-w-4xl mx-auto">
     <!-- TOC Drawer Trigger Button -->
     <button
       id="mobile-toc-trigger"
       type="button"
-      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-sky-400 hover:border-zinc-700 text-xs font-mono transition-colors focus-visible:ring-2 focus-visible:ring-sky-400"
+      class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-sky-400 hover:border-zinc-700 text-xs font-mono transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 flex-shrink-0"
       aria-label="Open Table of Contents"
       aria-expanded="false"
       aria-controls="mobile-toc-dialog"
     >
-      <span class="text-sky-400 font-semibold">On this page</span>
-      <span class="text-zinc-600">›</span>
-      <span id="mobile-toc-active-label" class="text-zinc-400 max-w-[140px] sm:max-w-[220px] truncate">
+      <span class="text-sky-400 font-semibold flex-shrink-0">On this page</span>
+      <span class="text-zinc-600 flex-shrink-0">›</span>
+      <span id="mobile-toc-active-label" class="text-zinc-400 w-[110px] sm:w-[180px] text-left truncate block">
         Overview
       </span>
-      <svg class="w-3.5 h-3.5 text-zinc-500 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg class="w-3.5 h-3.5 text-zinc-500 ml-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
     </button>
 
     <!-- Context Section Badge -->
     {section && (
-      <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider truncate max-w-[150px]">
+      <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider truncate max-w-[120px] sm:max-w-[160px] text-right">
         {section}
       </span>
     )}

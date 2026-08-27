@@ -27,13 +27,13 @@ const sourceFile = rawFileId || slug;
 <BaseLayout title={title} description={description}>
   <MobileSubNav slot="sub-nav" headings={headings} section={section} />
 
-  <div class="max-w-7xl w-full mx-auto px-3.5 sm:px-6 flex-grow flex">
+  <div class="max-w-7xl w-full mx-auto px-3.5 sm:px-6 flex-grow flex min-w-0">
     <!-- Left Navigation Sidebar -->
     <Sidebar currentSlug={slug} />
 
     <!-- Main Content Area -->
-    <main id="main-content" class="flex-1 min-w-0 py-6 sm:py-8 px-0 sm:px-6 lg:px-8 max-w-4xl">
-      <article aria-labelledby="page-title">
+    <main id="main-content" class="flex-1 min-w-0 py-6 sm:py-8 px-0 sm:px-6 lg:px-8 max-w-4xl w-full overflow-hidden">
+      <article aria-labelledby="page-title" class="min-w-0 max-w-full">
         <!-- Document Header Stack -->
         <header class="border-b border-zinc-800/80 pb-4 mb-6">
           <nav class="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 mb-3 overflow-x-auto whitespace-nowrap" aria-label="Breadcrumb">
@@ -67,31 +67,33 @@ const sourceFile = rawFileId || slug;
           </a>
 
           <!-- Feedback Region -->
-          <div id="feedback-container" class="flex items-center bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg min-h-[36px]" role="region" aria-label="Documentation feedback">
-            <div id="feedback-prompt" class="flex items-center gap-2">
+          <div id="feedback-container" class="flex flex-wrap items-center bg-zinc-900/80 border border-zinc-800 p-2 sm:px-3 sm:py-1.5 rounded-lg min-h-[36px] gap-2 max-w-full" role="region" aria-label="Documentation feedback">
+            <div id="feedback-prompt" class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
               <span class="text-zinc-400 text-[11px]">Was this section helpful?</span>
-              <button
-                id="feedback-yes"
-                type="button"
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-emerald-950/60 hover:text-emerald-300 hover:border-emerald-700 border border-zinc-700 rounded transition-colors text-[11px] text-zinc-300 cursor-pointer"
-                aria-label="Yes, this section was helpful"
-              >
-                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                </svg>
-                <span>Yes</span>
-              </button>
-              <button
-                id="feedback-no"
-                type="button"
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-rose-950/60 hover:text-rose-300 hover:border-rose-700 border border-zinc-700 rounded transition-colors text-[11px] text-zinc-300 cursor-pointer"
-                aria-label="No, this section was not helpful"
-              >
-                <svg class="w-3.5 h-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76 1.04m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
-                </svg>
-                <span>No</span>
-              </button>
+              <div class="flex items-center gap-1.5">
+                <button
+                  id="feedback-yes"
+                  type="button"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-emerald-950/60 hover:text-emerald-300 hover:border-emerald-700 border border-zinc-700 rounded transition-colors text-[11px] text-zinc-300 cursor-pointer"
+                  aria-label="Yes, this section was helpful"
+                >
+                  <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                  </svg>
+                  <span>Yes</span>
+                </button>
+                <button
+                  id="feedback-no"
+                  type="button"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-rose-950/60 hover:text-rose-300 hover:border-rose-700 border border-zinc-700 rounded transition-colors text-[11px] text-zinc-300 cursor-pointer"
+                  aria-label="No, this section was not helpful"
+                >
+                  <svg class="w-3.5 h-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76 1.04m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+                  </svg>
+                  <span>No</span>
+                </button>
+              </div>
             </div>
             <div id="feedback-ack" class="hidden items-center gap-1.5 text-emerald-400 text-[11px] font-semibold">
               <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">

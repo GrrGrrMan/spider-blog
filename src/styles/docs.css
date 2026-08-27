@@ -17,11 +17,33 @@ code, pre, .font-mono {
   font-family: var(--font-mono);
 }
 
+/* Root Viewport and Containment Hardening */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100vw;
+  width: 100%;
+}
+
+/* GPU Hardware-Accelerated Sticky Mobile Navigation */
+header.sticky,
+div.sticky {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 /* Base Prose container */
 .prose {
   color: #d4d4d8;
   font-size: 0.875rem;
   line-height: 1.75;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .prose p {
