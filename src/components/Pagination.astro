@@ -14,10 +14,16 @@ const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
 const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
 ---
 
+---
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+---
+
 <div class="border-t border-zinc-800/80 pt-6 mt-12 grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
   {prevItem ? (
     <a
-      href={`/docs/${prevItem.slug}`}
+      href={`${base}docs/${prevItem.slug}`}
       class="flex flex-col p-3.5 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 hover:bg-zinc-900/80 transition-all group"
     >
       <span class="text-[10px] text-zinc-500 mb-1.5 flex items-center gap-1.5 group-hover:text-sky-400 transition-colors">
@@ -32,7 +38,7 @@ const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1]
 
   {nextItem ? (
     <a
-      href={`/docs/${nextItem.slug}`}
+      href={`${base}docs/${nextItem.slug}`}
       class="flex flex-col p-3.5 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 hover:bg-zinc-900/80 text-right transition-all group"
     >
       <span class="text-[10px] text-zinc-500 mb-1.5 flex items-center justify-end gap-1.5 group-hover:text-sky-400 transition-colors">

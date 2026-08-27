@@ -31,6 +31,9 @@ function sanitizeMarkdownText(raw: string): string {
 export async function GET() {
   const docs = await getCollection('docs');
   const indexNodes: SearchEntry[] = [];
+  const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
 
   for (const doc of docs) {
     const rawFileId = (doc.slug || doc.id).replace(/\.(md|mdx)$/, '');
@@ -48,7 +51,7 @@ export async function GET() {
       section: doc.data.section,
       slug: cleanSlug,
       subheading: doc.data.title,
-      url: `/docs/${cleanSlug}`,
+      url: `${baseUrl}docs/${cleanSlug}`,
       content: cleanOverview,
       keywords: [doc.data.title, doc.data.section, doc.data.badge || ''].filter(Boolean),
     });
@@ -66,7 +69,7 @@ export async function GET() {
       );
 
       const anchorSlug = matchedHeading ? matchedHeading.slug : '';
-      const anchorUrl = anchorSlug ? `/docs/${cleanSlug}#${anchorSlug}` : `/docs/${cleanSlug}`;
+      const anchorUrl = anchorSlug ? `${baseUrl}docs/${cleanSlug}#${anchorSlug}` : `${baseUrl}docs/${cleanSlug}`;
       const cleanContent = sanitizeMarkdownText(chunk);
 
       indexNodes.push({

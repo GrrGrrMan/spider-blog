@@ -3,15 +3,19 @@ import { PRODUCT_LINKS } from '../data/links';
 import { DOCS_NAVIGATION } from '../data/docsNav';
 import SearchModal from './SearchModal.astro';
 
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
 const pathname = new URL(Astro.request.url).pathname;
 const cleanPath = pathname.replace(/\/$/, "");
-const isDocsPage = cleanPath.startsWith("/docs");
+const isDocsPage = cleanPath.includes("/docs");
 
 const navLinks = [
-  { href: "/", label: "Overview", active: cleanPath === "" },
-  { href: "/docs/mission-and-intentions", label: "Documentation", active: isDocsPage },
-  { href: "/hardware", label: "CAD & Parts", active: cleanPath.includes("hardware") },
-  { href: "/logbook", label: "Logbook", active: cleanPath.includes("logbook") },
+  { href: `${base}`, label: "Overview", active: cleanPath === "" || cleanPath === base.replace(/\/$/, "") },
+  { href: `${base}docs/mission-and-intentions`, label: "Documentation", active: isDocsPage },
+  { href: `${base}hardware`, label: "CAD & Parts", active: cleanPath.includes("hardware") },
+  { href: `${base}logbook`, label: "Logbook", active: cleanPath.includes("logbook") },
 ];
 ---
 
@@ -19,7 +23,7 @@ const navLinks = [
   <div class="max-w-7xl mx-auto px-3.5 sm:px-6 py-2 sm:py-2.5">
     <div class="flex items-center justify-between">
       <!-- Brand -->
-      <a href="/" class="flex items-center gap-2 font-mono text-xs sm:text-sm font-bold tracking-wider text-zinc-100 uppercase focus-visible:ring-2 focus-visible:ring-sky-400 rounded flex-shrink-0">
+      <a href={base} class="flex items-center gap-2 font-mono text-xs sm:text-sm font-bold tracking-wider text-zinc-100 uppercase focus-visible:ring-2 focus-visible:ring-sky-400 rounded flex-shrink-0">
         <span class="w-2 h-2 rounded-full bg-sky-400 flex-shrink-0"></span>
         AI_SPIDER <span class="text-zinc-600">//</span> <span class="text-sky-400">DOCS</span>
       </a>
@@ -108,7 +112,7 @@ const navLinks = [
   <div class="h-full flex flex-col justify-between">
     <!-- Drawer Top Header -->
     <div class="p-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950">
-      <a href="/" class="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-zinc-100 uppercase">
+      <a href={base} class="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-zinc-100 uppercase">
         <span class="w-2 h-2 rounded-full bg-sky-400"></span>
         AI_SPIDER <span class="text-sky-400">// MENU</span>
       </a>
@@ -159,10 +163,10 @@ const navLinks = [
                 </div>
                 <div class="space-y-0.5">
                   {sec.items.map((item) => {
-                    const isActive = cleanPath === `/docs/${item.slug}`;
+                    const isActive = cleanPath.endsWith(`/docs/${item.slug}`);
                     return (
                       <a
-                        href={`/docs/${item.slug}`}
+                        href={`${base}docs/${item.slug}`}
                         class={`flex items-center justify-between px-2.5 py-2 rounded-lg transition-colors ${
                           isActive
                             ? 'bg-sky-950/80 border border-sky-600/70 text-sky-300 font-semibold'
@@ -189,7 +193,7 @@ const navLinks = [
             // DOCUMENTATION HUB
           </div>
           <a
-            href="/docs/mission-and-intentions"
+            href={`${base}docs/mission-and-intentions`}
             class="flex items-center justify-between p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-sky-500/50 hover:bg-sky-950/30 transition-all text-zinc-300 group"
           >
             <div>

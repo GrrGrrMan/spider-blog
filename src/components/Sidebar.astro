@@ -6,6 +6,9 @@ interface Props {
 }
 
 const { currentSlug = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 ---
 
 <aside class="w-64 flex-shrink-0 hidden lg:block sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto pr-4 py-6 border-r border-zinc-800/80">
@@ -35,7 +38,7 @@ const { currentSlug = '' } = Astro.props;
                 return (
                   <li>
                     <a
-                      href={`/docs/${item.slug}`}
+                      href={`${base}docs/${item.slug}`}
                       aria-current={isActive ? 'page' : undefined}
                       class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-mono transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
                         isActive

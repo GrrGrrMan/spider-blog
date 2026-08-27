@@ -5,6 +5,10 @@ import ProductLinks from '../components/ProductLinks.astro';
 import { DOCS_NAVIGATION } from '../data/docsNav';
 import { PRODUCT_LINKS } from '../data/links';
 
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
 const keyMetrics = [
   { value: "100.0 Hz", label: "RTOS kinematics loop", desc: "Deterministic IK on ESP32-S3 Core 1" },
   { value: "5.30 V / 8 A", label: "Regulated power rail", desc: "Dual 300W buck with PWM phase-staggering" },
@@ -20,42 +24,42 @@ const architecturePillars = [
     title: "Perception and vision sensing",
     badge: "Vision / IMU",
     desc: "AI-Thinker ESP32-CAM streaming low-latency MJPEG over HTTP (:81), integrated 5 kHz PWM flashlight LED, and central MPU-9250 9-Axis IMU sensor fusion.",
-    href: "/docs/system-overview",
+    href: `${base}docs/system-overview`,
   },
   {
     num: "02",
     title: "Deterministic motion core",
     badge: "100Hz RTOS",
     desc: "Dual-core FreeRTOS SMP task partitioning. Core 1 runs an analytical 3-DoF Inverse Kinematics solver, 6-DoF Euler pose transforms, and 400 kHz dual PCA9685 I2C writes.",
-    href: "/docs/embedded-firmware",
+    href: `${base}docs/embedded-firmware`,
   },
   {
     num: "03",
     title: "Power regulation and pulse staggering",
     badge: "5.30V Bus",
     desc: "Dual 300W buck converters calibrated to 5.30V DC. Rising-edge phase staggering (ch × 150 ticks) eliminates inductive current surges across all 18 servos.",
-    href: "/docs/electrical-power",
+    href: `${base}docs/electrical-power`,
   },
   {
     num: "04",
     title: "Cognitive host gateway",
     badge: "Edge AI Hub",
     desc: "Raspberry Pi 4B orchestrating Mosquitto MQTT broker, Vosk/Whisper offline ASR, Piper embedded TTS, and multimodal tool-use agent planning.",
-    href: "/docs/pi-ai-hub",
+    href: `${base}docs/pi-ai-hub`,
   },
   {
     num: "05",
     title: "3D WebGL digital twin",
     badge: "React / Plotly",
     desc: "Browser-based WebGL simulation with Web Worker trajectory generation, Silero neural Voice Activity Detection, and sub-50ms WebSocket telemetry synchronization.",
-    href: "/docs/web-3d-dashboard",
+    href: `${base}docs/web-3d-dashboard`,
   },
   {
     num: "06",
     title: "Empirical torque limits and testing stand",
     badge: "Physics / Stand",
     desc: "Rigorous mass and torque physics budget analysis. Isolates 280g battery burden on a custom PETG DTC testing stand with external 5.30V power for continuous validation.",
-    href: "/docs/empirical-results",
+    href: `${base}docs/empirical-results`,
   },
 ];
 ---
@@ -91,7 +95,7 @@ const architecturePillars = [
 
     <div class="flex flex-wrap items-center gap-2.5 pt-2">
       <a
-        href="/docs/mission-and-intentions"
+        href={`${base}docs/mission-and-intentions`}
         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 text-zinc-950 font-mono text-xs font-bold hover:bg-sky-400 transition-colors"
       >
         <span>Read Technical Manual</span>
@@ -211,7 +215,7 @@ const architecturePillars = [
         {DOCS_NAVIGATION.flatMap((sec) =>
           sec.items.map((item) => (
             <a
-              href={`/docs/${item.slug}`}
+              href={`${base}docs/${item.slug}`}
               class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-sky-500/50 hover:bg-zinc-900 transition-all text-zinc-300 group"
             >
               <div class="truncate mr-2">

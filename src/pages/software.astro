@@ -1,4 +1,8 @@
 ---
 // Canonical redirection: All software architecture is maintained under formal technical docs
-return Astro.redirect('/docs/system-overview');
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
+return Astro.redirect(`${base}docs/system-overview`);
 ---

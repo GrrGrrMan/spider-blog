@@ -17,7 +17,10 @@ let searchIndexCache: SearchItem[] | null = null;
 async function loadSearchIndex(): Promise<SearchItem[]> {
   if (searchIndexCache) return searchIndexCache;
   try {
-    const res = await fetch('/api/search-index.json');
+    const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+      ? import.meta.env.BASE_URL
+      : `${import.meta.env.BASE_URL}/`;
+    const res = await fetch(`${baseUrl}api/search-index.json`);
     if (res.ok) {
       searchIndexCache = await res.json();
       return searchIndexCache || [];

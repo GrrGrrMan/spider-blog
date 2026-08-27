@@ -1,5 +1,9 @@
 import { PRODUCT_LINKS } from './links';
 
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
 export interface JointAnatomy {
   tag: string;
   role: string;
@@ -22,7 +26,7 @@ export const LEG_ANATOMY: JointAnatomy[] = [
     role: "Horizontal Yaw (Pan)",
     length: "L1 = 52 mm",
     range: "-65° to +65°",
-    img: "/images/coxa_model.png",
+    img: `${base}images/coxa_model.png`,
     alt: "Coxa Joint 3D CAD Model",
     desc: "Rotates the entire leg horizontally (yaw axis). Controls directional steering vectors and zero-radius chassis rotation.",
     cadUrl: PRODUCT_LINKS.cad.leg,
@@ -32,7 +36,7 @@ export const LEG_ANATOMY: JointAnatomy[] = [
     role: "Vertical Pitch (Lift)",
     length: "L2 = 66 mm",
     range: "-75° to +65°",
-    img: "/images/femur_model.png",
+    img: `${base}images/femur_model.png`,
     alt: "Femur Joint 3D CAD Model",
     desc: "Provides vertical stepping lift and stance height modulation. Absorbs primary normal load (4.28 N per stance leg).",
     cadUrl: PRODUCT_LINKS.cad.leg,
@@ -42,7 +46,7 @@ export const LEG_ANATOMY: JointAnatomy[] = [
     role: "Radial Pitch (Reach)",
     length: "L3 = 132 mm",
     range: "-135° to +45°",
-    img: "/images/tibia_model.png",
+    img: `${base}images/tibia_model.png`,
     alt: "Tibia Joint 3D CAD Model",
     desc: "Reaches forward to establish ground contact. Modulates radial reach distance and adapts to non-planar obstacles.",
     cadUrl: PRODUCT_LINKS.cad.leg,
