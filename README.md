@@ -2,11 +2,11 @@
 
 [![Astro](https://img.shields.io/badge/Astro-v7.2.8-18181b?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3.3-18181b?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/deploy-status?style=flat-square)](https://app.netlify.com)
+[![Netlify Status](https://netlify.com)](https://netlify.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-18181b?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Science Fair 2026](https://img.shields.io/badge/Science_Fair-2026_Autonomous_Robotics-0284c7?style=flat-square)](https://github.com/GrrGrrMan/spider-blog)
 
-Central technical documentation and monolith index for the **18-DOF Multimodal AI Spider Hexapod V2**.
+Central documentation index for the **18-DOF Multimodal AI Spider**.
 
 ---
 
@@ -141,4 +141,4 @@ Add a new record to `src/data/logbookData.ts`:
 
 ## License & Attribution
 
-Distributed under the **MIT License**. Developed for **Science Fair 2026** as an open-hardware, low-cost autonomous robotics research platform. See [LICENSE](LICENSE) for details.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
