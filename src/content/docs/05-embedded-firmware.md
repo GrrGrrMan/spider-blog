@@ -1,25 +1,25 @@
 ---
-title: "Embedded Firmware & Kinematic Control Engine"
-description: "FreeRTOS SMP dual-core task allocation, analytical 3-DOF IK math, gait generator, and safety watchdog."
-section: "04 Embedded Firmware"
+title: "Embedded firmware and motion core"
+description: "FreeRTOS SMP dual-core task allocation, analytical 3-DoF IK derivations, gait generator, and safety watchdog."
+section: "04 Embedded firmware"
 order: 5
 badge: "100Hz"
 ---
 
 The embedded firmware runs on an **ESP32-S3** microcontroller, leveraging FreeRTOS Symmetric Multiprocessing (SMP) to isolate high-frequency kinematics calculations from network and audio DMA tasks.
 
-## FreeRTOS Dual-Core SMP Task Partitioning
+## 1. FreeRTOS dual-core task partitioning
 
 ```mermaid
 flowchart TD
-    subgraph ESP32S3 ["ESP32-S3 DUAL-CORE SMP PROCESSOR"]
+    subgraph ESP32S3 ["ESP32-S3 Dual-Core SMP Processor"]
         subgraph Core0 ["Core 0: Network Ingress, Audio DMA & Host Comms"]
             TASK_NET["TaskNetwork (Priority 2, 8KB Stack)<br/>• WiFiMulti Auto-Reconnect Engine<br/>• MQTT Ingress & 10 Hz Telemetry Loop<br/>• Non-blocking LogSink Drainer (UART)<br/>• Binary Audio 10-byte Frame Ingestion"]
             TASK_AUDIO["TaskAudio (Priority 1, 8KB Stack)<br/>• 512KB PSRAM RingBuffer Reader<br/>• 16,384-byte Prebuffer Threshold<br/>• Q15 Fixed-Point Volume Scaler<br/>• I2S Direct Memory Access (DMA) Writes"]
         end
 
         subgraph Core1 ["Core 1: Deterministic Real-Time Control"]
-            TASK_CTRL["TaskControl (Priority 3, 4KB Stack)<br/>• Hard RTOS vTaskDelayUntil (100 Hz / 10ms)<br/>• Analytical 3-DOF Inverse Kinematics<br/>• 6-DOF Body Pose Transformation<br/>• Omnidirectional Gait Engine<br/>• SequencePoser Keyframe Interpolator<br/>• Two-Stage Safety Watchdog<br/>• Dual PCA9685 Burst I2C Writes (400 kHz)"]
+            TASK_CTRL["TaskControl (Priority 3, 4KB Stack)<br/>• Hard RTOS vTaskDelayUntil (100 Hz / 10ms)<br/>• Analytical 3-DoF Inverse Kinematics<br/>• 6-DoF Body Pose Transformation<br/>• Omnidirectional Gait Engine<br/>• SequencePoser Keyframe Interpolator<br/>• Two-Stage Safety Watchdog<br/>• Dual PCA9685 Burst I2C Writes (400 kHz)"]
         end
     end
 
@@ -33,13 +33,13 @@ flowchart TD
     TASK_CTRL -->|Executes 100 Hz Loop| I2C_HW
 ```
 
-### Core Isolation & Mutex Guarantees
-* **Non-Blocking Control Loop:** `TaskControl` on Core 1 executes deterministically every $10.0\text{ ms}$ without preemption from Wi-Fi interrupts. Non-blocking logging pushes string pointers to a bounded FreeRTOS queue (`xQueueSend(..., 0)`). If the queue fills, logs drop silently without delaying the motion loop.
-* **I2C Bus Mutex:** All register writes to the dual PCA9685 controllers are protected by `m_i2cMutex` with a $25\text{ ms}$ hardware timeout to prevent deadlocks from electrical noise.
+### Core isolation and mutex guarantees
+* **Non-blocking control loop:** `TaskControl` on Core 1 executes deterministically every $10.0\text{ ms}$ without preemption from Wi-Fi interrupts. Non-blocking logging pushes string pointers to a bounded FreeRTOS queue (`xQueueSend(..., 0)`). If the queue fills, logs drop silently without delaying the motion loop.
+* **I2C bus mutex:** All register writes to the dual PCA9685 controllers are protected by `m_i2cMutex` with a $25\text{ ms}$ hardware timeout to prevent deadlocks from electrical noise.
 
 ---
 
-## Analytical 3-DOF Inverse Kinematics
+## 2. Analytical 3-DoF inverse kinematics
 
 Each leg operates as an open kinematic chain with three revolute joints: Coxa ($\alpha$, hip pan), Femur ($\beta$, thigh lift), and Tibia ($\gamma$, knee reach).
 
@@ -51,7 +51,7 @@ flowchart LR
     TIBIA --> FOOT["Target Foot Tip (X, Y, Z)"]
 ```
 
-### Mathematical Kinematic Proof
+### Mathematical kinematic derivation
 
 Given a target Cartesian coordinate $(x, y, z)$ in the local frame of hip mounting point $M_i$:
 
@@ -61,7 +61,7 @@ $$
 \alpha = \operatorname{atan2}(y, x) \cdot \left(\frac{180^\circ}{\pi}\right)
 $$
 
-2. **Planar Projection and Reach Vector ($D$):**
+2. **Planar projection and reach vector ($D$):**
 
 $$
 \begin{aligned}
@@ -70,13 +70,13 @@ D &= \sqrt{d_{\text{planar}}^2 + z^2}
 \end{aligned}
 $$
 
-3. **Reachability Boundary Clamping:**
+3. **Reachability boundary clamping:**
 
 $$
 D_{\text{clamped}} = \max\Big(\min\big(D, (L_2 + L_3) - 0.1\big), |L_2 - L_3| + 0.1\Big)
 $$
 
-4. **Femur Angle ($\beta$):**
+4. **Femur angle ($\beta$):**
 
 $$
 \begin{aligned}
@@ -86,7 +86,7 @@ $$
 \end{aligned}
 $$
 
-5. **Tibia Angle ($\gamma$):**
+5. **Tibia angle ($\gamma$):**
 
 $$
 \begin{aligned}
@@ -97,19 +97,19 @@ $$
 
 ---
 
-## 6-DOF Body Pose Transformation
+## 3. 6-DoF rigid body pose transformation
 
 To apply rigid body translations $(\Delta x, \Delta y, \Delta z)$ and Tait-Bryan Euler rotations $(\text{Roll } \phi, \text{Pitch } \theta, \text{Yaw } \psi)$ relative to ground contact points, coordinates transform through forward and inverse mounting orientations.
 
 For leg $i \in \{0 \dots 5\}$ with physical mounting offset $\mathbf{M}_i = [M_{x,i}, M_{y,i}, M_{z,i}]^T$ and mounting angle $\theta_{m,i}$:
 
-1. **Foot Position in Body Coordinate Frame:**
+1. **Foot position in body coordinate frame:**
 
 $$
 \mathbf{P}_{\text{body}, i} = \mathbf{M}_i + \mathbf{R}_z(\theta_{m,i}) \cdot \mathbf{P}_{\text{local}, i}
 $$
 
-2. **Inverse Rigid Body Transformation:**
+2. **Inverse rigid body transformation:**
 
 $$
 \mathbf{P}_{\text{transformed}, i} = \mathbf{R}_z(-\psi) \mathbf{R}_y(-\theta) \mathbf{R}_x(-\phi) \cdot (\mathbf{P}_{\text{body}, i} - \mathbf{T}_{\text{body}})
@@ -117,7 +117,7 @@ $$
 
 Where $\mathbf{T}_{\text{body}} = [\Delta x, \Delta y, \Delta z]^T$.
 
-3. **Local Leg Frame Projection for Inverse Kinematics:**
+3. **Local leg frame projection for inverse kinematics:**
 
 $$
 \mathbf{P}_{\text{leg\_ik}, i} = \mathbf{R}_z(-\theta_{m,i}) \cdot (\mathbf{P}_{\text{transformed}, i} - \mathbf{M}_i)
@@ -135,7 +135,7 @@ $$
 
 ---
 
-## Omnidirectional Gait Generation Engine
+## 4. Omnidirectional gait generator engine
 
 The `GaitGenerator` modulates a normalized phase accumulator $\Phi \in [0.0, 1.0)$ driven by cycle time $T_{\text{cycle}}$:
 
@@ -162,11 +162,11 @@ flowchart TD
     Gaits --> Trajectory
 ```
 
-### Foot Trajectory Equations
+### Foot trajectory formulations
 
 For leg phase $\phi_i = (\Phi + \text{Offset}_i) \bmod 1.0$:
 
-* **Swing Phase ($\phi_i < \sigma$, Foot in Flight):**
+* **Swing phase ($\phi_i < \sigma$, foot in flight):**
 
 $$
 \begin{aligned}
@@ -177,7 +177,7 @@ Z_{\text{local}}(\tau) &= Z_{\text{base}} + \sin(\pi \tau) \cdot H_{\text{step}}
 \end{aligned}
 $$
 
-* **Stance Phase ($\phi_i \ge \sigma$, Ground Propulsion):**
+* **Stance phase ($\phi_i \ge \sigma$, ground propulsion):**
 
 $$
 \begin{aligned}
@@ -199,21 +199,21 @@ $$
 
 ---
 
-## Trajectory Interpolation & Easing Curves
+## 5. Trajectory interpolation and easing functions
 
 The `SequencePoser` dynamically transitions between poses using analytical easing functions:
 
-| Easing Identifier | Mathematical Formula $s(\tau), \quad \tau \in [0.0, 1.0]$ | Dynamic Motion Characteristics |
+| Easing identifier | Mathematical formula $s(\tau), \quad \tau \in [0.0, 1.0]$ | Dynamic motion characteristics |
 | :--- | :--- | :--- |
 | `LINEAR` | $s(\tau) = \tau$ | Constant velocity; discontinuous acceleration. |
 | `EASE_IN_OUT_QUAD` | $s(\tau) = 2\tau^2 \ (\tau < 0.5) \text{ or } 1 - \frac{(-2\tau + 2)^2}{2} \ (\tau \ge 0.5)$ | Quadratic acceleration and deceleration. |
 | `EASE_IN_OUT_CUBIC` | $s(\tau) = 4\tau^3 \ (\tau < 0.5) \text{ or } 1 - \frac{(-2\tau + 2)^3}{2} \ (\tau \ge 0.5)$ | **Standard:** Smooth S-curve transition profile. |
 | `EASE_IN_OUT_SINE` | $s(\tau) = -\frac{1}{2} (\cos(\pi\tau) - 1)$ | Harmonic sinusoidal profile for periodic gestures. |
-| `MINIMUM_JERK` | $s(\tau) = 10\tau^3 - 15\tau^4 + 6\tau^5$ | **Quintic Polynomial:** Zero boundary jerk ($\dot{s}=\ddot{s}=0$), preventing chassis resonance. |
+| `MINIMUM_JERK` | $s(\tau) = 10\tau^3 - 15\tau^4 + 6\tau^5$ | **Quintic polynomial:** Zero boundary jerk ($\dot{s}=\ddot{s}=0$), preventing chassis resonance. |
 
 ---
 
-## Multi-Stage Safety Watchdog State Machine
+## 6. Multi-stage safety watchdog state machine
 
 ```mermaid
 stateDiagram-v2
@@ -259,7 +259,7 @@ stateDiagram-v2
 
 ---
 
-## PlatformIO Build & Flashing
+## 7. Toolchain compilation and firmware flashing
 
 ```bash
 # Compile and flash ESP32-S3 Motion & Audio Controller

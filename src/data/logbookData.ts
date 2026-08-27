@@ -67,15 +67,15 @@ export const LOGBOOK_ENTRIES: LogEntry[] = [
     date: "09/06/26",
     tag: "FAILURE",
     tagType: "fail",
-    title: "Battery Inrush & Circuit Burnout",
-    desc: "Connected 4x 18650 Li-ion cells in series-parallel. Massive electrical inrush vaporized an input resistor on the PCA9685 board, destroying 3 servos. Added fast-acting fusing and dedicated step-down buck regulators."
+    title: "4S Battery Inrush & PCA9685 Circuit Burnout",
+    desc: "Connected 4x 18650 cells in 4S configuration without step-down regulation. Massive inductive inrush destroyed the PCA9685 driver board and burned out 3 MG90S servo motor windings. Procured 300W 20A buck converters and inline fusing."
   },
   {
     date: "11/06/26",
-    tag: "WEIGHT",
+    tag: "POWER",
     tagType: "fail",
-    title: "18650 Battery Pack Exceeded Payload Limits",
-    desc: "Determined that carrying 4x 18650 cells overloaded the budget micro-gear servos, stalling femur joints during stance transitions."
+    title: "18650 Cell Form Factor Deprecated for 3S LiPo",
+    desc: "18650 battery holders added excessive non-suspended mass and mechanical volume. Migrated power architecture to a high-discharge 3S 1800mAh LiPo tethered via XT60 harnesses."
   },
   {
     date: "16/06/26",
@@ -159,6 +159,6 @@ export const LOGBOOK_ENTRIES: LogEntry[] = [
     tag: "RELEASE",
     tagType: "success",
     title: "Final Build Polish & Open-Source Release",
-    desc: "Finalized wire harnesses, validated PlatformIO build pipelines, and open-sourced all CAD, firmware, gateway, and UI repositories for Science Fair 2026."
+    desc: "Finalized wire harnesses, validated PlatformIO build pipelines, and open-sourced all CAD, firmware, gateway, and UI repositories for 2026 project."
   }
 ];

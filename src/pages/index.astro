@@ -2,79 +2,233 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import TechBadge from '../components/TechBadge.astro';
 import ProductLinks from '../components/ProductLinks.astro';
+import { DOCS_NAVIGATION } from '../data/docsNav';
+import { PRODUCT_LINKS } from '../data/links';
+
+const keyMetrics = [
+  { value: "100.0 Hz", label: "RTOS kinematics loop", desc: "Deterministic IK on ESP32-S3 Core 1" },
+  { value: "5.30 V / 8 A", label: "Regulated power rail", desc: "Dual 300W buck with PWM phase-staggering" },
+  { value: "1,310 g", label: "Dry operational mass", desc: "Prototype 3.0 PETG monocoque assembly" },
+  { value: "4.15 kg·cm", label: "Stance torque demand", desc: "Femur joint load during tripod stance" },
+  { value: "370 ms", label: "Audio stream latency", desc: "16 KB PSRAM jitter prebuffer @ 22.05 kHz" },
+  { value: "~$185 NZD", label: "Fabrication BOM", desc: "Accessible open-hardware design" },
+];
+
+const architecturePillars = [
+  {
+    num: "01",
+    title: "Perception and vision sensing",
+    badge: "Vision / IMU",
+    desc: "AI-Thinker ESP32-CAM streaming low-latency MJPEG over HTTP (:81), integrated 5 kHz PWM flashlight LED, and central MPU-9250 9-Axis IMU sensor fusion.",
+    href: "/docs/system-overview",
+  },
+  {
+    num: "02",
+    title: "Deterministic motion core",
+    badge: "100Hz RTOS",
+    desc: "Dual-core FreeRTOS SMP task partitioning. Core 1 runs an analytical 3-DoF Inverse Kinematics solver, 6-DoF Euler pose transforms, and 400 kHz dual PCA9685 I2C writes.",
+    href: "/docs/embedded-firmware",
+  },
+  {
+    num: "03",
+    title: "Power regulation and pulse staggering",
+    badge: "5.30V Bus",
+    desc: "Dual 300W buck converters calibrated to 5.30V DC. Rising-edge phase staggering (ch × 150 ticks) eliminates inductive current surges across all 18 servos.",
+    href: "/docs/electrical-power",
+  },
+  {
+    num: "04",
+    title: "Cognitive host gateway",
+    badge: "Edge AI Hub",
+    desc: "Raspberry Pi 4B orchestrating Mosquitto MQTT broker, Vosk/Whisper offline ASR, Piper embedded TTS, and multimodal tool-use agent planning.",
+    href: "/docs/pi-ai-hub",
+  },
+  {
+    num: "05",
+    title: "3D WebGL digital twin",
+    badge: "React / Plotly",
+    desc: "Browser-based WebGL simulation with Web Worker trajectory generation, Silero neural Voice Activity Detection, and sub-50ms WebSocket telemetry synchronization.",
+    href: "/docs/web-3d-dashboard",
+  },
+  {
+    num: "06",
+    title: "Empirical torque limits and testing stand",
+    badge: "Physics / Stand",
+    desc: "Rigorous mass and torque physics budget analysis. Isolates 280g battery burden on a custom PETG DTC testing stand with external 5.30V power for continuous validation.",
+    href: "/docs/empirical-results",
+  },
+];
 ---
 
 <MainLayout title="Overview">
-  <section class="border-b border-zinc-800 pb-6 mb-6">
+  <!-- Hero Section -->
+  <section class="border-b border-zinc-800/80 pb-6 mb-8">
     <div class="flex items-center gap-2 mb-3">
-      <span class="font-mono text-[10px] tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded uppercase">
-        Science Fair Project 2026
+      <span class="font-mono text-[10px] tracking-wider text-sky-400 bg-sky-950/60 border border-sky-800 px-2 py-0.5 rounded uppercase font-semibold">
+        2026 project
       </span>
-      <span class="font-mono text-[10px] text-zinc-500">Autonomous Robotics &bull; 18-DOF Hexapod</span>
+      <span class="text-zinc-600 font-mono text-xs">//</span>
+      <span class="font-mono text-[11px] text-zinc-400">Robotics &amp; Embedded Systems Engineering</span>
     </div>
     
     <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-100 mb-3">
-      Low-Cost Multimodal AI Spider Robot
+      Low-Cost Autonomous Hexapod for Hazardous Terrains
     </h1>
     
-    <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-4">
-      An 18-degree-of-freedom hexapod robot engineered with accessible commodity hardware, real-time FreeRTOS dual-core embedded kinematics, and an embodied voice/vision AI reasoning loop powered by Llama 3.3 and Whisper.
+    <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-5 font-sans max-w-3xl">
+      An 18-degree-of-freedom multi-legged robotics platform engineered for extreme, unstructured, and non-planar terrain navigation (caves, disaster rubble, dense vegetation) where wheeled rovers get high-centered and aerial drones fail. Features deterministic 100 Hz FreeRTOS dual-core kinematics, isolated power conditioning, and an on-chassis edge AI roadmap.
     </p>
     
-    <div class="flex flex-wrap gap-1.5 mb-2">
-      <TechBadge text="18x Micro Servos" />
-      <TechBadge text="Dual-Core ESP32-S3 (100Hz IK)" />
-      <TechBadge text="Raspberry Pi 4 AI Gateway" />
-      <TechBadge text="ESP32-CAM MJPEG Video" />
-      <TechBadge text="Omniroute Multimodal API Router" />
+    <div class="flex flex-wrap gap-1.5 mb-5">
+      <TechBadge text="18x Metal-Gear Servos" />
+      <TechBadge text="Dual-Core ESP32-S3 (100Hz RTOS)" />
+      <TechBadge text="Raspberry Pi 4B AI Gateway" />
+      <TechBadge text="Dual PCA9685 PWM Drivers" />
+      <TechBadge text="ESP32-CAM MJPEG Node" />
+      <TechBadge text="Local Offline Speech & AI" />
       <TechBadge text="React & Plotly 3D Web Twin" />
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2.5 pt-2">
+      <a
+        href="/docs/mission-and-intentions"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 text-zinc-950 font-mono text-xs font-bold hover:bg-sky-400 transition-colors"
+      >
+        <span>Read Technical Manual</span>
+        <span>&rarr;</span>
+      </a>
+      <a
+        href={PRODUCT_LINKS.playgroundDemo}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-sky-950/60 border border-sky-800 text-sky-300 font-mono text-xs font-semibold hover:bg-sky-900/50 transition-colors"
+      >
+        <svg class="w-3.5 h-3.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <span>Launch 3D Web Sim</span>
+      </a>
+      <a
+        href={PRODUCT_LINKS.cad.body2}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-xs hover:border-zinc-700 transition-colors"
+      >
+        <span>Onshape 3D CAD</span>
+        <span class="text-zinc-500">&rarr;</span>
+      </a>
     </div>
   </section>
 
   <!-- Open-Source Product Hub Banner -->
   <ProductLinks />
 
-  <!-- Quick Entry into Full Documentation Tree -->
-  <div class="border border-sky-500/30 bg-sky-950/20 rounded-xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-    <div>
-      <span class="font-mono text-[10px] text-sky-400 uppercase font-bold">// COMPREHENSIVE_REFERENCE</span>
-      <h2 class="text-base font-bold text-zinc-100 mt-0.5">Explore Full Technical Documentation</h2>
-      <p class="text-xs text-zinc-400 font-sans mt-1">Read the complete technical architecture, FreeRTOS pinout matrices, and IK derivations.</p>
-    </div>
-    <a
-      href="/docs/01-system-overview"
-      class="px-4 py-2 rounded-lg bg-sky-500 text-zinc-950 font-mono text-xs font-bold hover:bg-sky-400 transition-colors whitespace-nowrap"
-    >
-      Open Tech Docs &rarr;
-    </a>
-  </div>
-
-  <!-- Aim & Results Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-    <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 flex flex-col">
-      <div class="font-mono text-xs font-semibold text-zinc-400 mb-2">// 01_PROJECT_AIM</div>
-      <h2 class="text-sm sm:text-base font-bold text-zinc-100 mb-2">Why We Built This</h2>
-      <div class="text-xs text-zinc-300 leading-relaxed space-y-2 flex-grow font-sans">
-        <p>
-          Emergency search-and-rescue teams often face dangerous rubble, collapsed buildings, and hazardous material spills where wheeled rovers get stuck. Commercial multi-legged robots cost thousands of dollars.
-        </p>
-        <p>
-          Our goal was to design an open, low-cost 18-DOF hexapod robot that traverses complex terrain and responds to natural voice instructions like <em>"Hey Spider, walk forward and inspect for obstacles"</em>.
-        </p>
-      </div>
+  <!-- Benchmarked Systems Matrix (KPIs) -->
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-3 border-b border-zinc-800/80 pb-2">
+      <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+        // Benchmarked systems and engineering specifications
+      </h2>
+      <span class="font-mono text-[10px] text-sky-400">EMPIRICAL DATA</span>
     </div>
 
-    <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 flex flex-col">
-      <div class="font-mono text-xs font-semibold text-sky-400 mb-2">// 02_THE_RESULT</div>
-      <h2 class="text-sm sm:text-base font-bold text-zinc-100 mb-2">What We Achieved & Learned</h2>
-      <div class="text-xs text-zinc-300 leading-relaxed space-y-2 flex-grow font-sans">
-        <p>
-          <strong>What Worked:</strong> We successfully built and validated all 18 revolute motor joints, an analytical 100 Hz IK solver on FreeRTOS, live 1-to-N video relays, and an embodied LLM voice agent.
-        </p>
-        <p>
-          <strong>Key Limitation:</strong> Full payload mass reached 1,310g (4.15 kg·cm torque demand), exceeding the continuous thermal limits of budget micro-gear servos. The system is presented on a custom DTC testing stand with external 5.3V power to demonstrate all 18-DOF motion and AI pipelines safely.
-        </p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+      {keyMetrics.map((kpi) => (
+        <div class="border border-zinc-800/80 bg-zinc-900/50 rounded-xl p-3.5 flex flex-col justify-between">
+          <div>
+            <span class="font-mono text-[10px] text-zinc-500 block mb-1 uppercase tracking-wider">
+              {kpi.label}
+            </span>
+            <span class="font-mono text-base sm:text-lg font-bold text-sky-400">
+              {kpi.value}
+            </span>
+          </div>
+          <p class="font-sans text-[11px] text-zinc-400 mt-2 leading-relaxed">
+            {kpi.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 6-Pillar Subsystem Architecture Matrix -->
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-3 border-b border-zinc-800/80 pb-2">
+      <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+        // Ecosystem subsystems and architectural tiers
+      </h2>
+      <a href="/docs/system-overview" class="font-mono text-xs text-sky-400 hover:underline">
+        System overview &rarr;
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {architecturePillars.map((p) => (
+        <a
+          href={p.href}
+          class="border border-zinc-800/80 bg-zinc-900/40 hover:bg-zinc-900/80 hover:border-sky-500/40 rounded-xl p-4 transition-all group flex flex-col justify-between"
+        >
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs text-sky-400 font-bold">// {p.num}</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-zinc-950 border border-zinc-800 text-zinc-400 group-hover:text-sky-300 group-hover:border-sky-800 transition-colors">
+                {p.badge}
+              </span>
+            </div>
+            <h3 class="text-sm font-bold text-zinc-200 group-hover:text-sky-300 mb-1.5 transition-colors">
+              {p.title}
+            </h3>
+            <p class="text-xs text-zinc-400 font-sans leading-relaxed">
+              {p.desc}
+            </p>
+          </div>
+          <div class="mt-4 pt-2.5 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono text-zinc-500 group-hover:text-sky-400 transition-colors">
+            <span>Read Chapter</span>
+            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Complete Technical Documentation Tree Directory -->
+  <section class="mb-8">
+    <div class="border border-sky-500/30 bg-sky-950/20 rounded-xl p-4 sm:p-5">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-zinc-800">
+        <div>
+          <span class="font-mono text-[10px] text-sky-400 uppercase font-bold">// DIÁTAXIS TECHNICAL MANUAL</span>
+          <h2 class="text-base font-bold text-zinc-100 mt-0.5">Complete Documentation Directory</h2>
+        </div>
+        <a
+          href="/docs/mission-and-intentions"
+          class="font-mono text-xs text-sky-300 hover:underline"
+        >
+          Open Chapter 00 &rarr;
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+        {DOCS_NAVIGATION.flatMap((sec) =>
+          sec.items.map((item) => (
+            <a
+              href={`/docs/${item.slug}`}
+              class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-sky-500/50 hover:bg-zinc-900 transition-all text-zinc-300 group"
+            >
+              <div class="truncate mr-2">
+                <span class="text-zinc-500 text-[10px] block">{sec.sectionTitle}</span>
+                <span class="font-semibold text-zinc-200 group-hover:text-sky-300 truncate block">{item.title}</span>
+              </div>
+              {item.badge ? (
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-sky-400 flex-shrink-0">
+                  {item.badge}
+                </span>
+              ) : (
+                <span class="text-zinc-600 group-hover:text-sky-400 flex-shrink-0 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              )}
+            </a>
+          ))
+        )}
       </div>
     </div>
-  </div>
+  </section>
 </MainLayout>

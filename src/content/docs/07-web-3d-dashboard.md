@@ -1,13 +1,13 @@
 ---
-title: "React & Plotly 3D Web Simulator"
+title: "3D digital twin and web simulation"
 description: "Browser-based WebGL kinematics digital twin, Web Worker offloading, and WebSocket MQTT telemetry."
-section: "06 Simulation & Web"
+section: "06 Simulation & web"
 order: 7
 ---
 
 The **Web UI** serves as the primary human-machine interface (HMI) and virtual kinematics simulator for the Hexapod V2 platform. Built with React and Plotly.js, it synchronizes physical hardware telemetry with an interactive 3D digital twin over WebSockets.
 
-## Frontend Architecture Topology
+## 1. Frontend architecture topology
 
 ```mermaid
 flowchart TD
@@ -47,7 +47,7 @@ flowchart TD
 
 ---
 
-## Real-Time Teleoperation & 3D State Synchronization
+## 2. Teleoperation and 3D state synchronization
 
 When an operator adjusts kinematic sliders or when the physical robot traverses terrain, state synchronization executes with sub-50ms latency:
 
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ---
 
-## Background Motion Offloading & Worker Pool
+## 3. Background motion offloading and worker pool
 
 To prevent the browser main UI thread from dropping frames during intensive trigonometric calculations, heavy choreographies are delegated to dedicated Web Workers:
 
@@ -86,7 +86,7 @@ flowchart LR
     MAIN["React Main Thread<br/>(User Input & DOM Updates)"] -->|Dispatches Action Payload| POOL["Web Worker Pool (workerPool.js)"]
     
     subgraph BackgroundCalculations ["Parallel Background Execution"]
-        IK_CALC["VirtualHexapod.js & Linkage.js<br/>(6-DOF Body Orientation Matrices)"]
+        IK_CALC["VirtualHexapod.js & Linkage.js<br/>(6-DoF Body Orientation Matrices)"]
         EASING_CALC["interpolation.js<br/>(Quintic Minimum-Jerk Splines)"]
         WALK_SOLVER["walkSequenceSolver.js<br/>(Discrete Foot Stride Paths)"]
     end
@@ -95,13 +95,13 @@ flowchart LR
     BackgroundCalculations -->|Returns Interpolated Pose Arrays| MAIN
 ```
 
-1. **Virtual Hexapod Geometry:** Analytically calculates body mounting vertices, center-of-gravity projections, and foot-ground intersection vectors (`VirtualHexapod.js`, `Vector.js`).
-2. **Trajectory Splines:** Generates smooth Bezier and quintic minimum-jerk keyframe transitions for complex gestures (e.g., wave, push-ups, dance) (`interpolation.js`).
-3. **Walk Path Solver:** Dynamically compiles phase offsets, step heights, and hip splay angles for tripod and ripple gaits (`walkSequenceSolver.js`).
+1. **Virtual hexapod geometry:** Analytically calculates body mounting vertices, center-of-gravity projections, and foot-ground intersection vectors (`VirtualHexapod.js`, `Vector.js`).
+2. **Trajectory splines:** Generates smooth Bezier and quintic minimum-jerk keyframe transitions for complex gestures (`interpolation.js`).
+3. **Walk path solver:** Dynamically compiles phase offsets, step heights, and hip splay angles for tripod and ripple gaits (`walkSequenceSolver.js`).
 
 ---
 
-## Browser-Based Voice Activity Detection (VAD)
+## 4. Browser-based voice activity detection
 
 The Web UI functions as a distributed smart speaker without requiring third-party audio recording daemons:
 
@@ -115,36 +115,39 @@ flowchart TD
     
     ENCODER -->|Publishes Audio Event| MQTT_MSG["hexapod/{id}/ai Topic"]
     
-    MQTT_MSG --> PI_AI["Pi-Hub AI Ingress (Whisper STT)"]
+    MQTT_MSG --> PI_AI["Pi-Hub AI Ingress (Vosk / Whisper STT)"]
 ```
 
-* **Zero-Cloud Audio Preprocessing:** Speech boundary detection executes 100% locally in the browser utilizing `@ricky0123/vad-web` and an optimized WebAssembly/ONNX runtime.
-* **Bandwidth Optimization:** Audio transmits over WebSockets only when active speech is validated, eliminating continuous microphone streaming overhead.
+* **Zero-cloud audio preprocessing:** Speech boundary detection executes 100% locally in the browser utilizing `@ricky0123/vad-web` and an optimized WebAssembly/ONNX runtime.
+* **Bandwidth optimization:** Audio transmits over WebSockets only when active speech is validated, eliminating continuous microphone streaming overhead.
 
 ---
 
-## Core UI Modules & Capabilities
+## 5. Core interface modules and capabilities
 
-| Module Name | Source Files | Functional Capabilities |
+| Module name | Source files | Functional capabilities |
 | :--- | :--- | :--- |
-| **Dual-Stage Viewport** | `src/components/viewport/` | Split-screen container hosting WebGL 3D model alongside live ESP32-CAM MJPEG stream. |
-| **Inverse Kinematics Tuner** | `src/components/pages/PageIK.js` | Direct manipulation of body translation $(t_x, t_y, t_z)$ and Euler rotation $(\phi, \theta, \psi)$. |
-| **Gait Selector & Sequencer** | `src/components/pages/PageGait.js` | Modulates step height, stride velocity $(V_x, V_y)$, turning rate $\omega$, and gait duty cycles. |
-| **AI Copilot Terminal** | `src/components/ai/AiChatModal.js` | Visualizes real-time LLM reasoning chains, tokens-per-second metrics, and active skills. |
-| **Long-Term Memory Manager** | `src/components/hub/MemoryManager.js` | Interface for inspecting and pruning stored contextual facts in `memory_pool.json`. |
+| **Dual-stage viewport** | `src/components/viewport/` | Split-screen container hosting WebGL 3D model alongside live ESP32-CAM MJPEG stream. |
+| **Inverse kinematics tuner** | `src/components/pages/PageIK.js` | Direct manipulation of body translation $(t_x, t_y, t_z)$ and Euler rotation $(\phi, \theta, \psi)$. |
+| **Gait selector and sequencer** | `src/components/pages/PageGait.js` | Modulates step height, stride velocity $(V_x, V_y)$, turning rate $\omega$, and gait duty cycles. |
+| **AI copilot terminal** | `src/components/ai/AiChatModal.js` | Visualizes real-time LLM reasoning chains, tokens-per-second metrics, and active skills. |
+| **Long-term memory manager** | `src/components/hub/MemoryManager.js` | Interface for inspecting and mutating stored contextual facts in `memory_pool.json`. |
 
 ---
 
-## Frontend Setup & Development
+## 6. Local development and build workflow
 
 ```bash
 # 1. Enter web UI directory and install dependencies
 cd spiderbot-mithi-web
 npm install
 
-# 2. Start local development server (React 16.13)
+# 2. Build Tailwind CSS stylesheet assets
+npm run tailwind:build
+
+# 3. Start local development server (React 16.13)
 npm start
 
-# 3. Compile optimized production static build
+# 4. Compile optimized production static build
 npm run build
 ```

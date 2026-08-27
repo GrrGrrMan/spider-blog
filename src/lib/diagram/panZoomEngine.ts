@@ -238,8 +238,13 @@ export function createPanZoomController(
   viewportEl.addEventListener('pointerup', onPointerUp);
   viewportEl.addEventListener('pointercancel', onPointerUp);
 
-  // Wheel Zoom (Desktop)
+  // Wheel Zoom (Desktop: Ctrl/Cmd + Wheel for inline cards, direct wheel inside Fullscreen Modal)
+  const isModalViewport = viewportEl.id === 'modal-diagram-viewport';
+
   const onWheel = (e: WheelEvent) => {
+    if (!isModalViewport && !e.ctrlKey && !e.metaKey) {
+      return; // Allow natural document scrolling
+    }
     e.preventDefault();
     if (animFrameId) cancelAnimationFrame(animFrameId);
     const rect = viewportEl.getBoundingClientRect();

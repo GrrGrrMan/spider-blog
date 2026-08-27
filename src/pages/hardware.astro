@@ -2,146 +2,146 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import TechBadge from '../components/TechBadge.astro';
 import { PRODUCT_LINKS } from '../data/links';
+import { LEG_ANATOMY, SLICER_SETTINGS } from '../data/hardwareData';
 ---
 
-<MainLayout title="Hardware & 3D CAD">
-  <section class="border-b border-zinc-800 pb-5 mb-6">
-    <div class="font-mono text-xs text-sky-400 mb-1">// MECHANICAL_DESIGN</div>
-    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Hardware & 3D CAD Models</h1>
-    <p class="text-xs sm:text-sm text-zinc-400">
-      Click any CAD model below to open the interactive 3D assembly in Onshape.
+<MainLayout title="Hardware and 3D CAD">
+  <!-- Header -->
+  <section class="border-b border-zinc-800/80 pb-5 mb-8">
+    <div class="flex items-center gap-2 mb-2 font-mono text-xs text-sky-400">
+      <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+      <span>// Mechanical CAD and fabrication</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">
+      Hardware assemblies and 3D CAD models
+    </h1>
+    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans max-w-3xl">
+      Parametric Onshape assemblies, 3-DoF kinematic linkage anatomy, additive manufacturing slicer configurations, and chassis structural evolution.
     </p>
   </section>
 
-  <!-- 3 Leg Joints with Overlay CAD Links -->
-  <section class="mb-8">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-        // 3-DOF Leg Anatomy (Hip, Thigh, Shin)
-      </h2>
-      <a href={PRODUCT_LINKS.cad.leg} target="_blank" class="font-mono text-xs text-sky-400 hover:underline">
-        Open Full Leg CAD &rarr;
+  <!-- 3-DoF Leg Anatomy Section -->
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-3 border-b border-zinc-800/80 pb-2">
+      <div>
+        <span class="font-mono text-[10px] text-sky-400 uppercase">// 3-DoF kinematics</span>
+        <h2 class="text-base sm:text-lg font-bold text-zinc-100">
+          Symmetrical leg anatomy (Coxa, Femur, Tibia)
+        </h2>
+      </div>
+      <a
+        href={PRODUCT_LINKS.cad.leg}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-mono text-xs text-sky-400 hover:underline flex items-center gap-1"
+      >
+        <span>Open leg CAD in Onshape</span>
+        <span>&rarr;</span>
       </a>
     </div>
-    
+
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <!-- Coxa (Hip) -->
-      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden flex flex-col">
-        <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
-          <span>01_COXA (HIP)</span>
-          <span class="text-sky-400 text-[10px]">TURNS LEFT/RIGHT</span>
-        </div>
-        <div class="p-3 bg-zinc-950/90 flex flex-col items-center justify-center border-b border-zinc-800/80 h-48 relative group overflow-hidden">
-          <img
-            src="/images/coxa_model.png"
-            alt="Coxa Joint 3D CAD Model"
-            class="max-h-36 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-          <a
-            href={PRODUCT_LINKS.cad.leg}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="absolute bottom-2 text-[10px] font-mono text-sky-300 bg-zinc-900/90 border border-zinc-700 px-2 py-1 rounded backdrop-blur hover:bg-sky-950 hover:border-sky-600 transition-colors opacity-90 group-hover:opacity-100"
-          >
-            View in Onshape 3D &rarr;
-          </a>
-        </div>
-        <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow font-sans">
-          Rotates the entire leg horizontally (yaw). Controls steering and lets the spider spin in place.
-        </div>
-      </div>
+      {LEG_ANATOMY.map((joint) => (
+        <div class="border border-zinc-800/80 bg-zinc-900/50 rounded-xl overflow-hidden flex flex-col justify-between">
+          <div>
+            <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
+              <span class="font-bold">{joint.tag}</span>
+              <span class="text-sky-400 text-[10px] font-semibold">{joint.role}</span>
+            </div>
+            
+            <div class="p-3 bg-zinc-950/90 flex flex-col items-center justify-center border-b border-zinc-800/80 h-48 relative group overflow-hidden">
+              <img
+                src={joint.img}
+                alt={joint.alt}
+                class="max-h-36 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <a
+                href={joint.cadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="absolute bottom-2 text-[10px] font-mono text-sky-300 bg-zinc-900/90 border border-zinc-700 px-2.5 py-1 rounded backdrop-blur hover:bg-sky-950 hover:border-sky-600 transition-colors opacity-90 group-hover:opacity-100"
+              >
+                Inspect in Onshape 3D &rarr;
+              </a>
+            </div>
 
-      <!-- Femur (Thigh) -->
-      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden flex flex-col">
-        <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
-          <span>02_FEMUR (THIGH)</span>
-          <span class="text-sky-400 text-[10px]">LIFTS UP/DOWN</span>
+            <div class="p-3.5 space-y-2">
+              <div class="flex items-center justify-between text-[11px] font-mono border-b border-zinc-800/60 pb-1.5 text-zinc-400">
+                <span>Moment Arm: <strong class="text-sky-300">{joint.length}</strong></span>
+                <span>Limits: <strong class="text-zinc-200">{joint.range}</strong></span>
+              </div>
+              <p class="text-xs text-zinc-300 leading-relaxed font-sans">
+                {joint.desc}
+              </p>
+            </div>
+          </div>
         </div>
-        <div class="p-3 bg-zinc-950/90 flex flex-col items-center justify-center border-b border-zinc-800/80 h-48 relative group overflow-hidden">
-          <img
-            src="/images/femur_model.png"
-            alt="Femur Joint 3D CAD Model"
-            class="max-h-36 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-          <a
-            href={PRODUCT_LINKS.cad.leg}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="absolute bottom-2 text-[10px] font-mono text-sky-300 bg-zinc-900/90 border border-zinc-700 px-2 py-1 rounded backdrop-blur hover:bg-sky-950 hover:border-sky-600 transition-colors opacity-90 group-hover:opacity-100"
-          >
-            View in Onshape 3D &rarr;
-          </a>
-        </div>
-        <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow font-sans">
-          Lifts the foot off the ground during each step. Carries the main weight of the robot.
-        </div>
-      </div>
-
-      <!-- Tibia (Shin/Foot) -->
-      <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden flex flex-col">
-        <div class="bg-zinc-900 px-3 py-2 border-b border-zinc-800 font-mono text-xs text-zinc-300 flex justify-between items-center">
-          <span>03_TIBIA (SHIN)</span>
-          <span class="text-sky-400 text-[10px]">REACHES FORWARD</span>
-        </div>
-        <div class="p-3 bg-zinc-950/90 flex flex-col items-center justify-center border-b border-zinc-800/80 h-48 relative group overflow-hidden">
-          <img
-            src="/images/tibia_model.png"
-            alt="Tibia Joint 3D CAD Model"
-            class="max-h-36 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-          <a
-            href={PRODUCT_LINKS.cad.leg}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="absolute bottom-2 text-[10px] font-mono text-sky-300 bg-zinc-900/90 border border-zinc-700 px-2 py-1 rounded backdrop-blur hover:bg-sky-950 hover:border-sky-600 transition-colors opacity-90 group-hover:opacity-100"
-          >
-            View in Onshape 3D &rarr;
-          </a>
-        </div>
-        <div class="p-3.5 text-xs text-zinc-300 leading-relaxed flex-grow font-sans">
-          Extends the lower leg to touch the ground smoothly, adapting to bumps and obstacles.
-        </div>
-      </div>
+      ))}
     </div>
   </section>
 
-  <!-- Prototype Evolution Cards -->
-  <section class="space-y-4">
-    <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-      // Chassis Evolution (3 Iterations)
-    </h2>
+  <!-- PETG Slicing Specifications -->
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-3 border-b border-zinc-800/80 pb-2">
+      <div>
+        <span class="font-mono text-[10px] text-sky-400 uppercase">// 3D FABRICATION</span>
+        <h2 class="text-base sm:text-lg font-bold text-zinc-100">
+          PETG Slicer Profile Specifications
+        </h2>
+      </div>
+      <TechBadge text="Additive Manufacturing" />
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 font-mono text-xs">
+      {SLICER_SETTINGS.map((s) => (
+        <div class="border border-zinc-800/80 bg-zinc-900/40 p-3 rounded-xl flex flex-col justify-between">
+          <span class="text-zinc-500 text-[10px] uppercase tracking-wider block mb-1">{s.label}</span>
+          <span class="text-zinc-200 font-semibold text-[11px]">{s.val}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+    <!-- Prototype Evolution Cards -->
+    <section class="space-y-4 mb-8">
+      <div class="flex items-center justify-between mb-1 border-b border-zinc-800/80 pb-2">
+        <h2 class="font-mono text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+          // Chassis structural evolution
+        </h2>
+        <a href="/docs/3d-cad-fabrication" class="font-mono text-xs text-sky-400 hover:underline">
+          Fabrication docs &rarr;
+        </a>
+      </div>
 
     <!-- Prototype 1 -->
     <div class="border border-zinc-800 bg-zinc-900/40 rounded-xl p-4">
       <div class="flex items-center justify-between mb-2">
-        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 1.0 &bull; Acrylic Sheets & Hot Glue</h3>
+        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 1.0 &bull; Laser-cut acrylic sheets</h3>
         <TechBadge text="Physical Test" />
       </div>
       <p class="text-xs text-zinc-400 leading-relaxed font-sans">
-        Built a quick mockup out of acrylic sheets and hot glue. The joints snapped under motor force, proving we needed high-strength 3D printed parts.
+        Built a quick mockup out of acrylic sheets and adhesive joints. Joint delamination and severe material flexing under active servo torque proved custom additive manufacturing with high-impact filament was mandatory.
       </p>
     </div>
 
     <!-- Prototype 2 -->
     <div class="border border-zinc-800 bg-zinc-900/40 rounded-xl p-4">
       <div class="flex items-center justify-between mb-2">
-        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 2.0 &bull; Flat 3D Plate Platform</h3>
-        <a href={PRODUCT_LINKS.cad.body1} target="_blank" class="font-mono text-[11px] text-sky-400 hover:underline">
+        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 2.0 &bull; Flat 3D plate platform</h3>
+        <a href={PRODUCT_LINKS.cad.body1} target="_blank" rel="noopener noreferrer" class="font-mono text-[11px] text-sky-400 hover:underline">
           View Body 1.0 CAD &rarr;
         </a>
       </div>
       <p class="text-xs text-zinc-400 leading-relaxed font-sans">
-        3D printed PETG legs on a flat plate. Validated our Inverse Kinematics math, but the open design left wires unprotected and onboard batteries made it too heavy.
+        3D printed PETG legs mounted to a flat structural baseplate. Successfully validated the analytical Inverse Kinematics math, but open wiring was vulnerable to limb snags and onboard battery mass caused motor stalling.
       </p>
     </div>
 
     <!-- Prototype 3 (Final Release) -->
     <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl overflow-hidden">
       <div class="bg-zinc-900 px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
-        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 3.0 &bull; Enclosed 3D Monocoque Chassis</h3>
+        <h3 class="font-mono text-xs sm:text-sm font-semibold text-zinc-200">Prototype 3.0 &bull; Enclosed 3D monocoque chassis and DTC stand</h3>
         <span class="font-mono text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
           CURRENT RELEASE
         </span>
@@ -163,7 +163,7 @@ import { PRODUCT_LINKS } from '../data/links';
         </a>
       </div>
       <div class="p-4 text-xs text-zinc-300 leading-relaxed font-sans">
-        Enclosed 3D shell protecting the dual microcontrollers, buck converters, and internal wire routing. Tested on a dedicated DTC testing stand with external 5.30V power.
+        Enclosed 3D shell protecting the dual microcontrollers, buck converters, and internal wire routing channels. Operated on a dedicated DTC presentation testing stand with external 5.30V DC power.
       </div>
     </div>
   </section>

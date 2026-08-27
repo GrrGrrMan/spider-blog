@@ -28,18 +28,19 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
       {filteredHeadings.length === 0 ? (
         <p class="text-xs font-mono text-zinc-500">No subheadings</p>
       ) : (
-        <nav id="toc-nav" class="relative space-y-1 text-xs font-mono border-l border-zinc-800/80 pl-2">
+        <nav id="toc-nav" class="relative space-y-1 text-xs font-mono border-l border-zinc-800/80 pl-2" aria-label="Table of contents">
           {filteredHeadings.map((h) => (
             <a
               href={`#${h.slug}`}
               data-heading-slug={h.slug}
-              class={`toc-link block py-1 transition-all duration-150 rounded px-2 ${
+              class={`toc-link flex items-center justify-between py-1 transition-colors duration-150 rounded px-2 group ${
                 h.depth === 3 
                   ? 'pl-4 text-[11px] text-zinc-400 hover:text-zinc-200' 
                   : 'text-zinc-300 hover:text-sky-300 font-medium'
               }`}
             >
-              {h.text}
+              <span class="truncate">{h.text}</span>
+              <span class="text-zinc-600 group-hover:text-sky-400 opacity-0 group-hover:opacity-100 transition-opacity text-[10px]">#</span>
             </a>
           ))}
         </nav>
@@ -53,73 +54,37 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         href={PRODUCT_LINKS.cad.body2}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center justify-between p-2 rounded-lg bg-zinc-900/60 border border-zinc-800 text-sky-300 hover:bg-sky-950/40 text-[11px] transition-colors focus-visible:ring-1 focus-visible:ring-sky-400"
+        class="flex items-center justify-between p-2 rounded-lg bg-zinc-900/60 border border-zinc-800 text-sky-300 hover:bg-sky-950/40 text-[11px] transition-colors focus-visible:ring-1 focus-visible:ring-sky-400 group"
       >
         <span>Onshape 3D CAD</span>
-        <span>&rarr;</span>
+        <svg class="w-3.5 h-3.5 text-zinc-500 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </a>
       <a
         href={PRODUCT_LINKS.playgroundDemo}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center justify-between p-2 rounded-lg bg-zinc-900/60 border border-sky-500/30 text-sky-300 hover:bg-sky-950/40 text-[11px] transition-colors focus-visible:ring-1 focus-visible:ring-sky-400"
+        class="flex items-center justify-between p-2 rounded-lg bg-zinc-900/60 border border-sky-500/30 text-sky-300 hover:bg-sky-950/40 text-[11px] transition-colors focus-visible:ring-1 focus-visible:ring-sky-400 group"
       >
         <span>Live 3D Web Sim</span>
-        <span>&rarr;</span>
+        <svg class="w-3.5 h-3.5 text-sky-400 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </a>
       <a
         href={PRODUCT_LINKS.repos.firmware}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center justify-between p-2 rounded-lg bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-[11px] transition-colors focus-visible:ring-1 focus-visible:ring-sky-400"
+        class="flex items-center justify-between p-2 rounded-lg bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-[11px] transition-colors focus-visible:ring-1 focus-visible:ring-sky-400 group"
       >
         <span>GitHub Repository</span>
-        <span>&rarr;</span>
+        <svg class="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </a>
     </div>
   </div>
 </aside>
 
-<script>
-  function setupTocScrollSpy() {
-    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
-    if (tocLinks.length === 0) return;
-
-    const headingElements: HTMLElement[] = [];
-    tocLinks.forEach((link) => {
-      const slug = link.getAttribute('data-heading-slug');
-      if (slug) {
-        const el = document.getElementById(slug);
-        if (el) headingElements.push(el);
-      }
-    });
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute('id');
-            tocLinks.forEach((link) => {
-              const matches = link.getAttribute('data-heading-slug') === id;
-              if (matches) {
-                link.classList.add('text-sky-400', 'bg-sky-950/50', 'font-semibold', 'translate-x-1');
-                link.classList.remove('text-zinc-400', 'text-zinc-300');
-                link.setAttribute('aria-current', 'location');
-              } else {
-                link.classList.remove('text-sky-400', 'bg-sky-950/50', 'font-semibold', 'translate-x-1');
-                link.classList.add('text-zinc-400');
-                link.removeAttribute('aria-current');
-              }
-            });
-          }
-        });
-      },
-      { rootMargin: '-80px 0% -60% 0%', threshold: 0.1 }
-    );
-
-    headingElements.forEach((h) => observer.observe(h));
-  }
-
-  setupTocScrollSpy();
-  document.addEventListener('astro:page-load', setupTocScrollSpy);
-</script>
+<!-- TOC Scrollspy is cleanly driven by src/lib/client/scrollspy.ts via BaseLayout lifecycle -->

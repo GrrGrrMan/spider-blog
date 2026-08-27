@@ -1,14 +1,14 @@
 ---
-title: "Pi-Hub Gateway, Voice AI & Multimodal Agent"
-description: "Raspberry Pi 4 network orchestrator, Faster-Whisper, Piper TTS, Llama 3.3 agent, and binary audio streaming."
-section: "05 Host AI Gateway"
+title: "Host gateway and voice AI engine"
+description: "Raspberry Pi 4 network orchestrator, Faster-Whisper ASR, Piper TTS, multimodal agent contracts, and binary audio streaming."
+section: "05 Host AI gateway"
 order: 6
 badge: "LLM"
 ---
 
 The **Pi-Hub** executes on a Raspberry Pi 4B (or Linux host), coordinating local speech recognition, cloud vision-language models, dynamic camera relays, and low-latency binary audio streaming.
 
-## Cognitive Pipeline & Multimodal Agent Workflow
+## 1. Cognitive pipeline and multimodal agent workflow
 
 ```mermaid
 sequenceDiagram
@@ -40,13 +40,13 @@ sequenceDiagram
     and Concurrent Motion Execution
         AI->>MQTT: Stream 20Hz Motion Leases (hexapod/{id}/cmd)
         MQTT->>S3: Execute Inverse Kinematics Loop
-        S3-->>User: Coordinated 18-DOF Movement
+        S3-->>User: Coordinated 18-DoF Movement
     end
 ```
 
 ---
 
-## Network Topology & Ingress Gateway
+## 2. Network topology and ingress routing
 
 ```mermaid
 flowchart TD
@@ -75,7 +75,7 @@ flowchart TD
 
 ---
 
-## MQTT Communication Topic Taxonomy
+## 3. MQTT communication topic taxonomy
 
 ```mermaid
 flowchart TD
@@ -106,11 +106,11 @@ flowchart TD
 
 ---
 
-## Binary Audio Stream Protocol Specification (`/audio`)
+## 4. Binary audio stream protocol specification
 
 Low-latency speech audio streams from the Raspberry Pi `ai-service` to the ESP32-S3 `TaskAudio` using framed raw PCM packets to eliminate JSON Base64 decode overhead:
 
-| Byte Offset | Field Identifier | Type | Endianness | Description / Validation Criteria |
+| Byte offset | Field identifier | Type | Endianness | Validation criteria |
 | :---: | :--- | :--- | :--- | :--- |
 | `0x00` | `MAGIC_BYTE` | `uint8_t` | — | Must equal `0xAA` to distinguish from JSON payloads. |
 | `0x01` | `ACTION_FLAG` | `uint8_t` | — | `0x00` = Stream Audio Chunk; `0x01` = Abort Active Stream. |
@@ -119,15 +119,19 @@ Low-latency speech audio streams from the Raspberry Pi `ai-service` to the ESP32
 | `0x08..0x09` | `TOTAL_CHUNKS` | `uint16_t` | Little | Total packets in utterance ($0$ denotes unbounded media stream). |
 | `0x0A..N` | `PCM_PAYLOAD` | `int16_t[]` | Little | 22,050 Hz Mono 16-bit PCM samples (max 4,096 bytes per chunk). |
 
-### PSRAM Ring Buffer & Jitter Management
-1. Incoming frames on Core 0 extract the PCM slice and push to a 512KB PSRAM `RingBuffer`.
+### PSRAM ring buffer and jitter management
+
+1. Incoming frames on Core 0 extract the raw PCM slice and push to a 512KB PSRAM `RingBuffer`.
 2. `TaskAudio` enforces a **16,384-byte prebuffer threshold** ($\approx 370\text{ ms}$) before triggering the I2S DMA controller, preventing buffer underruns during Wi-Fi latency spikes.
 3. Software volume is scaled sample-by-sample using Q15 fixed-point multiplication:
-   $$\text{Sample}_{\text{out}} = \frac{\text{Sample}_{\text{in}} \times \text{volQ15}}{32768}, \quad \text{where } \text{volQ15} \in [0, 32767]$$
+
+$$
+\text{Sample}_{\text{out}} = \frac{\text{Sample}_{\text{in}} \times \text{volQ15}}{32768}, \quad \text{where } \text{volQ15} \in [0, 32767]
+$$
 
 ---
 
-## Canonical Task Decomposition JSON Contract
+## 5. Canonical task decomposition JSON contract
 
 ```json
 {
@@ -161,9 +165,9 @@ Low-latency speech audio streams from the Raspberry Pi `ai-service` to the ESP32
 
 ---
 
-## Cognitive Tool Registry & Function Calling
+## 6. Cognitive tool registry and function calling
 
-| Tool Identifier | Parameters | Description |
+| Tool identifier | Parameters | Functional role |
 | :--- | :--- | :--- |
 | `inspect_scene` | `query: str` | Captures live frame from `/snapshot` to ground multimodal reasoning. |
 | `get_weather` | `location: str` | Retrieves live temperature, humidity, and forecast via Open-Meteo API. |
@@ -174,7 +178,7 @@ Low-latency speech audio streams from the Raspberry Pi `ai-service` to the ESP32
 
 ---
 
-## Dynamic Video Stream Relay & Camera Control
+## 7. Dynamic video stream relay and camera control
 
 ```mermaid
 flowchart LR
@@ -184,9 +188,9 @@ flowchart LR
     RELAY -->|On-Demand /snapshot| VLM["VLM Perception Loop"]
 ```
 
-### Camera Tuning Parameter Matrix (`hexapod/{cam_id}/cmd`)
+### Camera tuning parameter matrix
 
-| Parameter Name | Value Range / Type | Sensor Hardware Effect |
+| Parameter name | Value range / type | Sensor hardware effect |
 | :--- | :--- | :--- |
 | `preset` | `night_vision`, `inspection`, `stealth`, `low_power`, `default` | Configures flashlight, exposure, gain ceiling, and resolution atomically. |
 | `flash` | `0` to `100` (%) | Modulates LEDC Channel 1 duty cycle driving the white LED via GPIO 4. |

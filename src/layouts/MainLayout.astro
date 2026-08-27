@@ -1,42 +1,16 @@
 ---
-import NavBar from '../components/NavBar.astro';
-import Footer from '../components/Footer.astro';
-import { ClientRouter } from 'astro:transitions';
-import '../styles/docs.css';
+import BaseLayout from './BaseLayout.astro';
 
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="en" class="dark scroll-smooth bg-zinc-950 text-zinc-300">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#09090b" />
-    <title>{title} | AI Spider</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <ClientRouter />
-  </head>
-  <body class="bg-zinc-950 text-zinc-300 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-sky-500/20 selection:text-sky-300 min-h-screen flex flex-col">
-    <NavBar />
-    <main class="flex-grow w-full max-w-4xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8">
-      <slot />
-    </main>
-    <Footer />
-  </body>
-</html>
-
-<style is:global>
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
-</style>
+<BaseLayout title={title} description={description}>
+  <main class="flex-grow w-full max-w-4xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8">
+    <slot />
+  </main>
+</BaseLayout>

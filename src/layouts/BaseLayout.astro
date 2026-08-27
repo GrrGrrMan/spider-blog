@@ -1,0 +1,58 @@
+---
+import NavBar from '../components/NavBar.astro';
+import Footer from '../components/Footer.astro';
+import DiagramModal from '../components/diagram/DiagramModal.astro';
+import { ClientRouter } from 'astro:transitions';
+import '../styles/docs.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'AI Spider Hexapod V2 Technical Documentation Portal' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark bg-zinc-950 text-zinc-300">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#09090b" />
+    <title>{title} | AI Spider V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      crossorigin="anonymous"
+    />
+    <ClientRouter />
+  </head>
+  <body class="bg-zinc-950 text-zinc-300 font-['Plus_Jakarta_Sans',sans-serif] antialiased min-h-screen flex flex-col selection:bg-sky-500/20 selection:text-sky-300">
+    <NavBar />
+    <slot name="sub-nav" />
+    <slot />
+    <DiagramModal />
+    <Footer />
+
+    <script>
+      import { lifecycle } from '../lib/client/lifecycle';
+      import { initScrollspy } from '../lib/client/scrollspy';
+      import { initAnchorsAndCopyButtons } from '../lib/client/copyAnchor';
+      import { initFeedbackWidget } from '../lib/client/feedback';
+
+      lifecycle.init(() => {
+        initScrollspy();
+        initAnchorsAndCopyButtons();
+        initFeedbackWidget();
+      });
+    </script>
+    <script src="../lib/diagram/index.ts"></script>
+  </body>
+</html>

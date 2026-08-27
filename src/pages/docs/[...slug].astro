@@ -5,20 +5,25 @@ import Admonition from '../../components/Admonition.astro';
 
 export async function getStaticPaths() {
   const docsEntries = await getCollection('docs');
-  return docsEntries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  return docsEntries.map((entry) => {
+    const rawFileId = (entry.slug || entry.id).replace(/\.(md|mdx)$/, '');
+    const cleanSlug = rawFileId.replace(/^\d{2}-/, '');
+    return {
+      params: { slug: cleanSlug },
+      props: { entry, rawFileId, cleanSlug },
+    };
+  });
 }
 
-const { entry } = Astro.props;
+const { entry, rawFileId, cleanSlug } = Astro.props;
 const { Content, headings } = await render(entry);
 ---
 
 <DocsLayout
   title={entry.data.title}
   description={entry.data.description}
-  slug={entry.id}
+  slug={cleanSlug}
+  rawFileId={rawFileId}
   section={entry.data.section}
   headings={headings}
 >

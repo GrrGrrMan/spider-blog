@@ -11,46 +11,52 @@ export interface DocNavSection {
 
 export const DOCS_NAVIGATION: DocNavSection[] = [
   {
-    sectionTitle: "01 System Overview",
+    sectionTitle: "00 Mission & scope",
     items: [
-      { title: "System Architecture", slug: "01-system-overview", badge: "Core" },
+      { title: "Mission rationale and scope", slug: "mission-and-intentions", badge: "Mission" },
+    ],
+  },
+  {
+    sectionTitle: "01 System overview",
+    items: [
+      { title: "System topology and architecture", slug: "system-overview", badge: "Core" },
     ],
   },
   {
     sectionTitle: "02 Fabrication & CAD",
     items: [
-      { title: "Bill of Materials (BOM)", slug: "02-bill-of-materials" },
-      { title: "3D CAD & Slicing", slug: "03-3d-cad-fabrication" },
+      { title: "Bill of materials and procurement", slug: "bill-of-materials" },
+      { title: "CAD models and additive fabrication", slug: "3d-cad-fabrication" },
     ],
   },
   {
-    sectionTitle: "03 Electrical & Power",
+    sectionTitle: "03 Electrical & power",
     items: [
-      { title: "Power & Pinouts", slug: "04-electrical-power", badge: "5.3V" },
+      { title: "Power distribution and pinouts", slug: "electrical-power", badge: "5.3V" },
     ],
   },
   {
-    sectionTitle: "04 Embedded Firmware",
+    sectionTitle: "04 Embedded firmware",
     items: [
-      { title: "ESP32-S3 Dual-Core RTOS", slug: "05-embedded-firmware", badge: "100Hz" },
+      { title: "Embedded firmware and motion core", slug: "embedded-firmware", badge: "100Hz" },
     ],
   },
   {
-    sectionTitle: "05 Host AI Gateway",
+    sectionTitle: "05 Host AI gateway",
     items: [
-      { title: "Raspberry Pi 4 AI Hub", slug: "06-pi-ai-hub", badge: "LLM" },
+      { title: "Host gateway and voice AI engine", slug: "pi-ai-hub", badge: "LLM" },
     ],
   },
   {
-    sectionTitle: "06 Simulation & Web",
+    sectionTitle: "06 Simulation & web",
     items: [
-      { title: "React & Plotly 3D UI", slug: "07-web-3d-dashboard" },
+      { title: "3D digital twin and web simulation", slug: "web-3d-dashboard" },
     ],
   },
   {
-    sectionTitle: "07 Empirical Research",
+    sectionTitle: "07 Empirical research",
     items: [
-      { title: "Mass, Torque & Limits", slug: "08-empirical-results", badge: "Data" },
+      { title: "Empirical results and torque limits", slug: "empirical-results", badge: "Data" },
     ],
   },
 ];

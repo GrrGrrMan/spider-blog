@@ -1,22 +1,22 @@
 ---
-title: "Electrical Schematics, Power Distribution & Pinouts"
+title: "Power distribution and microcontroller pinouts"
 description: "Dual-rail power regulation, common ground isolation, complete MCU pinouts, and PCA9685 phase-staggering."
-section: "03 Electrical & Power"
+section: "03 Electrical & power"
 order: 4
 badge: "5.3V"
 ---
 
 The electrical subsystem provides isolated, low-noise power delivery across 18 high-torque servo actuators, two ESP32 microcontrollers, and an I2S digital audio amplifier.
 
-## Power Distribution Architecture
+## 1. Power distribution architecture
 
 ```mermaid
 flowchart TD
-    POWER_IN["DC Power Source<br/>(Regulated 5.30V DC / 8A Bench Rail or 2S/3S LiPo)"]
+    POWER_IN["DC Power Source<br/>(Regulated 5.30V DC / 8A Bench Rail or 3S LiPo)"]
     
     subgraph HighCurrentRail ["High-Current Actuation Rail (5.30V DC)"]
-        BUCK1["XL4015 Buck Regulator #1<br/>(Tuned 5.30V @ 5A Continuous)"]
-        BUCK2["XL4015 Buck Regulator #2<br/>(Tuned 5.30V @ 5A Continuous)"]
+        BUCK1["300W 20A / XL4015 Buck Regulator #1<br/>(Tuned 5.30V @ 5A Continuous)"]
+        BUCK2["300W 20A / XL4015 Buck Regulator #2<br/>(Tuned 5.30V @ 5A Continuous)"]
         PCA0_V["PCA9685 #1 V+ Rail (0x40)<br/>Right Quadrant Servos (0–8)"]
         PCA1_V["PCA9685 #2 V+ Rail (0x41)<br/>Left Quadrant Servos (9–17)"]
     end
@@ -47,50 +47,52 @@ flowchart TD
     AMP_V -.-> GND
 ```
 
-## Critical Electrical Isolation Rules
+---
 
-1. **Dedicated Actuation Power:** The 18 micro servos draw up to $4.5\text{A}$ to $6.0\text{A}$ cumulative stall current during rapid transitions. Servos must **never** be powered from the ESP32-S3 development board $5\text{V}$ or $3.3\text{V}$ output pins.
-2. **Unified Common Ground:** A shared, continuous ground plane connects the power supply, buck converters, ESP32-S3, ESP32-CAM, Raspberry Pi 4B, and both PCA9685 driver boards. Floating ground loops will corrupt high-speed I2C and UART communications.
-3. **Voltage Rail Tuning:** Servo buck regulators are calibrated to **$5.30\text{V DC}$**. This provides optimal actuation torque ($2.2\text{ kg}\cdot\text{cm}$) without exceeding the $6.0\text{V}$ maximum operating threshold of the micro servos.
+## 2. Electrical isolation principles
+
+1. **Dedicated actuation power:** The 18 micro servos draw between $4.5\text{A}$ and $6.0\text{A}$ cumulative stall current during rapid gait transitions. Servos must never draw current directly from the ESP32-S3 development board $5\text{V}$ or $3.3\text{V}$ LDO output pins.
+2. **Unified common ground:** A shared low-impedance ground plane connects the power supply, buck converters, ESP32-S3, ESP32-CAM, Raspberry Pi 4B, and both PCA9685 driver boards. Floating grounds cause logic potential drift, corrupting high-speed I2C and UART communications.
+3. **Calibrated voltage rails:** Actuator buck regulators are calibrated to **$5.30\text{V DC}$**. This maximizes available stall torque ($2.2\text{ kg}\cdot\text{cm}$) while remaining safely within the absolute maximum $6.0\text{V}$ threshold of the MG90S servo control electronics.
 
 ---
 
-## Microcontroller Pinout Specifications
+## 3. Microcontroller pinout specifications
 
-### ESP32-S3 Motion & Audio Controller Pinout (`s3-main`)
+### ESP32-S3 motion and audio controller pinout (`s3-main`)
 
-| Peripheral Subsystem | Physical Signal | ESP32-S3 GPIO | Operating Voltage | Electrical Constraints / Interface Protocol |
+| Peripheral subsystem | Physical signal | ESP32-S3 GPIO | Operating voltage | Interface constraints |
 | :--- | :--- | :--- | :---: | :--- |
-| **I2C Bus (PCA9685 Drivers)** | `SDA` | **GPIO 41** | 3.3V Logic | 400 kHz Fast-Mode, External 4.7kΩ pull-up resistor |
-| | `SCL` | **GPIO 42** | 3.3V Logic | 400 kHz Fast-Mode, External 4.7kΩ pull-up resistor |
-| | `OE` (Output Enable) | **GPIO 13** | 3.3V Logic | Active-LOW; Asserted HIGH on boot for Limp state |
-| **I2S Audio (MAX98357A)** | `BCLK` (Bit Clock) | **GPIO 40** | 3.3V Logic | 705.6 kHz ($22050\text{ Hz} \times 16\text{ bits} \times 2\text{ channels}$) |
+| **I2C bus (PCA9685 drivers)** | `SDA` | **GPIO 41** | 3.3V Logic | 400 kHz Fast-Mode, external 4.7kΩ pull-up |
+| | `SCL` | **GPIO 42** | 3.3V Logic | 400 kHz Fast-Mode, external 4.7kΩ pull-up |
+| | `OE` (Output Enable) | **GPIO 13** | 3.3V Logic | Active-LOW; pulled HIGH on boot for Limp state |
+| **I2S audio (MAX98357A)** | `BCLK` (Bit Clock) | **GPIO 40** | 3.3V Logic | 705.6 kHz ($22050\text{ Hz} \times 16\text{ bits} \times 2\text{ channels}$) |
 | | `LRC` / `WS` (Word Select) | **GPIO 39** | 3.3V Logic | 22,050 Hz Left/Right channel framing clock |
 | | `DIN` (Serial Data Out) | **GPIO 38** | 3.3V Logic | MSB-First 16-bit Mono PCM audio data stream |
-| **UART Hardware Telemetry** | `TXD0` | **GPIO 43** | 3.3V TTL | Serial debug output console @ 115,200 Baud |
+| **UART hardware telemetry** | `TXD0` | **GPIO 43** | 3.3V TTL | Serial debug output console @ 115,200 Baud |
 | | `RXD0` | **GPIO 44** | 3.3V TTL | Serial debug input console @ 115,200 Baud |
-| **Inter-Board Serial Link** | `TXD1` / `RXD1` | **GPIO 4 / GPIO 5**| 3.3V TTL | Direct host bridge UART link (Optional fallback) |
+| **Inter-board serial link** | `TXD1` / `RXD1` | **GPIO 4 / GPIO 5**| 3.3V TTL | Direct host bridge UART link (Optional fallback) |
 
 ---
 
-### ESP32-CAM Vision & Illumination Pinout (`cam-main`)
+### ESP32-CAM vision and illumination pinout (`cam-main`)
 
-| Peripheral Subsystem | Camera Signal | ESP32-CAM GPIO | Notes / Internal PCB Wiring |
+| Peripheral subsystem | Camera signal | ESP32-CAM GPIO | Operational role |
 | :--- | :--- | :--- | :--- |
-| **High-Power Flashlight LED** | `LAMP_PWM` | **GPIO 4** | White LED; LEDC Channel 1, 5 kHz PWM dimming |
-| **Camera Power & Reset** | `CAM_PIN_PWDN` | **GPIO 32** | Power-down control line |
+| **Flashlight LED illumination** | `LAMP_PWM` | **GPIO 4** | White LED; LEDC Channel 1, 5 kHz PWM dimming |
+| **Camera power and reset** | `CAM_PIN_PWDN` | **GPIO 32** | Power-down control line |
 | | `CAM_PIN_RESET` | **NC (-1)** | Hardware reset pulled permanently HIGH internally |
 | | `CAM_PIN_XCLK` | **GPIO 0** | Master Clock input (20 MHz via LEDC Timer 0) |
-| **SCCB / I2C Bus** | `CAM_PIN_SIOD` | **GPIO 26** | Serial Camera Control Bus (Data) |
+| **SCCB / I2C bus** | `CAM_PIN_SIOD` | **GPIO 26** | Serial Camera Control Bus (Data) |
 | | `CAM_PIN_SIOC` | **GPIO 27** | Serial Camera Control Bus (Clock) |
-| **DVP Parallel Pixel Bus** | `Y9` .. `Y2` | **35, 34, 39, 36, 21, 19, 18, 5** | 8-bit parallel digital video pixel interface |
-| **DVP Frame Synchronization**| `VSYNC` | **GPIO 25** | Vertical frame synchronization |
+| **DVP parallel pixel bus** | `Y9` .. `Y2` | **35, 34, 39, 36, 21, 19, 18, 5** | 8-bit parallel digital video pixel interface |
+| **DVP frame synchronization**| `VSYNC` | **GPIO 25** | Vertical frame synchronization |
 | | `HREF` | **GPIO 23** | Horizontal line reference |
 | | `PCLK` | **GPIO 22** | Pixel clock input |
 
 ---
 
-## Dual PCA9685 Channel Allocation & Phase Staggering
+## 4. PCA9685 channel allocation and pulse staggering
 
 ```mermaid
 flowchart TD
@@ -116,7 +118,7 @@ flowchart TD
     I2C_BUS --> Board1
 ```
 
-| Leg Index | Anatomical Position | Joint Segment | Global Ch | PCA Board | I2C Addr | Local Ch | Inverted Logic | Stagger Offset ($\text{Ticks}_{\text{ON}}$) |
+| Leg index | Anatomical position | Joint segment | Global ch | PCA board | I2C addr | Local ch | Inverted logic | Stagger offset ($\text{Ticks}_{\text{ON}}$) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Leg 0** | **Right Front (RF)** | Coxa (Hip Pan) | `0` | PCA 0 | `0x40` | Ch 0 | False | $0\text{ ticks}$ |
 | | | Femur (Thigh Lift) | `1` | PCA 0 | `0x40` | Ch 1 | **True** | $150\text{ ticks}$ |
@@ -139,11 +141,11 @@ flowchart TD
 
 ---
 
-## Supply Current Ripple Mitigation via Phase-Staggering
+## 5. Current ripple mitigation and phase staggering proof
 
-When 18 servos are driven synchronously with standard in-phase PWM, simultaneous rising edges cause transient current spikes exceeding $4.5\text{A}$ ($di/dt$), causing logic brownouts and microcontroller reset loops.
+When 18 servos are driven synchronously with standard in-phase PWM, simultaneous rising edges cause transient current spikes exceeding $4.5\text{A}$ ($di/dt$), triggering microcontroller reset loops.
 
-To resolve this, the firmware offsets the `ON` tick of each channel:
+To eliminate this ripple, the firmware offsets the `ON` tick of each successive channel across the 12-bit register space:
 
 ```mermaid
 gantt
@@ -164,7 +166,7 @@ gantt
     Safe Boundary Margin (Ticks 2740 to 4095) :done, 2740, 4095
 ```
 
-### Mathematical Staggering Proof
+### Mathematical staggering derivation
 
 $$\text{ON\_Tick}(ch) = ch \times 150$$
 $$\text{OFF\_Tick}(ch) = \text{ON\_Tick}(ch) + \text{Width\_Ticks}$$

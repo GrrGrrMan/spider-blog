@@ -115,30 +115,6 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         closeToc();
       });
     });
-
-    // Mobile Scrollspy observer
-    const headingElements: HTMLElement[] = [];
-    links.forEach((link) => {
-      const slug = link.getAttribute('data-mobile-heading-slug');
-      if (slug) {
-        const el = document.getElementById(slug);
-        if (el) headingElements.push(el);
-      }
-    });
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const text = entry.target.textContent || 'Overview';
-            if (activeLabel) activeLabel.textContent = text.trim();
-          }
-        });
-      },
-      { rootMargin: '-80px 0% -60% 0%', threshold: 0.1 }
-    );
-
-    headingElements.forEach((el) => observer.observe(el));
   }
 
   setupMobileToc();

@@ -18,20 +18,30 @@ const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1]
   {prevItem ? (
     <a
       href={`/docs/${prevItem.slug}`}
-      class="flex flex-col p-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 transition-colors"
+      class="flex flex-col p-3.5 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 hover:bg-zinc-900/80 transition-all group"
     >
-      <span class="text-[10px] text-zinc-500 mb-1">&larr; PREVIOUS SECTION</span>
-      <span class="text-zinc-200 font-semibold truncate">{prevItem.title}</span>
+      <span class="text-[10px] text-zinc-500 mb-1.5 flex items-center gap-1.5 group-hover:text-sky-400 transition-colors">
+        <svg class="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span>PREVIOUS SECTION</span>
+      </span>
+      <span class="text-zinc-200 font-semibold truncate group-hover:text-zinc-100">{prevItem.title}</span>
     </a>
   ) : <div />}
 
   {nextItem ? (
     <a
       href={`/docs/${nextItem.slug}`}
-      class="flex flex-col p-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 text-right transition-colors"
+      class="flex flex-col p-3.5 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-sky-500/40 hover:bg-zinc-900/80 text-right transition-all group"
     >
-      <span class="text-[10px] text-zinc-500 mb-1">NEXT SECTION &rarr;</span>
-      <span class="text-zinc-200 font-semibold truncate">{nextItem.title}</span>
+      <span class="text-[10px] text-zinc-500 mb-1.5 flex items-center justify-end gap-1.5 group-hover:text-sky-400 transition-colors">
+        <span>NEXT SECTION</span>
+        <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+      <span class="text-zinc-200 font-semibold truncate group-hover:text-zinc-100">{nextItem.title}</span>
     </a>
   ) : <div />}
 </div>

@@ -8,32 +8,40 @@ import { PRODUCT_LINKS } from '../data/links';
       <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
       // OPEN-SOURCE PRODUCT ASSETS
     </div>
-    <span class="font-mono text-[10px] text-sky-400">SCIENCE FAIR 2026</span>
+    <span class="font-mono text-[10px] text-sky-400">2026 project</span>
   </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
     <!-- Live Demo App -->
-    <a href={PRODUCT_LINKS.playgroundDemo} target="_blank" class="flex items-center justify-between p-2.5 rounded bg-zinc-950 border border-sky-500/30 text-sky-300 hover:bg-sky-500/10 transition-colors">
+    <a href={PRODUCT_LINKS.playgroundDemo} target="_blank" class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-950 border border-sky-500/30 text-sky-300 hover:bg-sky-500/10 transition-all group">
       <span>Live Interactive Web UI</span>
-      <span class="text-zinc-500">&rarr;</span>
+      <svg class="w-3.5 h-3.5 text-zinc-500 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
     </a>
 
     <!-- Firmware Repo -->
-    <a href={PRODUCT_LINKS.repos.firmware} target="_blank" class="flex items-center justify-between p-2.5 rounded bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-zinc-700 transition-colors">
+    <a href={PRODUCT_LINKS.repos.firmware} target="_blank" class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-zinc-100 transition-all group">
       <span>ESP32 Firmware Code</span>
-      <span class="text-zinc-500">&rarr;</span>
+      <svg class="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
     </a>
 
     <!-- Pi Hub Repo -->
-    <a href={PRODUCT_LINKS.repos.piHub} target="_blank" class="flex items-center justify-between p-2.5 rounded bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-zinc-700 transition-colors">
+    <a href={PRODUCT_LINKS.repos.piHub} target="_blank" class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-zinc-100 transition-all group">
       <span>Raspberry Pi 4 AI Hub</span>
-      <span class="text-zinc-500">&rarr;</span>
+      <svg class="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
     </a>
 
     <!-- Web UI Repo -->
-    <a href={PRODUCT_LINKS.repos.webUi} target="_blank" class="flex items-center justify-between p-2.5 rounded bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-zinc-700 transition-colors">
+    <a href={PRODUCT_LINKS.repos.webUi} target="_blank" class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-zinc-100 transition-all group">
       <span>Web Dashboard Source</span>
-      <span class="text-zinc-500">&rarr;</span>
+      <svg class="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
     </a>
   </div>
 </div>
