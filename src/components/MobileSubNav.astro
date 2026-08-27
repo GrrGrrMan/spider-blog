@@ -87,7 +87,6 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
     const trigger = document.getElementById('mobile-toc-trigger');
     const dialog = document.getElementById('mobile-toc-dialog') as HTMLDialogElement | null;
     const closeBtn = document.getElementById('close-mobile-toc');
-    const activeLabel = document.getElementById('mobile-toc-active-label');
     const links = document.querySelectorAll<HTMLAnchorElement>('.mobile-toc-link');
 
     if (!trigger || !dialog) return;

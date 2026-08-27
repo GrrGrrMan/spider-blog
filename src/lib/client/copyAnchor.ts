@@ -1,5 +1,3 @@
-import { lifecycle } from './lifecycle';
-
 export function initAnchorsAndCopyButtons(): void {
   // 1. Heading Permalinks
   const headings = document.querySelectorAll<HTMLHeadingElement>('article h2[id], article h3[id]');

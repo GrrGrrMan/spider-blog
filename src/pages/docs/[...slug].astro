@@ -6,7 +6,7 @@ import Admonition from '../../components/Admonition.astro';
 export async function getStaticPaths() {
   const docsEntries = await getCollection('docs');
   return docsEntries.map((entry) => {
-    const rawFileId = (entry.slug || entry.id).replace(/\.(md|mdx)$/, '');
+    const rawFileId = entry.id.replace(/\.(md|mdx)$/, '');
     const cleanSlug = rawFileId.replace(/^\d{2}-/, '');
     return {
       params: { slug: cleanSlug },

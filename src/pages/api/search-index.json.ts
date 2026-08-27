@@ -36,7 +36,7 @@ export async function GET() {
     : `${import.meta.env.BASE_URL}/`;
 
   for (const doc of docs) {
-    const rawFileId = (doc.slug || doc.id).replace(/\.(md|mdx)$/, '');
+    const rawFileId = doc.id.replace(/\.(md|mdx)$/, '');
     const cleanSlug = rawFileId.replace(/^\d{2}-/, '');
     const { headings } = await render(doc);
 
