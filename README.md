@@ -71,10 +71,10 @@ flowchart TD
 
 The documentation portal adheres to the **Diátaxis Framework**, structuring information across four distinct modes:
 
-```mermaid
-treeView-beta
+```text
+spider-blog/
 ├── src/
-│   ├── components/ ## Modular Astro UI components
+│   ├── components/          # Modular Astro UI components
 │   │   ├── Admonition.astro
 │   │   ├── MobileSubNav.astro
 │   │   ├── NavBar.astro
@@ -83,22 +83,22 @@ treeView-beta
 │   │   ├── Sidebar.astro
 │   │   └── TableOfContents.astro
 │   ├── content/
-│   │   ├── docs/ ## Formal technical chapters (00-08)
-│   │   └── logbook/ ## Development milestones
+│   │   ├── docs/            # Formal technical chapters (00-08)
+│   │   └── logbook/         # Development milestones
 │   ├── data/
-│   │   ├── docsNav.ts ## Navigation taxonomy
-│   │   ├── links.ts ## Centralized asset links
-│   │   └── logbookData.ts ## Build and failure records
+│   │   ├── docsNav.ts       # Navigation taxonomy
+│   │   ├── links.ts         # Centralized asset links
+│   │   └── logbookData.ts   # Build and failure records
 │   ├── layouts/
-│   │   ├── BaseLayout.astro ## HTML5 root shell
-│   │   ├── DocsLayout.astro ## 3-column documentation frame
-│   │   └── MainLayout.astro ## Single-column content layout
+│   │   ├── BaseLayout.astro # HTML5 root shell
+│   │   ├── DocsLayout.astro # 3-column documentation frame
+│   │   └── MainLayout.astro # Single-column content layout
 │   ├── lib/
-│   │   ├── client/ ## Lifecycle & observer registry
-│   │   └── diagram/ ## Mermaid pan-zoom engine
+│   │   ├── client/          # Lifecycle & observer registry
+│   │   └── diagram/         # Mermaid pan-zoom engine
 │   └── styles/
-│       ├── docs.css ## Tailwind v4 tokens & KaTeX
-│       └── diagram.css ## Viewport styles & skeletons
+│       ├── docs.css         # Tailwind v4 tokens & KaTeX
+│       └── diagram.css      # Viewport styles & skeletons
 ├── astro.config.mjs
 └── package.json
 ```
