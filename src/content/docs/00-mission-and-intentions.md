@@ -44,14 +44,28 @@ The core objective of this project is to develop an **accessible, 18-Degree-of-F
 
 Unlike wheeled vehicles that require continuous rolling contact, a hexapod interacts with terrain through **discrete ground contact points**. By employing three revolute joints per leg—Coxa (Yaw), Femur (Pitch Lift), and Tibia (Pitch Reach)—the chassis gains 6-DoF spatial adaptability:
 
-```text
-Clearance Scaling (Hipstance):
-Low Crawl Profile:      [==== Chassis Body ====] --- 35mm --- Ground
-Elevated Stance:        [==== Chassis Body ====] --------- 95mm --------- [Water / Hazard Plane]
+```mermaid
+flowchart TD
+    subgraph JointChain ["18-DoF Kinematic Joint Topology (Per Leg)"]
+        direction LR
+        COXA["Coxa Joint<br/>(Yaw / Directional Pan)"]
+        FEMUR["Femur Joint<br/>(Pitch Lift / Stance Height)"]
+        TIBIA["Tibia Joint<br/>(Pitch Reach / Foothold Arc)"]
+        COXA --> FEMUR --> TIBIA
+    end
 
-Obstacle Clearance (Ty Step Elevation):
-Nominal Step Arc:       Swing Trajectory -> (X + 20mm, Z + 25mm)
-Elevated Obstacle:      Swing Trajectory -> (X + 20mm, Z + 65mm)  [Steps cleanly onto ledge]
+    subgraph ClearanceScaling ["Dynamic Clearance Scaling (hipstance)"]
+        CRAWL["Low Crawl Profile (35mm Clearance)<br/>• Minimizes vertical envelope<br/>• Traverses low-overhead conduits"]
+        ELEV["Elevated Stance (95mm Clearance)<br/>• Maximizes ground clearance<br/>• Elevates electronics above water/hazard planes"]
+    end
+
+    subgraph ObstacleElevation ["Adaptive Obstacle Clearance (ty Elevation)"]
+        NOM["Nominal Swing Trajectory<br/>• ΔX = +20mm, ΔZ = +25mm<br/>• Standard planar ground cycle"]
+        LEDGE["Elevated Ledge Trajectory<br/>• ΔX = +20mm, ΔZ = +65mm<br/>• Steps cleanly onto non-planar obstacles"]
+    end
+
+    TIBIA --> ClearanceScaling
+    TIBIA --> ObstacleElevation
 ```
 
 ### Dynamic terrain traversal capabilities
