@@ -1,10 +1,8 @@
-import { initMermaid, createDiagramCard, renderMermaidDiagram } from './mermaidRenderer';
+import { createDiagramCard, renderMermaidDiagram } from './mermaidRenderer';
 import { createPanZoomController } from './panZoomEngine';
 import { setupModalTriggers } from './modalManager';
 
 export async function bootstrapDiagrams(): Promise<void> {
-  initMermaid();
-
   const codeBlocks = Array.from(
     document.querySelectorAll<HTMLElement>(
       'pre[data-language="mermaid"], pre:has(code.language-mermaid), pre.astro-code[data-language="mermaid"], .language-mermaid'

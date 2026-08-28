@@ -135,6 +135,7 @@ export function createPanZoomController(
     startVbY = 0;
   let initialPinchDistance = 0;
   let initialPinchViewBox: ViewBoxRect = { ...current };
+  let cachedRect: DOMRect | null = null;
 
   const onPointerDown = (e: PointerEvent) => {
     // Check for double tap on touch
@@ -151,6 +152,7 @@ export function createPanZoomController(
     if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 1) return;
     if (animFrameId) cancelAnimationFrame(animFrameId);
 
+    cachedRect = viewportEl.getBoundingClientRect();
     activePointers.push({ id: e.pointerId, x: e.clientX, y: e.clientY });
 
     if (activePointers.length === 1 && e.pointerType === 'mouse') {
@@ -178,6 +180,8 @@ export function createPanZoomController(
       activePointers[idx].y = e.clientY;
     }
 
+    const rect = cachedRect || viewportEl.getBoundingClientRect();
+
     // 2-Finger Touch Pinch Zoom
     if (activePointers.length === 2 && initialPinchDistance > 0) {
       const dx = activePointers[0].x - activePointers[1].x;
@@ -191,7 +195,6 @@ export function createPanZoomController(
       if (newW >= origW * 0.1 && newW <= origW * 8.0) {
         const midX = (activePointers[0].x + activePointers[1].x) / 2;
         const midY = (activePointers[0].y + activePointers[1].y) / 2;
-        const rect = viewportEl.getBoundingClientRect();
         const u = Math.min(Math.max((midX - rect.left) / rect.width, 0), 1);
         const v = Math.min(Math.max((midY - rect.top) / rect.height, 0), 1);
 
@@ -209,7 +212,6 @@ export function createPanZoomController(
 
     // Single Mouse Drag
     if (isMouseDragging && activePointers.length === 1) {
-      const rect = viewportEl.getBoundingClientRect();
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 

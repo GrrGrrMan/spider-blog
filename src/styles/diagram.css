@@ -4,6 +4,8 @@ pre[data-language="mermaid"],
 pre.astro-code[data-language="mermaid"] {
   position: relative;
   min-height: 280px;
+  contain: layout paint;
+  contain-intrinsic-size: 340px;
   background: rgba(9, 9, 11, 0.8) !important;
   border: 1px solid rgba(39, 39, 42, 0.8) !important;
   border-radius: 0.75rem;

@@ -1,31 +1,37 @@
-import mermaid from 'mermaid';
 import { decodeHtmlEntities } from './svgMath';
 
 let isInitialized = false;
+let mermaidInstance: typeof import('mermaid').default | null = null;
 
-export function initMermaid(): void {
-  if (isInitialized) return;
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: 'dark',
-    securityLevel: 'loose',
-    fontFamily: 'JetBrains Mono, monospace',
-    themeVariables: {
-      darkMode: true,
-      background: '#09090b',
-      mainBkg: '#09090b',
-      primaryColor: '#0369a1',
-      primaryTextColor: '#f4f4f5',
-      primaryBorderColor: '#38bdf8',
-      lineColor: '#38bdf8',
-      secondaryColor: '#18181b',
-      tertiaryColor: '#18181b',
-      border1: '#27272a',
-      border2: '#3f3f46',
-      fontSize: '14px',
-    },
-  });
-  isInitialized = true;
+export async function getMermaid(): Promise<typeof import('mermaid').default> {
+  if (!mermaidInstance) {
+    const mod = await import('mermaid');
+    mermaidInstance = mod.default;
+  }
+  if (!isInitialized && mermaidInstance) {
+    mermaidInstance.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      fontFamily: 'JetBrains Mono, monospace',
+      themeVariables: {
+        darkMode: true,
+        background: '#09090b',
+        mainBkg: '#09090b',
+        primaryColor: '#0369a1',
+        primaryTextColor: '#f4f4f5',
+        primaryBorderColor: '#38bdf8',
+        lineColor: '#38bdf8',
+        secondaryColor: '#18181b',
+        tertiaryColor: '#18181b',
+        border1: '#27272a',
+        border2: '#3f3f46',
+        fontSize: '14px',
+      },
+    });
+    isInitialized = true;
+  }
+  return mermaidInstance;
 }
 
 export function createDiagramCard(): {
@@ -75,6 +81,7 @@ export async function renderMermaidDiagram(
   index: number
 ): Promise<{ svgString: string; error?: string }> {
   try {
+    const mermaid = await getMermaid();
     const cleanCode = decodeHtmlEntities(rawCode).trim();
     const diagramId = `mermaid-svg-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 6)}`;
     const { svg } = await mermaid.render(diagramId, cleanCode);

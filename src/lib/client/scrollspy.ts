@@ -21,11 +21,15 @@ export function initScrollspy(): void {
 
   if (headingElements.length === 0) return;
 
+  let activeHeadingId = '';
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const id = entry.target.getAttribute('id');
+          if (!id || id === activeHeadingId) return;
+          activeHeadingId = id;
           const titleText = entry.target.textContent || 'Overview';
 
           // Update Desktop TOC

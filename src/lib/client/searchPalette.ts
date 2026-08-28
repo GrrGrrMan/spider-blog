@@ -90,6 +90,7 @@ export function initSearchPalette(): void {
         .slice(0, 8)
         .map((item) => ({ item, isSnippetMatch: false }));
     } else {
+      const tokens = q.split(/\s+/).filter(Boolean);
       const scored = items
         .map((item) => {
           let score = 0;
@@ -100,26 +101,28 @@ export function initSearchPalette(): void {
 
           let isSnippetMatch = false;
 
-          if (subLower === q) score += 120;
-          else if (subLower.includes(q)) score += 60;
+          for (const token of tokens) {
+            if (subLower === token) score += 120;
+            else if (subLower.includes(token)) score += 60;
 
-          if (titleLower.includes(q)) score += 40;
-          if (secLower.includes(q)) score += 20;
+            if (titleLower.includes(token)) score += 40;
+            if (secLower.includes(token)) score += 20;
 
-          item.keywords.forEach((kw) => {
-            if (kw.toLowerCase().includes(q)) score += 30;
-          });
+            for (const kw of item.keywords) {
+              if (kw.toLowerCase().includes(token)) score += 30;
+            }
 
-          if (contentLower.includes(q)) {
-            score += 15;
-            if (score <= 15) isSnippetMatch = true;
+            if (contentLower.includes(token)) {
+              score += 15;
+              isSnippetMatch = true;
+            }
           }
 
           return { item, score, isSnippetMatch };
         })
         .filter((res) => res.score > 0)
         .sort((a, b) => b.score - a.score)
-        .slice(0, 12);
+        .slice(0, 10);
 
       filteredItems = scored.map((s) => ({ item: s.item, isSnippetMatch: s.isSnippetMatch }));
     }
@@ -236,10 +239,15 @@ export function initSearchPalette(): void {
   };
   modal.addEventListener('click', onModalBackdropClick);
 
-  const onInput = async (e: Event) => {
-    activeGlobalIndex = 0;
-    const items = await loadSearchIndex();
-    renderResults((e.target as HTMLInputElement).value, items);
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  const onInput = (e: Event) => {
+    const targetValue = (e.target as HTMLInputElement).value;
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(async () => {
+      activeGlobalIndex = 0;
+      const items = await loadSearchIndex();
+      renderResults(targetValue, items);
+    }, 120);
   };
   input.addEventListener('input', onInput);
 

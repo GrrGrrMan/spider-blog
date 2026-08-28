@@ -70,7 +70,7 @@ export async function GET() {
 
       const anchorSlug = matchedHeading ? matchedHeading.slug : '';
       const anchorUrl = anchorSlug ? `${baseUrl}docs/${cleanSlug}#${anchorSlug}` : `${baseUrl}docs/${cleanSlug}`;
-      const cleanContent = sanitizeMarkdownText(chunk);
+      const cleanContent = sanitizeMarkdownText(chunk).slice(0, 220);
 
       indexNodes.push({
         id: `${cleanSlug}#${anchorSlug || headingText}`,
