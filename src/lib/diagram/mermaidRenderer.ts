@@ -13,7 +13,14 @@ export async function getMermaid(): Promise<typeof import('mermaid').default> {
       startOnLoad: false,
       theme: 'dark',
       securityLevel: 'loose',
-      fontFamily: 'JetBrains Mono, monospace',
+      fontFamily: '"JetBrains Mono", monospace',
+      flowchart: {
+        htmlLabels: false,
+        useMaxWidth: false,
+        nodeSpacing: 45,
+        rankSpacing: 40,
+        padding: 20,
+      },
       themeVariables: {
         darkMode: true,
         background: '#09090b',
@@ -59,7 +66,7 @@ export async function getMermaid(): Promise<typeof import('mermaid').default> {
         pieTitleTextColor: '#f4f4f5',
         pieLegendTextColor: '#d4d4d8',
         pieSectionTextColor: '#f4f4f5',
-        fontSize: '13px',
+        fontSize: '12px',
       },
     });
     isInitialized = true;

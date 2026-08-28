@@ -1,7 +1,21 @@
 import { createDiagramCard, renderMermaidDiagram } from './mermaidRenderer';
 import { createPanZoomController } from './panZoomEngine';
 import { setupModalTriggers } from './modalManager';
+import { adjustNodePadding } from './svgMath';
 import { lifecycle } from '../client/lifecycle';
+
+async function waitForFontReadiness(): Promise<void> {
+  if (typeof document !== 'undefined' && 'fonts' in document) {
+    try {
+      await Promise.race([
+        document.fonts.ready,
+        new Promise((resolve) => setTimeout(resolve, 800)),
+      ]);
+    } catch {
+      // Gracefully continue if FontFaceSet times out
+    }
+  }
+}
 
 export async function bootstrapDiagrams(): Promise<void> {
   const codeBlocks = Array.from(
@@ -11,6 +25,8 @@ export async function bootstrapDiagrams(): Promise<void> {
   );
 
   if (codeBlocks.length === 0) return;
+
+  await waitForFontReadiness();
 
   for (const [idx, targetEl] of codeBlocks.entries()) {
     const preEl = targetEl.closest('pre') || targetEl;
@@ -43,6 +59,7 @@ export async function bootstrapDiagrams(): Promise<void> {
     preEl.replaceWith(card);
 
     if (renderedSvg) {
+      adjustNodePadding(renderedSvg);
       const vbAttr = renderedSvg.getAttribute('viewBox');
       let w = 800,
         h = 400;

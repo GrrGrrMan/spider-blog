@@ -6,20 +6,18 @@ order: 5
 badge: "100Hz"
 ---
 
-The embedded firmware runs on an **ESP32-S3** microcontroller, leveraging FreeRTOS Symmetric Multiprocessing (SMP) to isolate high-frequency kinematics calculations from network and audio DMA tasks.
-
 ## 1. FreeRTOS dual-core task partitioning
 
 ```mermaid
 flowchart TD
     subgraph ESP32S3 ["ESP32-S3 Dual-Core SMP Processor"]
         subgraph Core0 ["Core 0: Network Ingress, Audio DMA & Host Comms"]
-            TASK_NET["TaskNetwork (Priority 2, 8KB Stack)<br/>• WiFiMulti Auto-Reconnect Engine<br/>• MQTT Ingress & 10 Hz Telemetry Loop<br/>• Non-blocking LogSink Drainer (UART)<br/>• Binary Audio 10-byte Frame Ingestion"]
-            TASK_AUDIO["TaskAudio (Priority 1, 8KB Stack)<br/>• 512KB PSRAM RingBuffer Reader<br/>• 16,384-byte Prebuffer Threshold<br/>• Q15 Fixed-Point Volume Scaler<br/>• I2S Direct Memory Access (DMA) Writes"]
+            TASK_NET["TaskNetwork (Pri 2, 8KB Stack)<br/>• WiFiMulti Auto-Reconnect Engine<br/>• MQTT Ingress & 10 Hz Telemetry Loop<br/>• Non-blocking LogSink Drainer (UART)<br/>• Binary Audio 10-byte Frame Ingest"]
+            TASK_AUDIO["TaskAudio (Pri 1, 8KB Stack)<br/>• 512KB PSRAM RingBuffer Reader<br/>• 16,384-byte Prebuffer Threshold<br/>• Q15 Fixed-Point Volume Scaler<br/>• I2S DMA Direct Memory Writes"]
         end
 
         subgraph Core1 ["Core 1: Deterministic Real-Time Control"]
-            TASK_CTRL["TaskControl (Priority 3, 4KB Stack)<br/>• Hard RTOS vTaskDelayUntil (100 Hz / 10ms)<br/>• Analytical 3-DoF Inverse Kinematics<br/>• 6-DoF Body Pose Transformation<br/>• Omnidirectional Gait Engine<br/>• SequencePoser Keyframe Interpolator<br/>• Two-Stage Safety Watchdog<br/>• Dual PCA9685 Burst I2C Writes (400 kHz)"]
+            TASK_CTRL["TaskControl (Pri 3, 4KB Stack)<br/>• Hard RTOS Loop (100 Hz / 10ms)<br/>• Analytical 3-DoF Inverse Kinematics<br/>• 6-DoF Body Pose Transformation<br/>• Omnidirectional Gait Engine<br/>• SequencePoser Keyframe Engine<br/>• Two-Stage Safety Watchdog<br/>• Dual PCA9685 I2C Writes (400 kHz)"]
         end
     end
 

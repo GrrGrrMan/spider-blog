@@ -43,3 +43,36 @@ export function decodeHtmlEntities(str: string): string {
   txt.innerHTML = str;
   return txt.value;
 }
+
+/**
+ * Inspects all rendered diagram nodes and dynamically expands bounding
+ * shapes (<rect>) if text metrics exceed container width.
+ */
+export function adjustNodePadding(svgEl: SVGSVGElement, horizontalPadding = 18): void {
+  const nodes = svgEl.querySelectorAll<SVGGraphicsElement>('.node, g.node');
+  nodes.forEach((node) => {
+    const textEl = node.querySelector<SVGGraphicsElement>('.label, text, foreignObject');
+    const shapeEl = node.querySelector<SVGGraphicsElement>('rect, polygon, circle');
+    if (!textEl || !shapeEl) return;
+
+    try {
+      const textBBox = textEl.getBBox();
+      const shapeBBox = shapeEl.getBBox();
+
+      if (textBBox.width <= 0 || shapeBBox.width <= 0) return;
+
+      const requiredWidth = textBBox.width + horizontalPadding * 2;
+      if (requiredWidth > shapeBBox.width) {
+        const delta = requiredWidth - shapeBBox.width;
+        if (shapeEl instanceof SVGRectElement) {
+          const currentWidth = parseFloat(shapeEl.getAttribute('width') || String(shapeBBox.width));
+          const currentX = parseFloat(shapeEl.getAttribute('x') || String(shapeBBox.x));
+          shapeEl.setAttribute('width', String(currentWidth + delta));
+          shapeEl.setAttribute('x', String(currentX - delta / 2));
+        }
+      }
+    } catch {
+      // Graceful fallback for non-rendered SVG elements
+    }
+  });
+}

@@ -85,6 +85,20 @@ pre.astro-code[data-language="mermaid"]::after {
   }
 }
 
+/* Deterministic SVG Typography Matrix */
+.diagram-viewport svg text,
+.diagram-viewport svg tspan {
+  font-family: 'JetBrains Mono', monospace !important;
+  letter-spacing: normal !important;
+  text-rendering: geometricPrecision;
+}
+
+.diagram-viewport svg .node text,
+.diagram-viewport svg .node tspan {
+  font-size: 11px !important;
+  fill: #f4f4f5 !important;
+}
+
 /* High-Contrast Mermaid Diagram Overrides */
 /* 1. Timeline High-Contrast Theme Matrix */
 .diagram-viewport svg .cScale0 {
