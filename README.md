@@ -3,11 +3,11 @@
 [![Astro](https://img.shields.io/badge/Astro-v7.2.8-18181b?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3.3-18181b?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-18181b?style=flat-square)](https://opensource.org/licenses/MIT)
-[![Docs Portal](https://img.shields.io/badge/Documentation_Portal-grrgrrman.github.io%2Fspider--blog-0284c7?style=flat-square&logo=github)](https://grrgrrman.github.io/spider-blog/)
+[![Documentation Portal](https://img.shields.io/badge/Documentation_Portal-grrgrrman.github.io%2Fspider--blog-18181b?style=flat-square&logo=githubpages&logoColor=white)](https://grrgrrman.github.io/spider-blog/)
 
 Central documentation repository, mathematical kinematics derivations, CAD assets, and operational logs for the **18-Degree-of-Freedom (18-DoF) Biomimetic Hexapod Robotic Platform**.
 
-🔗 **Live Documentation Portal:** [https://grrgrrman.github.io/spider-blog/](https://grrgrrman.github.io/spider-blog/)
+* **Live Documentation Portal:** [https://grrgrrman.github.io/spider-blog/](https://grrgrrman.github.io/spider-blog/)
 
 ---
 
@@ -71,36 +71,36 @@ flowchart TD
 
 The documentation portal adheres to the **Diátaxis Framework**, structuring information across four distinct modes:
 
-```
-spider-blog/
+```mermaid
+treeView-beta
 ├── src/
-│   ├── components/            # Modular Astro UI components
-│   │   ├── Admonition.astro   # Standardized Note, Important, Warning, Hazard blocks
-│   │   ├── MobileSubNav.astro # Slide-up mobile table of contents drawer
-│   │   ├── NavBar.astro       # Header, Command+K search modal & off-canvas drawer
-│   │   ├── Pagination.astro   # Sequential chapter routing
-│   │   ├── ProductLinks.astro # Ecosystem repository cards
-│   │   ├── Sidebar.astro      # Left documentation tree
-│   │   └── TableOfContents.astro # Desktop scrollspy rail
+│   ├── components/ ## Modular Astro UI components
+│   │   ├── Admonition.astro
+│   │   ├── MobileSubNav.astro
+│   │   ├── NavBar.astro
+│   │   ├── Pagination.astro
+│   │   ├── ProductLinks.astro
+│   │   ├── Sidebar.astro
+│   │   └── TableOfContents.astro
 │   ├── content/
-│   │   ├── docs/              # Formal technical documentation chapters (00 to 08)
-│   │   └── logbook/           # Chronological development milestones
+│   │   ├── docs/ ## Formal technical chapters (00-08)
+│   │   └── logbook/ ## Development milestones
 │   ├── data/
-│   │   ├── docsNav.ts         # Navigation taxonomy and status badge registry
-│   │   ├── links.ts           # Centralized external asset URLs
-│   │   └── logbookData.ts     # Build logs, failure records, and revision entries
+│   │   ├── docsNav.ts ## Navigation taxonomy
+│   │   ├── links.ts ## Centralized asset links
+│   │   └── logbookData.ts ## Build and failure records
 │   ├── layouts/
-│   │   ├── BaseLayout.astro   # Unified HTML5 shell, metadata, fonts, lifecycle controller
-│   │   ├── DocsLayout.astro   # 3-column technical layout (Sidebar + Prose + TOC)
-│   │   └── MainLayout.astro   # Single-column layout for Overview, Hardware, Methodology
+│   │   ├── BaseLayout.astro ## HTML5 root shell
+│   │   ├── DocsLayout.astro ## 3-column documentation frame
+│   │   └── MainLayout.astro ## Single-column content layout
 │   ├── lib/
-│   │   ├── client/            # Decoupled ViewTransitions lifecycle & observer registry
-│   │   └── diagram/           # Custom Mermaid pan-zoom, SVG projection & tour engine
+│   │   ├── client/ ## Lifecycle & observer registry
+│   │   └── diagram/ ## Mermaid pan-zoom engine
 │   └── styles/
-│       ├── docs.css           # Tailwind v4 @theme tokens, typography, KaTeX math
-│       └── diagram.css        # Mermaid loading skeletons and interactive viewports
-├── astro.config.mjs           # Astro 7 + Tailwind Vite + KaTeX integration config
-└── package.json               # Node dependency manifest
+│       ├── docs.css ## Tailwind v4 tokens & KaTeX
+│       └── diagram.css ## Viewport styles & skeletons
+├── astro.config.mjs
+└── package.json
 ```
 
 ### Chapter overview
@@ -123,28 +123,20 @@ spider-blog/
 
 $$\tau_{\text{required}} = F_{\text{leg}} \cdot L_{\text{arm}} = \left(\frac{1.310\text{ kg} \times 9.81\text{ m/s}^2}{3}\right) \times 0.095\text{ m} \approx 0.407\text{ N}\cdot\text{m} \approx 4.15\text{ kg}\cdot\text{cm}$$
 
-```
-+-------------------------------------------------------------+
-| MEASURED MASS SPECIFICATIONS (CHASSIS 3.0)                  |
-+------------------------------------+------------------------+
-| Subsystem component                | Mass (g)               |
-+------------------------------------+------------------------+
-| 6x Leg assemblies (PETG brackets)  | 240 g                  |
-| 18x MG90S Micro servos             | 234 g                  |
-| Monocoque main body housing & lid  | 210 g                  |
-| Power wiring, harnesses & bus bars | 125 g                  |
-| Dual buck converters & fuse blocks | 68 g                   |
-| Raspberry Pi 4B host computer      | 65 g                   |
-| Audio subsystem (Amp + Speaker)    | 46 g                   |
-| Dual ESP32 microcontrollers        | 42 g                   |
-| Fasteners, standoffs, connectors   | 80 g                   |
-+------------------------------------+------------------------+
-| NET CHASSIS MASS (EXCLUDING BATT)  | 1,110 g                |
-| 3S 1800mAh Flight LiPo pack        | 200 g                  |
-+------------------------------------+------------------------+
-| ALL-UP OPERATIONAL MASS            | 1,310 g                |
-+------------------------------------+------------------------+
-```
+| Subsystem component | Mass (g) |
+| :--- | :---: |
+| 6x Leg assemblies (PETG brackets) | 240 g |
+| 18x MG90S Micro servos | 234 g |
+| Monocoque main body housing & lid | 210 g |
+| Power wiring, harnesses & bus bars | 125 g |
+| Dual buck converters & fuse blocks | 68 g |
+| Raspberry Pi 4B host computer | 65 g |
+| Audio subsystem (Amp + Speaker) | 46 g |
+| Dual ESP32 microcontrollers | 42 g |
+| Fasteners, standoffs, connectors | 80 g |
+| **Net chassis mass (excluding battery)** | **1,110 g** |
+| 3S 1800mAh Flight LiPo pack | 200 g |
+| **All-up operational mass** | **1,310 g** |
 
 > [!WARNING]
 > **Actuator operating ceiling:** Budget micro-gear servos (MG90S) offer a peak stall torque of $1.8\text{–}2.2\text{ kg}\cdot\text{cm}$ and continuous thermal capacity under $0.8\text{ kg}\cdot\text{cm}$. The $4.15\text{ kg}\cdot\text{cm}$ static stance demand exceeds continuous ratings. The platform is demonstrated on a custom PETG testing stand connected to a regulated 5.30V DC bench supply to validate all kinematic, vision, and audio loops safely.
