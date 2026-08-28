@@ -3,11 +3,11 @@
 [![Astro](https://img.shields.io/badge/Astro-v7.2.8-18181b?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3.3-18181b?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-18181b?style=flat-square)](https://opensource.org/licenses/MIT)
-[![Documentation Portal](https://img.shields.io/badge/Documentation_Portal-grrgrrman.github.io%2Fspider--blog-18181b?style=flat-square&logo=githubpages&logoColor=white)](https://grrgrrman.github.io/spider-blog/)
+[![Docs](https://img.shields.io/badge/Docs-Live_Portal-18181b?style=flat-square&logo=githubpages&logoColor=white)](https://grrgrrman.github.io/spider-blog/)
 
 Central documentation repository, mathematical kinematics derivations, CAD assets, and operational logs for the **18-Degree-of-Freedom (18-DoF) Biomimetic Hexapod Robotic Platform**.
 
-* **Live Documentation Portal:** [https://grrgrrman.github.io/spider-blog/](https://grrgrrman.github.io/spider-blog/)
+* **Live Documentation Portal:** [grrgrrman.github.io/spider-blog](https://grrgrrman.github.io/spider-blog/)
 
 ---
 
@@ -58,12 +58,12 @@ flowchart TD
 
 | Subsystem / layer | Repository / asset URL | Tech stack | Architectural role |
 | :--- | :--- | :--- | :--- |
-| **Documentation portal** | [`grrgrrman.github.io/spider-blog`](https://grrgrrman.github.io/spider-blog/) ([Source](https://github.com/GrrGrrMan/spider-blog)) | Astro 7, Tailwind 4, MDX, KaTeX, Mermaid | Complete scientific manual, mathematical derivations, BOM ledger, and build logs |
+| **Documentation portal** | [`grrgrrman.github.io/spider-blog`](https://grrgrrman.github.io/spider-blog/) | Astro 7, Tailwind 4, MDX, KaTeX, Mermaid | Complete scientific manual, mathematical derivations, BOM ledger, and build logs |
 | **Motion firmware** | [`GrrGrrMan/spiderbot-firmware`](https://github.com/GrrGrrMan/spiderbot-firmware) | C++, FreeRTOS SMP, PlatformIO, ESP32-S3 | 100 Hz deterministic IK loop, dual PCA9685 phase staggering, I2S DMA audio |
 | **Cognitive gateway** | [`GrrGrrMan/spiderbot-pi-hub`](https://github.com/GrrGrrMan/spiderbot-pi-hub) | Python 3.11, Faster-Whisper, Mosquitto, Nginx | Host gateway, Wi-Fi hotspot AP, Piper TTS, and local/cloud LLM proxy |
 | **3D digital twin** | [`GrrGrrMan/spiderbot-mithi-web`](https://github.com/GrrGrrMan/spiderbot-mithi-web) | React 16, Plotly.js WebGL, WebSockets | Web-based kinematics simulator, Web Worker kinematics offloading, 10 Hz telemetry |
-| **Live simulator** | [spiderbot-playground.netlify.app](https://spiderbot-playground.netlify.app/) | WebGL / Production static build | Interactive browser sandbox and 3D digital twin |
-| **Parametric CAD** | [Enclosed body 2.0 (Onshape)](https://cad.onshape.com/documents/97670e8943e0cc50e830c42a/w/00e0069e98a6590d172338eb/e/8904dbdba274489211ded1bf?renderMode=0&uiState=6a8cd46a6dfb0f4caeea9e32) | Onshape CAD | 3D printable PETG monocoque shell, 3-DoF leg linkages, and presentation stand |
+| **Live simulator** | [`spiderbot-playground.netlify.app`](https://spiderbot-playground.netlify.app/) | WebGL / Production static build | Interactive browser sandbox and 3D digital twin |
+| **Parametric CAD** | [`Enclosed body 2.0 (Onshape)`](https://cad.onshape.com/documents/97670e8943e0cc50e830c42a/w/00e0069e98a6590d172338eb/e/8904dbdba274489211ded1bf?renderMode=0&uiState=6a8cd46a6dfb0f4caeea9e32) | Onshape CAD | 3D printable PETG monocoque shell, 3-DoF leg linkages, and presentation stand |
 
 ---
 
