@@ -1,7 +1,3 @@
-
-Here is the complete, updated `README.md` configured to point to the live GitHub Pages documentation portal at **`https://grrgrrman.github.io/spider-blog/`** instead of deprecated Netlify / GitHub URLs.
-
-```markdown
 # AI Spider Hexapod V2 — Technical documentation portal and system index
 
 [![Astro](https://img.shields.io/badge/Astro-v7.2.8-18181b?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
