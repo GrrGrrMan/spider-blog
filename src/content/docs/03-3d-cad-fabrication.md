@@ -1,117 +1,156 @@
 ---
-title: "CAD models and additive fabrication"
-description: "Parametric Onshape assemblies, PETG slicer configurations, and print orientation tables."
-section: "02 Fabrication & CAD"
-order: 3
+title: "Mission rationale and tactical systems scope"
+description: "Problem statement, kinematic advantages in extreme terrains, cloud-to-edge architecture shift, and sensor expansion roadmap."
+section: "00 Mission & scope"
+order: 0
+badge: "Mission"
 ---
 
-Parametric mechanical assets, 3D printing configurations, and structural assembly guidelines for the 18-DoF Hexapod V2 platform.
+## 1. Problem statement: Hazardous and extreme environments
 
-## 1. Mechanical fabrication workflow
+Industrial accident zones, collapsed structures, subterranean cave systems, dense wilderness, and extraterrestrial topographies present hazardous operating conditions where human entry carries extreme risk.
+
+Traditional robotic exploration platforms face critical mechanical limitations in these terrains:
 
 ```mermaid
 flowchart TD
-    CAD["Onshape Parametric CAD<br/>(Body 2.0, Leg Linkages, Testing Stand)"] --> EXPORT["Export High-Resolution STL / STEP"]
-    
-    EXPORT --> SLICER["Slicer Configuration (PETG Profile)<br/>• 4 Perimeter Shells (1.6mm)<br/>• 35% Gyroid Infill<br/>• 0.20mm Layer Height"]
-    
-    SLICER --> PRINT["FDM 3D Printing<br/>• 240°C Nozzle / 75°C Bed<br/>• Tree Supports for Servo Horn Lips"]
-    
-    PRINT --> POST["Post-Processing & Assembly<br/>• Ream M2 Horn Pilot Pockets<br/>• Press-Fit Servo Horn Splines<br/>• Fasten M2 Screws & Route Cables"]
-    
-    POST --> CHASSIS["Enclosed Monocoque Chassis 3.0 & DTC Stand"]
+    subgraph WheeledTracked ["Wheeled & Tracked Systems"]
+        W1["Fixed ground clearance"]
+        W2["High-centers on boulders and debris"]
+        W3["Requires continuous traction plane"]
+        W4["Zero vertical obstacle stepping capability"]
+    end
+
+    subgraph AerialDrones ["Aerial Drones (UAVs)"]
+        D1["Flight endurance limited by battery mass (< 25 min)"]
+        D2["Air turbulence in confined subterranean conduits"]
+        D3["Catastrophic failure on rotor blade impact"]
+        D4["Incapable of physical ground sampling contact"]
+    end
+
+    subgraph HexapodPlatform ["18-DoF Biomimetic Hexapod"]
+        H1["Discrete footholds on isolated stable surfaces"]
+        H2["Dynamic chassis clearance scaling (hipstance)"]
+        H3["Zero turning radius omnidirectional stepping"]
+        H4["Continuous static stability support triangle"]
+    end
 ```
 
----
-
-## 2. Parametric 3D CAD assets
-
-| Assembly / part identifier | Description | Status | Interactive CAD link |
-| :--- | :--- | :---: | :--- |
-| **Enclosed body chassis 2.0 / 3.0** | Integrated electronics bay, wire ducts, and MCU mounts | **Current Release** | [Open body 2.0 in Onshape](https://cad.onshape.com/documents/97670e8943e0cc50e830c42a/w/00e0069e98a6590d172338eb/e/8904dbdba274489211ded1bf?renderMode=0&uiState=6a8cd46a6dfb0f4caeea9e32) |
-| **Flat plate chassis 1.0** | Preliminary flat evaluation platform (open wiring) | Prototype (Deprecated) | [Open body 1.0 in Onshape](https://cad.onshape.com/documents/2eb7ad3166d9957057efdbed/w/e8c5560e4175eba75eb554f7/e/949102c48f152406690b75f3?renderMode=0&uiState=6a8cd3263182be2f972a37d2) |
-| **3-DoF symmetrical leg assembly** | Symmetrical Coxa, Femur, and Tibia joint linkages | **Current Release** | [Open leg CAD in Onshape](https://cad.onshape.com/documents/ad85265f97458b2bb5a36b9a/w/754aa4f35e9737488e2b5583/e/29b64b050765026b374ec06f?renderMode=0&uiState=6a8cd34b7774753c86709f86) |
+The core objective of this project is to develop an **accessible, 18-Degree-of-Freedom (18-DoF) biomimetic hexapod platform** capable of traversing non-planar, discontinuous, and hazardous terrain where conventional wheeled and aerial vehicles fail.
 
 ---
 
-## 3. PETG slicer profile specifications
+## 2. Kinematic advantages of 18-DoF locomotion
 
-| Parameter name | Target setting | Mechanical rationale |
-| :--- | :--- | :--- |
-| **Filament material** | PETG (Polyethylene Terephthalate Glycol) | High impact strength, flexural endurance, and thermal resilience |
-| **Filament diameter** | 1.75 mm (±0.02 mm) | Standard extrusion feedstock |
-| **Nozzle diameter** | 0.40 mm brass / hardened steel | Balances fine horn pocket features with rapid perimeter extrusion |
-| **Primary layer height** | 0.20 mm | Maximizes interlayer adhesion and shear bonding strength |
-| **Initial layer height** | 0.24 mm | Ensures strong base adhesion on textured PEI spring steel bed |
-| **Perimeter wall shells** | 4 loops (1.60 mm total thickness) | Resists torsional shear from active 2.2 kg·cm servo output splines |
-| **Top / bottom solid layers**| 5 top layers / 4 bottom layers | Prevents structural crush under M2/M3 fastener compression |
-| **Internal infill density** | 35% infill | Provides high strength-to-weight ratio for dynamic limb acceleration |
-| **Infill pattern** | Gyroid | Isotropic multi-axial mechanical strength without directional weakness |
-| **Extruder temperature** | 240°C | Ensures complete polymer melt and interlayer weld strength |
-| **Heated bed temperature** | 75°C | Exceeds glass transition point ($T_g$), eliminating corner warping |
-| **Cooling fan speed** | 40% (0% for layers 1 to 3) | Preserves ductility and prevents premature embrittlement |
-| **Support structure** | Organic / tree supports | Clean removal on servo pocket overhangs and mounting tabs |
+Unlike wheeled vehicles that require continuous rolling contact, a hexapod interacts with terrain through **discrete ground contact points**. By employing three revolute joints per leg—Coxa (Yaw), Femur (Pitch Lift), and Tibia (Pitch Reach)—the chassis gains 6-DoF spatial adaptability:
+
+```mermaid
+flowchart TD
+    subgraph JointChain ["18-DoF Kinematic Joint Topology (Per Leg)"]
+        direction LR
+        COXA["Coxa Joint<br/>(Yaw / Directional Pan)"]
+        FEMUR["Femur Joint<br/>(Pitch Lift / Stance Height)"]
+        TIBIA["Tibia Joint<br/>(Pitch Reach / Foothold Arc)"]
+        COXA --> FEMUR --> TIBIA
+    end
+
+    subgraph ClearanceScaling ["Dynamic Clearance Scaling (hipstance)"]
+        CRAWL["Low Crawl Profile (35mm Clearance)<br/>• Minimizes vertical envelope<br/>• Traverses low-overhead conduits"]
+        ELEV["Elevated Stance (95mm Clearance)<br/>• Maximizes ground clearance<br/>• Elevates electronics above water/hazard planes"]
+    end
+
+    subgraph ObstacleElevation ["Adaptive Obstacle Clearance (ty Elevation)"]
+        NOM["Nominal Swing Trajectory<br/>• ΔX = +20mm, ΔZ = +25mm<br/>• Standard planar ground cycle"]
+        LEDGE["Elevated Ledge Trajectory<br/>• ΔX = +20mm, ΔZ = +65mm<br/>• Steps cleanly onto non-planar obstacles"]
+    end
+
+    TIBIA --> ClearanceScaling
+    TIBIA --> ObstacleElevation
+```
+
+### Dynamic terrain traversal capabilities
+
+1. **Dynamic clearance scaling (`hipstance -> up / down`):** Modulates vertical ground clearance dynamically to crawl beneath low overhead conduits or elevate sensitive electronics bays above standing water, mud, and thermal hazards.
+2. **Per-leg obstacle elevation (`ty -> up`):** Recalculates swing trajectories in real time when proximity sensors detect obstructions, elevating the tibia to step onto or over obstacles without stalling the femur joint.
+3. **Omnidirectional stepping:** Combines translational velocity vectors $(V_x, V_y)$ with yaw rate $\omega$ to immediately change heading without requiring a turning radius.
+4. **Triangular static stability:** Enforces a Tripod Gait where three feet maintain ground contact at all times, keeping the Center of Gravity (CoG) enclosed within the support polygon.
 
 ---
 
-## 4. Component print orientation and support matrix
+## 3. Architecture evolution: Cloud multimodal vs. local edge autonomy
+
+### Phase 1: Cloud multimodal architecture (bench prototype)
+
+Initial prototypes evaluated natural language task decomposition using browser speech recognition, WebSockets, and cloud-hosted LLMs (Groq LLaMA 3.3 70B via Function Calling).
 
 ```mermaid
 flowchart LR
-    subgraph Legs ["6x Leg Sets (18 Links Total)"]
-        COXA["6x Coxa (Hip) Links<br/>Print Flat on Base"]
-        FEMUR["6x Femur (Thigh) Beams<br/>Print on Lateral Edge"]
-        TIBIA["6x Tibia (Shin) Links<br/>Print on Flat Side"]
+    subgraph CloudBench ["Phase 1: Cloud Architecture (Bench Prototype)"]
+        SPEECH["Web Audio API"] --> CLOUD_LLM["Groq LLaMA 3.3 70B<br/>(Mandatory Internet)"]
+        CLOUD_LLM -->|Network Latency & Token Costs| MQTT_C["MQTT Broker"]
+        MQTT_C --> ESP32_C["ESP32-S3 Stand"]
     end
 
-    subgraph Body ["Chassis Monocoque"]
-        BASE["1x Lower Body Tub<br/>Print Flat on Baseplate"]
-        LID["1x Upper Electronics Lid<br/>Print External Face Up"]
-        HEAD["1x Camera Head Mount<br/>Print Bezel Down"]
-        STAND["1x DTC Bench Testing Stand<br/>Print Rigid Base Down"]
+    subgraph LocalEdge ["Phase 2: Target Edge Architecture (Field Deployable)"]
+        SENSORS["IMU + Depth + Rangefinders"] --> SBC["On-Chassis Pi 5 / Edge NPU<br/>(100% Offline)"]
+        SBC -->|Deterministic Local Planning| ESP32_E["ESP32-S3 RTOS"]
+        ESP32_E --> SERVOS["High-Torque Actuators"]
     end
 ```
 
-| Part identifier | Print qty | Optimal bed orientation | Support requirements | Critical assembly notes |
-| :--- | :---: | :--- | :--- | :--- |
-| **Coxa (hip link)** | 6 | Flat on servo pocket face | None required | Ensure friction-fit pilot hole alignment for servo horn spline |
-| **Femur (thigh beam)** | 6 | Lateral side face flat on bed | Tree supports under horn pocket | 4 perimeter shells mandatory to withstand leg-lifting torque |
-| **Tibia (shin / foot)** | 6 | Flat lateral face on bed | Minimal tree supports on pivot | Install TPU or rubber tip at foot contact point for traction |
-| **Chassis lower tub** | 1 | Flat on structural baseplate | None required | Features wire pass-through ducts and PCA9685 standoffs |
-| **Chassis upper lid** | 1 | Exterior face upward | None required | Houses ESP32-CAM head pivot and snap-fit retention clips |
-| **Camera cranial mount**| 1 | Front optical bezel downward | Minimal supports on bracket | Friction clamp securing ESP32-CAM module and flashlight LED |
-| **DTC testing stand** | 1 | Flat on rigid baseplate | None required | Elevates chassis to isolate 280g battery weight during validation |
+> [!WARNING]
+> **Cloud dependency limitations:** In real-world disaster sites, deep caves, and remote environments, WAN connectivity is unavailable. Cloud inference introduces non-deterministic network latency, link drop vulnerability, and recurring token costs.
+
+### Phase 2: Local edge autonomy (target architecture)
+
+The platform is migrating toward a **100% localized, on-chassis compute stack**:
+
+* **Quantized intent parsing:** On-device compact models (FunctionGemma 270M or Qwen 0.6B) running locally via `llama.cpp` or ONNX Runtime.
+* **Offline speech processing:** Embedded `Vosk` automatic speech recognition and `Piper TTS` speech synthesis operating without network uplinks.
+* **Autonomous local mapping:** Real-time 2D/2.5D hazard mapping calculated on the companion single-board computer.
 
 ---
 
-## 5. Chassis structural evolution
+## 4. Hardware validation and DTC testing stand resolution
+
+Physical evaluation of the Prototype 3.0 monocoque design established critical mass and torque boundaries:
+
+$$\tau_{\text{required}} = \left(\frac{1.310\text{ kg} \times 9.81\text{ m/s}^2}{3}\right) \times 0.095\text{ m} \approx 0.407\text{ N}\cdot\text{m} \approx 4.15\text{ kg}\cdot\text{cm}$$
+
+* **Actuator operating envelope:** Budget MG90S metal-gear micro-servos provide a stall torque of $1.8\text{–}2.2\text{ kg}\cdot\text{cm}$ and continuous thermal capacity under $0.8\text{ kg}\cdot\text{cm}$. The $4.15\text{ kg}\cdot\text{cm}$ demand exceeds the continuous thermal rating by a factor of 5.
+* **Testing stand resolution:** The platform is operated on a custom PETG **DTC Testing Stand** supplied by an external regulated 5.30V DC bench rail. This eliminates the 280g battery burden, allowing full empirical verification of the 18-DoF analytical Inverse Kinematics, 100 Hz FreeRTOS dual-core task partitioning, video relays, and AI pipeline without gear stripping or thermal brownouts.
+
+---
+
+## 5. Engineering expansion roadmap
 
 ```mermaid
-flowchart TD
-    subgraph Proto1 ["Prototype 1.0 (Acrylic)"]
-        P1_DESC["Hand-cut acrylic sheets & hot glue joints.<br/>Result: Joint delamination under active servo torque."]
-    end
-
-    subgraph Proto2 ["Prototype 2.0 (Flat PETG Plate)"]
-        P2_DESC["Flat 3D printed PETG plate platform.<br/>Result: Validated IK math; unconstrained wiring and battery overload."]
-    end
-
-    subgraph Proto3 ["Prototype 3.0 (Enclosed Monocoque & Stand)"]
-        P3_DESC["Enclosed 3D monocoque chassis.<br/>Integrated wire ducts, MCU bays, shortened legs, and DTC stand support."]
-    end
-
-    Proto1 -->|Failure Analysis: Inadequate Joint Rigidity| Proto2
-    Proto2 -->|Failure Analysis: Cable Snagging & Weight Distribution| Proto3
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'cScale0': '#0284c7',
+    'cScaleLabel0': '#ffffff',
+    'cScale1': '#0284c7',
+    'cScaleLabel1': '#ffffff',
+    'cScale2': '#0284c7',
+    'cScaleLabel2': '#ffffff'
+  }
+}}%%
+timeline
+    title Platform Development Roadmap
+    Phase 1 (Completed) : Acrylic & PETG 1.0 Prototypes : 4S Inrush Burnout Post-Mortem : Monocoque Chassis 2.0/3.0 : 100Hz RTOS IK Engine : DTC Stand Validation
+    Phase 2 (Current)   : 5.30V High-Current Bus Regulators : Dual PCA9685 Staggered PWM : Low-Latency PCM Audio DMA : React WebGL Digital Twin
+    Phase 3 (Next Gen)  : High-Torque Coreless Bus Servos : 9-Axis IMU Active Slope Balancing : Local Edge NPU (Vosk + Gemma) : Solid-State Micro-LiDAR
 ```
 
-### Prototype comparison matrix
+### 1. Actuation and structural upgrades
+* Replace analog micro-servos with high-voltage (7.4V) serial bus servos equipped with magnetic position feedback and continuous stall protection.
+* Transition structural linkages from solid PETG to skeletonized carbon-fiber reinforced nylon to cut limb inertia by 40%.
 
-| Feature / metric | Prototype 1.0 (acrylic) | Prototype 2.0 (flat PETG plate) | Prototype 3.0 (enclosed monocoque) |
-| :--- | :--- | :--- | :--- |
-| **Chassis material** | 3mm acrylic sheets + adhesive | Flat 3mm 3D printed PETG plate | Contoured 3D PETG monocoque shell |
-| **Joint integrity** | Brittle; fractured under load | Ductile; withstands nominal loads | Maximum rigidity with 4 perimeter walls |
-| **Electronics protection**| None (exposed wiring) | Open air (wires prone to snags) | Fully enclosed internal electronics bay |
-| **Cable management** | Unconstrained loose leads | Cable-tied to flat plate surface | Internal recessed wire routing channels |
-| **Mounting standoffs** | Glued plastic posts | Drilled screw holes | Integrated threaded M3 mounting bosses |
-| **Leg moment arm** | Unoptimized long levers | Long lever arms (excess torque) | Shortened lever arms reducing servo strain |
-| **Presentation baseline** | Static acrylic mockup | Unsupported bench sag | Custom rigid PETG DTC testing stand |
+### 2. Inertial dynamic balance leveling
+* Mount the MPU-9250 / GY-6500 9-Axis IMU on EVA anti-vibration dampening foam directly at the Center of Mass (CoM).
+* Feed pitch/roll attitude deltas directly into the 100 Hz Inverse Kinematics loop to automatically keep the chassis level when traversing uneven slopes.
+
+### 3. Spatial perception and elevation mapping
+* Upgrade from single-point HC-SR04 ultrasonic sensors to solid-state micro-LiDAR or a spatial stereo depth camera.
+* Construct 2.5D elevation grid maps in real time, feeding step height parameters directly to the gait generator to step over obstacles autonomously.
