@@ -50,6 +50,7 @@ export async function bootstrapDiagrams(): Promise<void> {
         if (parts.length === 4) {
           w = parts[2];
           h = parts[3];
+          renderedSvg.setAttribute('data-original-viewbox', `${parts[0]} ${parts[1]} ${parts[2]} ${parts[3]}`);
         }
       }
       const aspectRatio = w / h;

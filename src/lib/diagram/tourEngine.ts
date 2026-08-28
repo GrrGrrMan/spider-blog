@@ -18,18 +18,17 @@ export class TourEngine {
   }
 
   private discoverElements(): void {
-    const allClusters = Array.from(
-      this.svgEl.querySelectorAll<SVGGraphicsElement>('.cluster, g[id^="subGraph"], g.subgraph')
+    // Universal selector supporting Flowcharts, State, Sequence, and Architecture diagrams
+    const candidateElements = Array.from(
+      this.svgEl.querySelectorAll<SVGGraphicsElement>(
+        '.node, .cluster, g[id^="subGraph"], g.subgraph, .statediagram-state, .actor, .task'
+      )
     );
-    const leafClusters = allClusters.filter(
-      (c) => c.querySelectorAll('.cluster, g[id^="subGraph"], g.subgraph').length === 0
-    );
-    const clustersToUse = leafClusters.length > 0 ? leafClusters : allClusters;
 
-    const allNodes = Array.from(this.svgEl.querySelectorAll<SVGGraphicsElement>('.node'));
-    const uncontainedNodes = allNodes.filter((node) => !clustersToUse.some((cluster) => cluster.contains(node)));
-
-    const candidateElements = [...clustersToUse, ...uncontainedNodes];
+    if (candidateElements.length === 0) {
+      this.tourElements = [];
+      return;
+    }
 
     // Spatial sorting: Top-to-bottom, left-to-right
     this.tourElements = candidateElements
@@ -38,7 +37,7 @@ export class TourEngine {
         return { el, top: r.top, left: r.left };
       })
       .sort((a, b) => {
-        const rowDiff = Math.round(a.top / 35) - Math.round(b.top / 35);
+        const rowDiff = Math.round(a.top / 30) - Math.round(b.top / 30);
         return rowDiff !== 0 ? rowDiff : a.left - b.left;
       })
       .map((item) => item.el);

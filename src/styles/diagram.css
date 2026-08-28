@@ -46,3 +46,13 @@ pre.astro-code[data-language="mermaid"]::after {
 .diagram-viewport svg g.cluster:hover {
   filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.35));
 }
+
+/* Fullscreen Modal Dialog Scroll & Gesture Isolation */
+dialog#diagram-modal {
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
+dialog#diagram-modal::backdrop {
+  overscroll-behavior: contain;
+}

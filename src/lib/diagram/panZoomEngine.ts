@@ -6,7 +6,7 @@ export function createPanZoomController(
   svgEl: SVGSVGElement,
   controls: PanZoomControls = {}
 ): PanZoomController {
-  const origAttr = svgEl.getAttribute('viewBox');
+  const origAttr = svgEl.getAttribute('data-original-viewbox') || svgEl.getAttribute('viewBox');
   let origX = 0,
     origY = 0,
     origW = 1000,
@@ -101,9 +101,43 @@ export function createPanZoomController(
     }
   }
 
-  function resetToFit() {
+  function resetToFit(instant = false) {
     tourEngine.clearHighlights();
-    animateCameraTo({ x: origX, y: origY, w: origW, h: origH }, 350);
+
+    const vWidth = viewportEl.clientWidth || 800;
+    const vHeight = viewportEl.clientHeight || 440;
+    const vAspect = vWidth / vHeight;
+
+    const padFactor = 1.06;
+    const paddedW = origW * padFactor;
+    const paddedH = origH * padFactor;
+    const cx = origX + origW / 2;
+    const cy = origY + origH / 2;
+
+    let targetW = paddedW;
+    let targetH = paddedH;
+
+    if (paddedW / paddedH < vAspect) {
+      targetH = paddedH;
+      targetW = paddedH * vAspect;
+    } else {
+      targetW = paddedW;
+      targetH = paddedW / vAspect;
+    }
+
+    const target: ViewBoxRect = {
+      x: cx - targetW / 2,
+      y: cy - targetH / 2,
+      w: targetW,
+      h: targetH,
+    };
+
+    if (instant) {
+      Object.assign(current, target);
+      applyViewBox();
+    } else {
+      animateCameraTo(target, 350);
+    }
     tourEngine.updateIndicator(`All (${tourEngine.elementsCount})`);
   }
 
@@ -297,25 +331,13 @@ export function createPanZoomController(
   controls.tourNextBtn?.addEventListener('click', () => stepTour('next'));
 
   if (controls.tourNavWrapper) {
-    controls.tourNavWrapper.style.display = tourEngine.elementsCount >= 2 ? 'flex' : 'none';
+    controls.tourNavWrapper.style.display = tourEngine.elementsCount >= 1 ? 'flex' : 'none';
   }
 
-  // Startup: Frame initial cluster
-  if (tourEngine.elementsCount >= 3) {
-    setTimeout(() => {
-      const initialCluster = tourEngine.getInitialCluster(3);
-      focusGroup(initialCluster, false);
-      tourEngine.updateIndicator('1-3');
-    }, 60);
-  } else if (tourEngine.elementsCount > 0) {
-    setTimeout(() => {
-      const allElements = tourEngine.getInitialCluster(tourEngine.elementsCount);
-      focusGroup(allElements, false);
-      tourEngine.updateIndicator(1);
-    }, 60);
-  } else {
-    resetToFit();
-  }
+  // Startup: Frame the entire diagram with 100% precision centering
+  setTimeout(() => {
+    resetToFit(true);
+  }, 30);
 
   return {
     resetToFit,

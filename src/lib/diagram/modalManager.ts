@@ -14,6 +14,7 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
   if (!isModalDismissBound) {
     const closeModal = () => {
       modal.close();
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
 
@@ -22,8 +23,19 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
       if (e.target === modal) closeModal();
     });
     modal.addEventListener('close', () => {
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     });
+    modal.addEventListener(
+      'wheel',
+      (e) => {
+        // Prevent background documentation scrolling when cursor is on modal header/margins
+        if (e.target !== modalViewport && !modalViewport.contains(e.target as Node)) {
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
     isModalDismissBound = true;
   }
 
@@ -34,17 +46,21 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
     const cloneSvg = renderedSvgEl.cloneNode(true) as SVGSVGElement;
     modalViewport.appendChild(cloneSvg);
     modal.showModal();
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
 
-    activeModalController = createPanZoomController(modalViewport, cloneSvg, {
-      zoomText: document.getElementById('modal-zoom-text'),
-      zoomInBtn: document.getElementById('modal-zoom-in'),
-      zoomOutBtn: document.getElementById('modal-zoom-out'),
-      zoomResetBtn: document.getElementById('modal-zoom-reset'),
-      tourPrevBtn: document.getElementById('modal-tour-prev'),
-      tourNextBtn: document.getElementById('modal-tour-next'),
-      stepIndicator: document.getElementById('modal-step-indicator'),
-      tourNavWrapper: document.getElementById('modal-tour-nav-wrapper'),
+    // Wait for dialog reflow pass before mounting pan/zoom calculations
+    requestAnimationFrame(() => {
+      activeModalController = createPanZoomController(modalViewport, cloneSvg, {
+        zoomText: document.getElementById('modal-zoom-text'),
+        zoomInBtn: document.getElementById('modal-zoom-in'),
+        zoomOutBtn: document.getElementById('modal-zoom-out'),
+        zoomResetBtn: document.getElementById('modal-zoom-reset'),
+        tourPrevBtn: document.getElementById('modal-tour-prev'),
+        tourNextBtn: document.getElementById('modal-tour-next'),
+        stepIndicator: document.getElementById('modal-step-indicator'),
+        tourNavWrapper: document.getElementById('modal-tour-nav-wrapper'),
+      });
     });
   });
 }
