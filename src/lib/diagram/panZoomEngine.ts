@@ -37,8 +37,8 @@ export function createPanZoomController(
   svgEl.style.display = 'block';
   svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-  // Prevent capturing vertical page scrolling
-  viewportEl.style.touchAction = 'pan-y pinch-zoom';
+  // Strict touch isolation: Prevents page scroll hijacking during pan/zoom
+  viewportEl.style.touchAction = 'none';
 
   const tourEngine = new TourEngine(svgEl, controls.stepIndicator);
 

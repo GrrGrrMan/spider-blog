@@ -142,6 +142,21 @@ export class TourEngine {
       targetH = targetW / vAspect;
     }
 
+    // Proportional zoom guard: Prevents small nodes from over-magnifying (>180%)
+    const origViewBox = this.svgEl.getAttribute('viewBox');
+    let origW = 800;
+    if (origViewBox) {
+      const parts = origViewBox.trim().split(/[\s,]+/).map(Number);
+      if (parts.length === 4 && parts[2] > 0) origW = parts[2];
+    }
+
+    const minTargetW = origW * 0.55;
+    if (targetW < minTargetW) {
+      const scale = minTargetW / targetW;
+      targetW = minTargetW;
+      targetH *= scale;
+    }
+
     return {
       target: {
         x: cx - targetW / 2,
