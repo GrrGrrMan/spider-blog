@@ -1,11 +1,17 @@
+
+Here is the complete, updated `README.md` configured to point to the live GitHub Pages documentation portal at **`https://grrgrrman.github.io/spider-blog/`** instead of deprecated Netlify / GitHub URLs.
+
+```markdown
 # AI Spider Hexapod V2 — Technical documentation portal and system index
 
 [![Astro](https://img.shields.io/badge/Astro-v7.2.8-18181b?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3.3-18181b?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-18181b?style=flat-square)](https://opensource.org/licenses/MIT)
-[![2026 project](https://img.shields.io/badge/Science_Fair-2026_Robotics_Engineering-0284c7?style=flat-square)](https://github.com/GrrGrrMan/spider-blog)
+[![Docs Portal](https://img.shields.io/badge/Documentation_Portal-grrgrrman.github.io%2Fspider--blog-0284c7?style=flat-square&logo=github)](https://grrgrrman.github.io/spider-blog/)
 
 Central documentation repository, mathematical kinematics derivations, CAD assets, and operational logs for the **18-Degree-of-Freedom (18-DoF) Biomimetic Hexapod Robotic Platform**.
+
+🔗 **Live Documentation Portal:** [https://grrgrrman.github.io/spider-blog/](https://grrgrrman.github.io/spider-blog/)
 
 ---
 
@@ -56,7 +62,7 @@ flowchart TD
 
 | Subsystem / layer | Repository / asset URL | Tech stack | Architectural role |
 | :--- | :--- | :--- | :--- |
-| **Documentation portal** *(This repo)* | [`GrrGrrMan/spider-blog`](https://github.com/GrrGrrMan/spider-blog) | Astro 7, Tailwind 4, MDX, KaTeX, Mermaid | Complete scientific manual, mathematical derivations, BOM ledger, and build logs |
+| **Documentation portal** | [`grrgrrman.github.io/spider-blog`](https://grrgrrman.github.io/spider-blog/) ([Source](https://github.com/GrrGrrMan/spider-blog)) | Astro 7, Tailwind 4, MDX, KaTeX, Mermaid | Complete scientific manual, mathematical derivations, BOM ledger, and build logs |
 | **Motion firmware** | [`GrrGrrMan/spiderbot-firmware`](https://github.com/GrrGrrMan/spiderbot-firmware) | C++, FreeRTOS SMP, PlatformIO, ESP32-S3 | 100 Hz deterministic IK loop, dual PCA9685 phase staggering, I2S DMA audio |
 | **Cognitive gateway** | [`GrrGrrMan/spiderbot-pi-hub`](https://github.com/GrrGrrMan/spiderbot-pi-hub) | Python 3.11, Faster-Whisper, Mosquitto, Nginx | Host gateway, Wi-Fi hotspot AP, Piper TTS, and local/cloud LLM proxy |
 | **3D digital twin** | [`GrrGrrMan/spiderbot-mithi-web`](https://github.com/GrrGrrMan/spiderbot-mithi-web) | React 16, Plotly.js WebGL, WebSockets | Web-based kinematics simulator, Web Worker kinematics offloading, 10 Hz telemetry |
@@ -103,15 +109,15 @@ spider-blog/
 
 ### Chapter overview
 
-1. **[`00 Mission rationale and scope`](https://spider-blog.netlify.app/docs/mission-and-intentions):** Tactical mission rationale, extreme terrain locomotion advantages, cloud-to-edge roadmap.
-2. **[`01 System topology and architecture`](https://spider-blog.netlify.app/docs/system-overview):** Multi-tier distributed compute hierarchy, network interconnects, and node protocols.
-3. **[`02 Bill of materials and procurement`](https://spider-blog.netlify.app/docs/bill-of-materials):** Component manifest, fastener sizing, historical procurement ledger (~$350 NZD), and paradigm shift analysis.
-4. **[`02 CAD models and additive fabrication`](https://spider-blog.netlify.app/docs/3d-cad-fabrication):** Parametric Onshape links, 35% Gyroid infill PETG slicer configurations, and print orientation tables.
-5. **[`03 Power distribution and pinouts`](https://spider-blog.netlify.app/docs/electrical-power):** 5.30V dual-rail power topology, common ground rules, complete GPIO pinouts, and PWM phase staggering proofs.
-6. **[`04 Embedded firmware and motion core`](https://spider-blog.netlify.app/docs/embedded-firmware):** FreeRTOS SMP task partitioning, analytical 3-DoF IK equations, gait generator math, and safety watchdogs.
-7. **[`05 Host gateway and voice AI engine`](https://spider-blog.netlify.app/docs/pi-ai-hub):** Raspberry Pi host setup, MQTT taxonomy, binary PCM audio protocol, and multimodal agent contracts.
-8. **[`06 3D digital twin and web simulation`](https://spider-blog.netlify.app/docs/web-3d-dashboard):** React + Plotly WebGL kinematics digital twin, Web Worker trajectory offloading, and Silero VAD audio pipeline.
-9. **[`07 Empirical results and torque limits`](https://spider-blog.netlify.app/docs/empirical-results):** 1,310g dry weight audit, actuator torque physics formulation ($4.15\text{ kg}\cdot\text{cm}$ demand), and custom DTC testing stand resolution.
+1. **[`00 Mission rationale and scope`](https://grrgrrman.github.io/spider-blog/docs/mission-and-intentions):** Tactical mission rationale, extreme terrain locomotion advantages, cloud-to-edge roadmap.
+2. **[`01 System topology and architecture`](https://grrgrrman.github.io/spider-blog/docs/system-overview):** Multi-tier distributed compute hierarchy, network interconnects, and node protocols.
+3. **[`02 Bill of materials and procurement`](https://grrgrrman.github.io/spider-blog/docs/bill-of-materials):** Component manifest, fastener sizing, historical procurement ledger (~$350 NZD), and paradigm shift analysis.
+4. **[`03 CAD models and additive fabrication`](https://grrgrrman.github.io/spider-blog/docs/3d-cad-fabrication):** Parametric Onshape links, 35% Gyroid infill PETG slicer configurations, and print orientation tables.
+5. **[`04 Power distribution and pinouts`](https://grrgrrman.github.io/spider-blog/docs/electrical-power):** 5.30V dual-rail power topology, common ground rules, complete GPIO pinouts, and PWM phase staggering proofs.
+6. **[`05 Embedded firmware and motion core`](https://grrgrrman.github.io/spider-blog/docs/embedded-firmware):** FreeRTOS SMP task partitioning, analytical 3-DoF IK equations, gait generator math, and safety watchdogs.
+7. **[`06 Host gateway and voice AI engine`](https://grrgrrman.github.io/spider-blog/docs/pi-ai-hub):** Raspberry Pi host setup, MQTT taxonomy, binary PCM audio protocol, and multimodal agent contracts.
+8. **[`07 3D digital twin and web simulation`](https://grrgrrman.github.io/spider-blog/docs/web-3d-dashboard):** React + Plotly WebGL kinematics digital twin, Web Worker trajectory offloading, and Silero VAD audio pipeline.
+9. **[`08 Empirical results and torque limits`](https://grrgrrman.github.io/spider-blog/docs/empirical-results):** 1,310g dry weight audit, actuator torque physics formulation ($4.15\text{ kg}\cdot\text{cm}$ demand), and custom DTC testing stand resolution.
 
 ---
 
