@@ -326,7 +326,7 @@ export function createPanZoomController(
     applyViewBox();
   });
 
-  controls.zoomResetBtn?.addEventListener('click', resetToFit);
+  controls.zoomResetBtn?.addEventListener('click', () => resetToFit());
   controls.tourPrevBtn?.addEventListener('click', () => stepTour('prev'));
   controls.tourNextBtn?.addEventListener('click', () => stepTour('next'));
 
@@ -343,6 +343,7 @@ export function createPanZoomController(
     resetToFit,
     stepTour,
     focusElement,
+    focusGroup,
     destroy() {
       if (animFrameId) cancelAnimationFrame(animFrameId);
       svgEl.removeEventListener('click', onSvgClick);

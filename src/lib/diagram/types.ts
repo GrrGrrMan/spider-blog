@@ -27,5 +27,6 @@ export interface PanZoomController {
   resetToFit: () => void;
   stepTour: (direction: 'prev' | 'next') => void;
   focusElement: (el: SVGGraphicsElement, instant?: boolean) => void;
+  focusGroup: (elements: SVGGraphicsElement[], instant?: boolean) => void;
   destroy: () => void;
 }
