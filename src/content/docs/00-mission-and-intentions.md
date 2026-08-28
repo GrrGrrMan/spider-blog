@@ -125,22 +125,36 @@ $$\tau_{\text{required}} = \left(\frac{1.310\text{ kg} \times 9.81\text{ m/s}^2}
 ## 5. Engineering expansion roadmap
 
 ```mermaid
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'cScale0': '#0284c7',
-    'cScaleLabel0': '#ffffff',
-    'cScale1': '#0284c7',
-    'cScaleLabel1': '#ffffff',
-    'cScale2': '#0284c7',
-    'cScaleLabel2': '#ffffff'
-  }
-}}%%
-timeline
-    title Platform Development Roadmap
-    Phase 1 (Completed) : Acrylic & PETG 1.0 Prototypes : 4S Inrush Burnout Post-Mortem : Monocoque Chassis 2.0/3.0 : 100Hz RTOS IK Engine : DTC Stand Validation
-    Phase 2 (Current)   : 5.30V High-Current Bus Regulators : Dual PCA9685 Staggered PWM : Low-Latency PCM Audio DMA : React WebGL Digital Twin
-    Phase 3 (Next Gen)  : High-Torque Coreless Bus Servos : 9-Axis IMU Active Slope Balancing : Local Edge NPU (Vosk + Gemma) : Solid-State Micro-LiDAR
+flowchart LR
+    subgraph Phase1 ["Phase 1: Completed (Foundational Prototype)"]
+        direction TB
+        P1_1["Acrylic & PETG 1.0 Prototypes"]
+        P1_2["4S Inrush Burnout Post-Mortem"]
+        P1_3["Monocoque Chassis 2.0/3.0"]
+        P1_4["100Hz RTOS IK Engine"]
+        P1_5["DTC Stand Validation"]
+        P1_1 --> P1_2 --> P1_3 --> P1_4 --> P1_5
+    end
+
+    subgraph Phase2 ["Phase 2: Current (Power & Bench Maturity)"]
+        direction TB
+        P2_1["5.30V High-Current Bus Regulators"]
+        P2_2["Dual PCA9685 Staggered PWM"]
+        P2_3["Low-Latency PCM Audio DMA"]
+        P2_4["React WebGL Digital Twin"]
+        P2_1 --> P2_2 --> P2_3 --> P2_4
+    end
+
+    subgraph Phase3 ["Phase 3: Next Gen (Autonomous Field Hardening)"]
+        direction TB
+        P3_1["High-Torque Coreless Bus Servos"]
+        P3_2["9-Axis IMU Active Slope Balancing"]
+        P3_3["Local Edge NPU (Vosk + Gemma)"]
+        P3_4["Solid-State Micro-LiDAR"]
+        P3_1 --> P3_2 --> P3_3 --> P3_4
+    end
+
+    Phase1 --> Phase2 --> Phase3
 ```
 
 ### 1. Actuation and structural upgrades
