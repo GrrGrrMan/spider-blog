@@ -18,10 +18,10 @@ export class TourEngine {
   }
 
   private discoverElements(): void {
-    // Universal selector supporting Flowcharts, State, Sequence, and Architecture diagrams
+    // Universal AST discovery covering Flowcharts, Timelines, Sequences, State Machines, Gantts, and Pies
     const candidateElements = Array.from(
       this.svgEl.querySelectorAll<SVGGraphicsElement>(
-        '.node, .cluster, g[id^="subGraph"], g.subgraph, .statediagram-state, .actor, .task'
+        '.node, .cluster, g[id^="subGraph"], g.subgraph, .statediagram-state, .actor, .task, .timeline-node, .cScale0, .cScale1, .cScale2, .pieCircle, .note'
       )
     );
 
@@ -30,35 +30,49 @@ export class TourEngine {
       return;
     }
 
+    // Filter out parent containers that enclose smaller selectable nodes
+    const validElements = candidateElements.filter((el) => {
+      const isEnclosedByAnother = candidateElements.some((other) => other !== el && other.contains(el) && other.classList.contains('node'));
+      return !isEnclosedByAnother;
+    });
+
     // Spatial sorting: Top-to-bottom, left-to-right
-    this.tourElements = candidateElements
+    this.tourElements = validElements
       .map((el) => {
         const r = el.getBoundingClientRect();
         return { el, top: r.top, left: r.left };
       })
       .sort((a, b) => {
-        const rowDiff = Math.round(a.top / 30) - Math.round(b.top / 30);
+        const rowDiff = Math.round(a.top / 35) - Math.round(b.top / 35);
         return rowDiff !== 0 ? rowDiff : a.left - b.left;
       })
       .map((item) => item.el);
   }
 
   public clearHighlights(): void {
-    this.svgEl.querySelectorAll<SVGGraphicsElement>('.cluster, .node').forEach((node) => {
-      node.style.opacity = '1';
-      node.style.filter = '';
-    });
+    this.svgEl
+      .querySelectorAll<SVGGraphicsElement>(
+        '.cluster, .node, .statediagram-state, .actor, .task, .timeline-node, .cScale0, .cScale1, .cScale2, .pieCircle, .note'
+      )
+      .forEach((node) => {
+        node.style.opacity = '1';
+        node.style.filter = '';
+      });
   }
 
   public applyHighlight(targetEl: SVGGraphicsElement): void {
     this.clearHighlights();
-    this.svgEl.querySelectorAll<SVGGraphicsElement>('.cluster, .node').forEach((node) => {
-      if (node !== targetEl && !targetEl.contains(node)) {
-        node.style.opacity = '0.35';
-      }
-    });
+    this.svgEl
+      .querySelectorAll<SVGGraphicsElement>(
+        '.cluster, .node, .statediagram-state, .actor, .task, .timeline-node, .cScale0, .cScale1, .cScale2, .pieCircle, .note'
+      )
+      .forEach((node) => {
+        if (node !== targetEl && !targetEl.contains(node)) {
+          node.style.opacity = '0.3';
+        }
+      });
     targetEl.style.opacity = '1';
-    targetEl.style.filter = 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.65))';
+    targetEl.style.filter = 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.75))';
   }
 
   public applyGroupHighlight(targetEls: SVGGraphicsElement[]): void {

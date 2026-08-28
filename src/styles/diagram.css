@@ -37,20 +37,158 @@ pre.astro-code[data-language="mermaid"]::after {
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Interactive Subgraph Hover Highlighting */
-.diagram-viewport svg g.cluster,
-.diagram-viewport svg .node {
-  transition: opacity 0.25s ease, filter 0.25s ease;
+/* Card Container Query & Responsive Framing */
+.diagram-card {
+  container-type: inline-size;
+  container-name: diagram-card;
 }
 
-.diagram-viewport svg g.cluster:hover {
+/* Dynamic Inline Viewport Touch Isolation */
+.diagram-viewport {
+  touch-action: pan-y pinch-zoom;
+  overscroll-behavior: auto;
+}
+
+/* Fullscreen Viewport Touch Capture */
+#modal-diagram-viewport {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+/* Interactive Subgraph Hover & Focus Highlighting */
+.diagram-viewport svg g.cluster,
+.diagram-viewport svg .node,
+.diagram-viewport svg .statediagram-state,
+.diagram-viewport svg .timeline-node,
+.diagram-viewport svg .actor {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.diagram-viewport svg g.cluster:hover,
+.diagram-viewport svg .node:hover {
   filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.35));
+}
+
+/* Responsive Toolbar Adaptability via Container Queries */
+@container diagram-card (max-width: 480px) {
+  .diagram-toolbar-title {
+    display: none;
+  }
+  .diagram-toolbar-fullscreen-label {
+    display: none;
+  }
+}
+
+@container diagram-card (max-width: 360px) {
+  .diagram-zoom-level-text {
+    display: none;
+  }
+}
+
+/* High-Contrast Mermaid Diagram Overrides */
+/* 1. Timeline High-Contrast Theme Matrix */
+.diagram-viewport svg .cScale0 {
+  fill: #0369a1 !important;
+  stroke: #38bdf8 !important;
+}
+.diagram-viewport svg .cScale0 text,
+.diagram-viewport svg .cScaleLabel0 {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+}
+
+.diagram-viewport svg .cScale1 {
+  fill: #1e293b !important;
+  stroke: #0284c7 !important;
+}
+.diagram-viewport svg .cScale1 text,
+.diagram-viewport svg .cScaleLabel1 {
+  fill: #38bdf8 !important;
+  color: #38bdf8 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+}
+
+.diagram-viewport svg .cScale2 {
+  fill: #312e81 !important;
+  stroke: #818cf8 !important;
+}
+.diagram-viewport svg .cScale2 text,
+.diagram-viewport svg .cScaleLabel2 {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+}
+
+.diagram-viewport svg .timeline-axis {
+  stroke: #3f3f46 !important;
+}
+
+.diagram-viewport svg text.timeline-title {
+  fill: #f4f4f5 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 700 !important;
+}
+
+/* 2. Sequence Diagram High-Contrast Actors & Messages */
+.diagram-viewport svg .actor {
+  stroke: #38bdf8 !important;
+  fill: #0f172a !important;
+}
+.diagram-viewport svg text.actor > tspan {
+  fill: #f4f4f5 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+.diagram-viewport svg .messageLine0,
+.diagram-viewport svg .messageLine1 {
+  stroke: #38bdf8 !important;
+}
+.diagram-viewport svg .messageText {
+  fill: #e4e4e7 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+.diagram-viewport svg .note {
+  fill: #18181b !important;
+  stroke: #38bdf8 !important;
+}
+.diagram-viewport svg .noteText {
+  fill: #f4f4f5 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* 3. Gantt & State High-Contrast Overrides */
+.diagram-viewport svg .section0,
+.diagram-viewport svg .section2 {
+  fill: #18181b !important;
+}
+.diagram-viewport svg .section1,
+.diagram-viewport svg .section3 {
+  fill: #09090b !important;
+}
+.diagram-viewport svg .taskText {
+  fill: #f4f4f5 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* 4. Pie Chart Contrast */
+.diagram-viewport svg .pieCircle {
+  stroke: #09090b !important;
+}
+.diagram-viewport svg .pieTitleText {
+  fill: #f4f4f5 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+.diagram-viewport svg .legend text {
+  fill: #d4d4d8 !important;
+  font-family: 'JetBrains Mono', monospace !important;
 }
 
 /* Fullscreen Modal Dialog Scroll & Gesture Isolation */
 dialog#diagram-modal {
   overscroll-behavior: contain;
-  touch-action: none;
 }
 
 dialog#diagram-modal::backdrop {

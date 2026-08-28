@@ -49,8 +49,19 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
 
-    // Wait for dialog reflow pass before mounting pan/zoom calculations
-    requestAnimationFrame(() => {
+    // Mobile Back-Button History Trap
+    window.history.pushState({ modalOpen: 'diagram' }, '');
+    const onPopState = () => {
+      if (modal.open) {
+        modal.close();
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
+    };
+    window.addEventListener('popstate', onPopState, { once: true });
+
+    // Wait for CSS dialog transition (200ms) to settle before calculating bounding box
+    setTimeout(() => {
       activeModalController = createPanZoomController(modalViewport, cloneSvg, {
         zoomText: document.getElementById('modal-zoom-text'),
         zoomInBtn: document.getElementById('modal-zoom-in'),
@@ -61,6 +72,6 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
         stepIndicator: document.getElementById('modal-step-indicator'),
         tourNavWrapper: document.getElementById('modal-tour-nav-wrapper'),
       });
-    });
+    }, 220);
   });
 }

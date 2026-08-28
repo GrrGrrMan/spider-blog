@@ -10,6 +10,9 @@ export default defineConfig({
   base: '/spider-blog',
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 1200,
+    },
   },
   integrations: [mdx()],
   markdown: {

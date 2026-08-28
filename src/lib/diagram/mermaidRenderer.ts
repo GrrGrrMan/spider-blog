@@ -22,11 +22,44 @@ export async function getMermaid(): Promise<typeof import('mermaid').default> {
         primaryTextColor: '#f4f4f5',
         primaryBorderColor: '#38bdf8',
         lineColor: '#38bdf8',
-        secondaryColor: '#18181b',
-        tertiaryColor: '#18181b',
+        secondaryColor: '#1e293b',
+        secondaryTextColor: '#f4f4f5',
+        secondaryBorderColor: '#0284c7',
+        tertiaryColor: '#312e81',
+        tertiaryTextColor: '#f4f4f5',
+        tertiaryBorderColor: '#818cf8',
         border1: '#27272a',
         border2: '#3f3f46',
-        fontSize: '14px',
+        noteBkgColor: '#18181b',
+        noteTextColor: '#f4f4f5',
+        noteBorderColor: '#38bdf8',
+        actorBkg: '#0f172a',
+        actorBorder: '#38bdf8',
+        actorTextColor: '#f4f4f5',
+        actorLineColor: '#38bdf8',
+        signalColor: '#38bdf8',
+        signalTextColor: '#f4f4f5',
+        labelBoxBkgColor: '#18181b',
+        labelBoxBorderColor: '#38bdf8',
+        labelTextColor: '#f4f4f5',
+        sectionBkgColor: '#18181b',
+        sectionBkgColor2: '#09090b',
+        taskBorderColor: '#38bdf8',
+        taskBkgColor: '#0369a1',
+        taskTextColor: '#f4f4f5',
+        activeTaskBorderColor: '#38bdf8',
+        activeTaskBkgColor: '#0284c7',
+        gridColor: '#27272a',
+        pie1: '#0284c7',
+        pie2: '#6366f1',
+        pie3: '#0d9488',
+        pie4: '#d97706',
+        pie5: '#e11d48',
+        pie6: '#8b5cf6',
+        pieTitleTextColor: '#f4f4f5',
+        pieLegendTextColor: '#d4d4d8',
+        pieSectionTextColor: '#f4f4f5',
+        fontSize: '13px',
       },
     });
     isInitialized = true;
@@ -44,27 +77,27 @@ export function createDiagramCard(): {
 
   const toolbar = document.createElement('div');
   toolbar.className =
-    'flex flex-wrap items-center justify-between gap-1.5 px-2.5 sm:px-4 py-2 bg-zinc-950/90 border-b border-zinc-800 text-xs font-mono text-zinc-400 w-full';
+    'flex items-center justify-between gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-zinc-950/95 border-b border-zinc-800 text-xs font-mono text-zinc-400 w-full select-none';
   toolbar.innerHTML = `
-    <div class="flex items-center gap-1.5 text-sky-400 font-semibold text-[10px] sm:text-xs truncate">
+    <div class="diagram-toolbar-title flex items-center gap-1.5 text-sky-400 font-semibold text-[10px] sm:text-xs truncate">
       <span class="w-1.5 h-1.5 rounded-full bg-sky-400 flex-shrink-0"></span>
-      <span class="truncate">// ARCHITECTURE_DIAGRAM</span>
+      <span class="truncate">// DIAGRAM</span>
     </div>
     <div class="flex items-center gap-1 sm:gap-1.5 ml-auto">
       <div class="tour-nav-wrapper flex items-center bg-zinc-900 border border-zinc-800 rounded px-1 py-0.5 gap-0.5 sm:gap-1">
-        <button class="tour-prev-btn px-1.5 py-0.5 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors text-[10px] sm:text-[11px]" title="Previous Block">‹ Prev</button>
-        <span class="step-indicator text-[10px] text-sky-400 font-bold px-1 min-w-[24px] text-center">1/?</span>
-        <button class="tour-next-btn px-1.5 py-0.5 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors text-[10px] sm:text-[11px]" title="Next Block">Next ›</button>
+        <button class="tour-prev-btn px-1.5 py-0.5 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors text-[10px] sm:text-[11px] cursor-pointer" title="Previous Block">‹ Prev</button>
+        <span class="step-indicator text-[10px] text-sky-400 font-bold px-1 min-w-[28px] text-center">1/?</span>
+        <button class="tour-next-btn px-1.5 py-0.5 hover:bg-zinc-800 rounded text-zinc-300 hover:text-sky-400 transition-colors text-[10px] sm:text-[11px] cursor-pointer" title="Next Block">Next ›</button>
       </div>
       <div class="flex items-center gap-0.5 sm:gap-1">
-        <button class="zoom-out-btn px-1.5 sm:px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300 font-bold text-[11px]" title="Zoom Out">-</button>
-        <span class="zoom-level-text text-[10px] text-zinc-500 w-7 sm:w-8 text-center">100%</span>
-        <button class="zoom-in-btn px-1.5 sm:px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300 font-bold text-[11px]" title="Zoom In">+</button>
-        <button class="zoom-reset-btn px-1.5 sm:px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-[10px] sm:text-[11px] text-zinc-300" title="Fit to Screen">⟲ Fit</button>
-        <span class="text-zinc-700 hidden sm:inline">|</span>
-        <button class="fullscreen-btn px-1.5 sm:px-2 py-0.5 bg-sky-950/60 hover:bg-sky-900/60 border border-sky-800 text-sky-300 rounded transition-colors text-[10px] sm:text-[11px]" title="Fullscreen View">
-          <span class="sm:hidden">⛶</span>
-          <span class="hidden sm:inline">⛶ Fullscreen</span>
+        <button class="zoom-out-btn px-1.5 sm:px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300 font-bold text-[11px] cursor-pointer" title="Zoom Out">-</button>
+        <span class="zoom-level-text diagram-zoom-level-text text-[10px] text-zinc-500 w-7 sm:w-8 text-center">100%</span>
+        <button class="zoom-in-btn px-1.5 sm:px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-zinc-300 font-bold text-[11px] cursor-pointer" title="Zoom In">+</button>
+        <button class="zoom-reset-btn px-1.5 sm:px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded transition-colors text-[10px] sm:text-[11px] text-zinc-300 cursor-pointer" title="Fit to Viewport">⟲ Fit</button>
+        <span class="text-zinc-700 mx-0.5">|</span>
+        <button class="fullscreen-btn px-1.5 sm:px-2 py-0.5 bg-sky-950/60 hover:bg-sky-900/60 border border-sky-800 text-sky-300 rounded transition-colors text-[10px] sm:text-[11px] cursor-pointer" title="Fullscreen View">
+          <span>⛶</span>
+          <span class="diagram-toolbar-fullscreen-label ml-1">Fullscreen</span>
         </button>
       </div>
     </div>

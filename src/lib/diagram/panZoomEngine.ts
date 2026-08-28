@@ -1,4 +1,5 @@
 import { TourEngine } from './tourEngine';
+import { getContentBoundingBox } from './svgMath';
 import type { PanZoomController, PanZoomControls, ViewBoxRect } from './types';
 
 export function createPanZoomController(
@@ -6,23 +7,25 @@ export function createPanZoomController(
   svgEl: SVGSVGElement,
   controls: PanZoomControls = {}
 ): PanZoomController {
+  // Reconcile true rendered content bounds against SVG canvas viewBox
+  const contentBounds = getContentBoundingBox(svgEl);
   const origAttr = svgEl.getAttribute('data-original-viewbox') || svgEl.getAttribute('viewBox');
+
   let origX = 0,
     origY = 0,
     origW = 1000,
     origH = 500;
 
-  if (origAttr) {
+  if (contentBounds) {
+    origX = contentBounds.x;
+    origY = contentBounds.y;
+    origW = contentBounds.width;
+    origH = contentBounds.height;
+  } else if (origAttr) {
     const parts = origAttr.trim().split(/[\s,]+/).map(Number);
     if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
       [origX, origY, origW, origH] = parts;
     }
-  } else {
-    const bbox = svgEl.getBBox();
-    origX = bbox.x || 0;
-    origY = bbox.y || 0;
-    origW = bbox.width || 800;
-    origH = bbox.height || 400;
   }
 
   const current: ViewBoxRect = { x: origX, y: origY, w: origW, h: origH };
@@ -104,26 +107,30 @@ export function createPanZoomController(
   function resetToFit(instant = false) {
     tourEngine.clearHighlights();
 
-    const vWidth = viewportEl.clientWidth || 800;
-    const vHeight = viewportEl.clientHeight || 440;
+    const vWidth = Math.max(viewportEl.clientWidth || 800, 100);
+    const vHeight = Math.max(viewportEl.clientHeight || 400, 100);
     const vAspect = vWidth / vHeight;
 
-    const padFactor = 1.06;
-    const paddedW = origW * padFactor;
-    const paddedH = origH * padFactor;
+    const padMargin = Math.max(Math.min(origW, origH) * 0.08, 24);
+    const contentW = origW + padMargin * 2;
+    const contentH = origH + padMargin * 2;
+    const contentAspect = contentW / contentH;
+
+    let targetW = contentW;
+    let targetH = contentH;
+
+    if (contentAspect < vAspect) {
+      // Pillarbox mode
+      targetH = contentH;
+      targetW = contentH * vAspect;
+    } else {
+      // Letterbox mode
+      targetW = contentW;
+      targetH = contentW / vAspect;
+    }
+
     const cx = origX + origW / 2;
     const cy = origY + origH / 2;
-
-    let targetW = paddedW;
-    let targetH = paddedH;
-
-    if (paddedW / paddedH < vAspect) {
-      targetH = paddedH;
-      targetW = paddedH * vAspect;
-    } else {
-      targetW = paddedW;
-      targetH = paddedW / vAspect;
-    }
 
     const target: ViewBoxRect = {
       x: cx - targetW / 2,
@@ -171,8 +178,10 @@ export function createPanZoomController(
   let initialPinchViewBox: ViewBoxRect = { ...current };
   let cachedRect: DOMRect | null = null;
 
+  const isModalViewport = viewportEl.id === 'modal-diagram-viewport';
+
   const onPointerDown = (e: PointerEvent) => {
-    // Check for double tap on touch
+    // Mobile double-tap reset
     if (e.pointerType === 'touch') {
       const now = performance.now();
       if (now - lastTapTime < 300) {
@@ -189,7 +198,8 @@ export function createPanZoomController(
     cachedRect = viewportEl.getBoundingClientRect();
     activePointers.push({ id: e.pointerId, x: e.clientX, y: e.clientY });
 
-    if (activePointers.length === 1 && e.pointerType === 'mouse') {
+    // Enable 1-finger panning in Fullscreen Modal or Mouse dragging
+    if (activePointers.length === 1 && (e.pointerType === 'mouse' || isModalViewport)) {
       isMouseDragging = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -198,7 +208,7 @@ export function createPanZoomController(
       viewportEl.setPointerCapture(e.pointerId);
       viewportEl.style.cursor = 'grabbing';
     } else if (activePointers.length === 2) {
-      // Begin 2-finger pinch gesture
+      // 2-finger pinch & pan gesture
       isMouseDragging = false;
       const dx = activePointers[0].x - activePointers[1].x;
       const dy = activePointers[0].y - activePointers[1].y;
@@ -275,8 +285,6 @@ export function createPanZoomController(
   viewportEl.addEventListener('pointercancel', onPointerUp);
 
   // Wheel Zoom (Desktop: Ctrl/Cmd + Wheel for inline cards, direct wheel inside Fullscreen Modal)
-  const isModalViewport = viewportEl.id === 'modal-diagram-viewport';
-
   const onWheel = (e: WheelEvent) => {
     if (!isModalViewport && !e.ctrlKey && !e.metaKey) {
       return; // Allow natural document scrolling
@@ -334,10 +342,20 @@ export function createPanZoomController(
     controls.tourNavWrapper.style.display = tourEngine.elementsCount >= 1 ? 'flex' : 'none';
   }
 
-  // Startup: Frame the entire diagram with 100% precision centering
-  setTimeout(() => {
+  // Dynamic ResizeObserver: Auto-recenter on layout change (iPad orientation, sidebar toggle)
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  const resizeObserver = new ResizeObserver(() => {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      resetToFit(false);
+    }, 60);
+  });
+  resizeObserver.observe(viewportEl);
+
+  // Initial Startup Framing
+  requestAnimationFrame(() => {
     resetToFit(true);
-  }, 30);
+  });
 
   return {
     resetToFit,
@@ -346,6 +364,8 @@ export function createPanZoomController(
     focusGroup,
     destroy() {
       if (animFrameId) cancelAnimationFrame(animFrameId);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeObserver.disconnect();
       svgEl.removeEventListener('click', onSvgClick);
       viewportEl.removeEventListener('pointerdown', onPointerDown);
       viewportEl.removeEventListener('pointermove', onPointerMove);

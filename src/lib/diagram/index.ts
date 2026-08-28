@@ -53,10 +53,11 @@ export async function bootstrapDiagrams(): Promise<void> {
           renderedSvg.setAttribute('data-original-viewbox', `${parts[0]} ${parts[1]} ${parts[2]} ${parts[3]}`);
         }
       }
-      const aspectRatio = w / h;
+      const aspectRatio = Math.max(w / Math.max(h, 1), 0.5);
       const colWidth = Math.min(card.clientWidth || 760, 840);
       const idealHeight = colWidth / aspectRatio;
-      viewport.style.height = `${Math.round(Math.min(Math.max(idealHeight + 35, 260), 540))}px`;
+      // Content-adaptive inline height allocation
+      viewport.style.height = `${Math.round(Math.min(Math.max(idealHeight + 40, 220), 560))}px`;
 
       createPanZoomController(viewport, renderedSvg, {
         zoomText: toolbar.querySelector<HTMLElement>('.zoom-level-text'),
