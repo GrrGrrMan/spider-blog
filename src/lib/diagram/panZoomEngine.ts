@@ -1,5 +1,4 @@
 import { TourEngine } from './tourEngine';
-import { getContentBoundingBox } from './svgMath';
 import type { PanZoomController, PanZoomControls, ViewBoxRect } from './types';
 
 export function createPanZoomController(
@@ -7,8 +6,6 @@ export function createPanZoomController(
   svgEl: SVGSVGElement,
   controls: PanZoomControls = {}
 ): PanZoomController {
-  // Reconcile true rendered content bounds against SVG canvas viewBox
-  const contentBounds = getContentBoundingBox(svgEl);
   const origAttr = svgEl.getAttribute('data-original-viewbox') || svgEl.getAttribute('viewBox');
 
   let origX = 0,
@@ -16,12 +13,7 @@ export function createPanZoomController(
     origW = 1000,
     origH = 500;
 
-  if (contentBounds) {
-    origX = contentBounds.x;
-    origY = contentBounds.y;
-    origW = contentBounds.width;
-    origH = contentBounds.height;
-  } else if (origAttr) {
+  if (origAttr) {
     const parts = origAttr.trim().split(/[\s,]+/).map(Number);
     if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
       [origX, origY, origW, origH] = parts;
@@ -107,43 +99,18 @@ export function createPanZoomController(
   function resetToFit(instant = false) {
     tourEngine.clearHighlights();
 
-    const vWidth = Math.max(viewportEl.clientWidth || 800, 100);
-    const vHeight = Math.max(viewportEl.clientHeight || 400, 100);
-    const vAspect = vWidth / vHeight;
-
-    const padMargin = Math.max(Math.min(origW, origH) * 0.08, 24);
-    const contentW = origW + padMargin * 2;
-    const contentH = origH + padMargin * 2;
-    const contentAspect = contentW / contentH;
-
-    let targetW = contentW;
-    let targetH = contentH;
-
-    if (contentAspect < vAspect) {
-      // Pillarbox mode
-      targetH = contentH;
-      targetW = contentH * vAspect;
-    } else {
-      // Letterbox mode
-      targetW = contentW;
-      targetH = contentW / vAspect;
-    }
-
-    const cx = origX + origW / 2;
-    const cy = origY + origH / 2;
-
     const target: ViewBoxRect = {
-      x: cx - targetW / 2,
-      y: cy - targetH / 2,
-      w: targetW,
-      h: targetH,
+      x: origX,
+      y: origY,
+      w: origW,
+      h: origH,
     };
 
     if (instant) {
       Object.assign(current, target);
       applyViewBox();
     } else {
-      animateCameraTo(target, 350);
+      animateCameraTo(target, 300);
     }
     tourEngine.updateIndicator(`All (${tourEngine.elementsCount})`);
   }

@@ -47,11 +47,17 @@ export async function bootstrapDiagrams(): Promise<void> {
         h = 400;
       if (vbAttr) {
         const parts = vbAttr.trim().split(/[\s,]+/).map(Number);
-        if (parts.length === 4) {
+        if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
           w = parts[2];
           h = parts[3];
           renderedSvg.setAttribute('data-original-viewbox', `${parts[0]} ${parts[1]} ${parts[2]} ${parts[3]}`);
         }
+      } else {
+        const bbox = renderedSvg.getBBox();
+        w = bbox.width || 800;
+        h = bbox.height || 400;
+        renderedSvg.setAttribute('data-original-viewbox', `${bbox.x || 0} ${bbox.y || 0} ${w} ${h}`);
+        renderedSvg.setAttribute('viewBox', `${bbox.x || 0} ${bbox.y || 0} ${w} ${h}`);
       }
       const aspectRatio = Math.max(w / Math.max(h, 1), 0.5);
       const colWidth = Math.min(card.clientWidth || 760, 840);

@@ -43,8 +43,16 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
     activeModalController?.destroy();
     modalViewport.innerHTML = '';
 
+    const pristineVb =
+      renderedSvgEl.getAttribute('data-original-viewbox') ||
+      renderedSvgEl.getAttribute('viewBox') ||
+      '0 0 1000 500';
+
     const cloneSvg = renderedSvgEl.cloneNode(true) as SVGSVGElement;
+    cloneSvg.setAttribute('viewBox', pristineVb);
+    cloneSvg.setAttribute('data-original-viewbox', pristineVb);
     modalViewport.appendChild(cloneSvg);
+
     modal.showModal();
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
@@ -60,8 +68,8 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
     };
     window.addEventListener('popstate', onPopState, { once: true });
 
-    // Wait for CSS dialog transition (200ms) to settle before calculating bounding box
-    setTimeout(() => {
+    // Initialize controller on pristine baseline after dialog reflow
+    requestAnimationFrame(() => {
       activeModalController = createPanZoomController(modalViewport, cloneSvg, {
         zoomText: document.getElementById('modal-zoom-text'),
         zoomInBtn: document.getElementById('modal-zoom-in'),
@@ -72,6 +80,6 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
         stepIndicator: document.getElementById('modal-step-indicator'),
         tourNavWrapper: document.getElementById('modal-tour-nav-wrapper'),
       });
-    }, 220);
+    });
   });
 }
