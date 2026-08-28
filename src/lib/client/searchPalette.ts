@@ -213,22 +213,44 @@ export function initSearchPalette(): void {
     resultsBox.innerHTML = html;
   }
 
+  let isBackListenerBound = false;
+
+  const onPopState = () => {
+    if (modal.open) {
+      closeSearch(false);
+    }
+  };
+
   const openSearch = async () => {
     modal.showModal();
     document.body.style.overflow = 'hidden';
     input.value = '';
     input.setAttribute('aria-expanded', 'true');
     activeGlobalIndex = 0;
+
+    // Mobile Back-Button History Trap (Preserves Astro Router State)
+    const astroState = window.history.state || {};
+    window.history.pushState({ ...astroState, modalOpen: 'search' }, '');
+    if (!isBackListenerBound) {
+      window.addEventListener('popstate', onPopState);
+      isBackListenerBound = true;
+    }
+
     const items = await loadSearchIndex();
     renderResults('', items);
     input.focus();
   };
 
-  const closeSearch = () => {
+  const closeSearch = (revertHistory = true) => {
+    if (!modal.open) return;
     modal.close();
     document.body.style.overflow = '';
     input.setAttribute('aria-expanded', 'false');
     input.removeAttribute('aria-activedescendant');
+
+    if (revertHistory && window.history.state?.modalOpen === 'search') {
+      window.history.back();
+    }
   };
 
   searchBtn?.addEventListener('click', openSearch);
@@ -306,5 +328,9 @@ export function initSearchPalette(): void {
 
   lifecycle.register(() => {
     window.removeEventListener('keydown', onWindowKeydown);
+    if (isBackListenerBound) {
+      window.removeEventListener('popstate', onPopState);
+      isBackListenerBound = false;
+    }
   });
 }

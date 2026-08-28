@@ -250,16 +250,36 @@ const navLinks = [
 
     if (!openBtn || !drawer) return;
 
+    let isHistoryBound = false;
+
+    const onPopState = () => {
+      if (drawer.open) {
+        closeDrawer(false);
+      }
+    };
+
     const openDrawer = () => {
       drawer.showModal();
       document.body.style.overflow = 'hidden';
       openBtn.setAttribute('aria-expanded', 'true');
+
+      const astroState = window.history.state || {};
+      window.history.pushState({ ...astroState, modalOpen: 'mobile-nav' }, '');
+      if (!isHistoryBound) {
+        window.addEventListener('popstate', onPopState);
+        isHistoryBound = true;
+      }
     };
 
-    const closeDrawer = () => {
+    const closeDrawer = (revertHistory = true) => {
+      if (!drawer.open) return;
       drawer.close();
       document.body.style.overflow = '';
       openBtn.setAttribute('aria-expanded', 'false');
+
+      if (revertHistory && window.history.state?.modalOpen === 'mobile-nav') {
+        window.history.back();
+      }
     };
 
     openBtn.addEventListener('click', openDrawer);

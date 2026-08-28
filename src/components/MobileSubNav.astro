@@ -14,7 +14,7 @@ const { headings, section } = Astro.props;
 const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<div class="lg:hidden sticky top-[53px] sm:top-[57px] z-30 w-full bg-zinc-950 border-b border-zinc-800/80 px-3.5 sm:px-6 py-1.5 transform-gpu">
+<div class="xl:hidden sticky top-[var(--header-height,53px)] z-30 w-full bg-zinc-950 border-b border-zinc-800/80 px-3.5 sm:px-6 py-1.5 transform-gpu">
   <div class="flex items-center justify-between gap-2 max-w-4xl mx-auto">
     <!-- TOC Drawer Trigger Button -->
     <button
@@ -57,7 +57,7 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
     <button
       id="close-mobile-toc"
       type="button"
-      class="text-zinc-400 hover:text-zinc-100 px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono"
+      class="text-zinc-400 hover:text-zinc-100 min-h-[36px] px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-mono flex items-center justify-center cursor-pointer"
     >
       ✕ Close
     </button>
@@ -91,16 +91,36 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
     if (!trigger || !dialog) return;
 
+    let isTocHistoryBound = false;
+
+    const onPopState = () => {
+      if (dialog.open) {
+        closeToc(false);
+      }
+    };
+
     const openToc = () => {
       dialog.showModal();
       document.body.style.overflow = 'hidden';
       trigger.setAttribute('aria-expanded', 'true');
+
+      const astroState = window.history.state || {};
+      window.history.pushState({ ...astroState, modalOpen: 'mobile-toc' }, '');
+      if (!isTocHistoryBound) {
+        window.addEventListener('popstate', onPopState);
+        isTocHistoryBound = true;
+      }
     };
 
-    const closeToc = () => {
+    const closeToc = (revertHistory = true) => {
+      if (!dialog.open) return;
       dialog.close();
       document.body.style.overflow = '';
       trigger.setAttribute('aria-expanded', 'false');
+
+      if (revertHistory && window.history.state?.modalOpen === 'mobile-toc') {
+        window.history.back();
+      }
     };
 
     trigger.addEventListener('click', openToc);

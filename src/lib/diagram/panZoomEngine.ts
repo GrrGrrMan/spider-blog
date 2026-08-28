@@ -32,8 +32,10 @@ export function createPanZoomController(
   svgEl.style.display = 'block';
   svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-  // Strict touch isolation: Prevents page scroll hijacking during pan/zoom
-  viewportEl.style.touchAction = 'none';
+  const isModalViewport = viewportEl.id === 'modal-diagram-viewport';
+
+  // Dual-mode gesture isolation: Allow vertical page scrolling across inline diagrams
+  viewportEl.style.touchAction = isModalViewport ? 'none' : 'pan-y pinch-zoom';
 
   const tourEngine = new TourEngine(svgEl, controls.stepIndicator);
 
@@ -145,11 +147,9 @@ export function createPanZoomController(
   let initialPinchViewBox: ViewBoxRect = { ...current };
   let cachedRect: DOMRect | null = null;
 
-  const isModalViewport = viewportEl.id === 'modal-diagram-viewport';
-
   const onPointerDown = (e: PointerEvent) => {
-    // Mobile double-tap reset
-    if (e.pointerType === 'touch') {
+    // Mobile double-tap reset (fullscreen modal only to prevent scroll interruption)
+    if (e.pointerType === 'touch' && isModalViewport) {
       const now = performance.now();
       if (now - lastTapTime < 300) {
         resetToFit();
@@ -175,7 +175,7 @@ export function createPanZoomController(
       viewportEl.setPointerCapture(e.pointerId);
       viewportEl.style.cursor = 'grabbing';
     } else if (activePointers.length === 2) {
-      // 2-finger pinch & pan gesture
+      // 2-finger pinch & pan gesture (active on both inline cards and modal)
       isMouseDragging = false;
       const dx = activePointers[0].x - activePointers[1].x;
       const dy = activePointers[0].y - activePointers[1].y;

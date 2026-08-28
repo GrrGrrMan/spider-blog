@@ -45,7 +45,7 @@ export function initAnchorsAndCopyButtons(): void {
     pre.style.position = 'relative';
     const copyBtn = document.createElement('button');
     copyBtn.className =
-      'code-copy-btn absolute top-2.5 right-2.5 px-2.5 py-1 bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 rounded-md text-[11px] font-mono transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-sky-400 outline-none flex items-center gap-1.5 shadow-sm cursor-pointer';
+      'code-copy-btn sticky top-2.5 float-right -mt-1 mb-2 px-2.5 py-1 bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 rounded-md text-[11px] font-mono transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-sky-400 outline-none flex items-center gap-1.5 shadow-sm cursor-pointer z-10';
     copyBtn.setAttribute('aria-label', 'Copy code to clipboard');
 
     const defaultHtml = `

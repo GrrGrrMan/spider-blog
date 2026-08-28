@@ -1,6 +1,7 @@
 import { createDiagramCard, renderMermaidDiagram } from './mermaidRenderer';
 import { createPanZoomController } from './panZoomEngine';
 import { setupModalTriggers } from './modalManager';
+import { lifecycle } from '../client/lifecycle';
 
 export async function bootstrapDiagrams(): Promise<void> {
   const codeBlocks = Array.from(
@@ -65,7 +66,7 @@ export async function bootstrapDiagrams(): Promise<void> {
       // Content-adaptive inline height allocation
       viewport.style.height = `${Math.round(Math.min(Math.max(idealHeight + 40, 220), 560))}px`;
 
-      createPanZoomController(viewport, renderedSvg, {
+      const controller = createPanZoomController(viewport, renderedSvg, {
         zoomText: toolbar.querySelector<HTMLElement>('.zoom-level-text'),
         zoomInBtn: toolbar.querySelector<HTMLElement>('.zoom-in-btn'),
         zoomOutBtn: toolbar.querySelector<HTMLElement>('.zoom-out-btn'),
@@ -75,6 +76,7 @@ export async function bootstrapDiagrams(): Promise<void> {
         stepIndicator: toolbar.querySelector<HTMLElement>('.step-indicator'),
         tourNavWrapper: toolbar.querySelector<HTMLElement>('.tour-nav-wrapper'),
       });
+      lifecycle.register(() => controller.destroy());
       
       const fullscreenBtn = toolbar.querySelector<HTMLElement>('.fullscreen-btn');
       if (fullscreenBtn) {

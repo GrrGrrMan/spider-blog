@@ -1,8 +1,30 @@
 import { createPanZoomController } from './panZoomEngine';
 import type { PanZoomController } from './types';
+import { lifecycle } from '../client/lifecycle';
 
 let activeModalController: PanZoomController | null = null;
-let isModalDismissBound = false;
+
+function sanitizeSvgClone(sourceSvg: SVGSVGElement): SVGSVGElement {
+  const pristineVb =
+    sourceSvg.getAttribute('data-original-viewbox') ||
+    sourceSvg.getAttribute('viewBox') ||
+    '0 0 1000 500';
+
+  const cloneSvg = sourceSvg.cloneNode(true) as SVGSVGElement;
+  cloneSvg.setAttribute('viewBox', pristineVb);
+  cloneSvg.setAttribute('data-original-viewbox', pristineVb);
+
+  // Strip inline tour highlight opacities and filters from active inline states
+  const mutatedNodes = cloneSvg.querySelectorAll<SVGGraphicsElement>(
+    '.cluster, .node, .statediagram-state, .actor, .task, .timeline-node, .cScale0, .cScale1, .cScale2, .pieCircle, .note'
+  );
+  mutatedNodes.forEach((node) => {
+    node.style.opacity = '1';
+    node.style.filter = '';
+  });
+
+  return cloneSvg;
+}
 
 export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTMLElement): void {
   const modal = document.getElementById('diagram-modal') as HTMLDialogElement | null;
@@ -11,65 +33,78 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
 
   if (!modal || !modalViewport) return;
 
-  if (!isModalDismissBound) {
-    const closeModal = () => {
-      if (modal.open) {
-        modal.close();
-      }
-      activeModalController?.destroy();
-      activeModalController = null;
-      modalViewport.innerHTML = '';
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    };
+  const performClose = () => {
+    if (modal.open) {
+      modal.close();
+    }
+    activeModalController?.destroy();
+    activeModalController = null;
+    modalViewport.innerHTML = '';
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  };
 
-    closeBtn?.addEventListener('click', closeModal);
+  const onPopState = () => {
+    if (modal.open) {
+      performClose();
+    }
+  };
+
+  const closeModal = (revertHistory = true) => {
+    if (!modal.open) return;
+    performClose();
+    if (revertHistory && window.history.state?.modalOpen === 'diagram') {
+      window.removeEventListener('popstate', onPopState);
+      window.history.back();
+    }
+  };
+
+  // Idempotent DOM binding per document lifecycle
+  if (modal.dataset.modalInit !== 'true') {
+    modal.dataset.modalInit = 'true';
+
+    closeBtn?.addEventListener('click', () => closeModal(true));
+    
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
+      if (e.target === modal) closeModal(true);
     });
-    modal.addEventListener('close', () => {
-      closeModal();
+
+    modal.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      closeModal(true);
     });
+
     modal.addEventListener(
       'wheel',
       (e) => {
-        // Prevent background documentation scrolling when cursor is on modal header/margins
         if (e.target !== modalViewport && !modalViewport.contains(e.target as Node)) {
           e.preventDefault();
         }
       },
       { passive: false }
     );
-    isModalDismissBound = true;
+
+    lifecycle.register(() => {
+      performClose();
+      modal.dataset.modalInit = 'false';
+      window.removeEventListener('popstate', onPopState);
+    });
   }
 
   triggerBtn.addEventListener('click', () => {
-    activeModalController?.destroy();
-    modalViewport.innerHTML = '';
+    performClose();
 
-    const pristineVb =
-      renderedSvgEl.getAttribute('data-original-viewbox') ||
-      renderedSvgEl.getAttribute('viewBox') ||
-      '0 0 1000 500';
-
-    const cloneSvg = renderedSvgEl.cloneNode(true) as SVGSVGElement;
-    cloneSvg.setAttribute('viewBox', pristineVb);
-    cloneSvg.setAttribute('data-original-viewbox', pristineVb);
+    const cloneSvg = sanitizeSvgClone(renderedSvgEl);
     modalViewport.appendChild(cloneSvg);
 
     modal.showModal();
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
 
-    // Mobile Back-Button History Trap
-    window.history.pushState({ modalOpen: 'diagram' }, '');
-    const onPopState = () => {
-      if (modal.open) {
-        modal.close();
-        document.documentElement.style.overflow = '';
-        document.body.style.overflow = '';
-      }
-    };
+    // Mobile Back-Button History Trap (Preserves Astro Router State)
+    const astroState = window.history.state || {};
+    window.history.pushState({ ...astroState, modalOpen: 'diagram' }, '');
+    window.removeEventListener('popstate', onPopState);
     window.addEventListener('popstate', onPopState, { once: true });
 
     // Initialize controller on pristine baseline after dialog reflow

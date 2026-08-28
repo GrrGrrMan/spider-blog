@@ -13,6 +13,35 @@
   --color-cyber-accent: #38bdf8;
 }
 
+:root {
+  --header-height: 53px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --header-height: 57px;
+  }
+}
+
+/* Touch & Coarse Pointer Accessibility Overrides (WCAG 2.5.5 / 2.5.8) */
+@media (pointer: coarse) {
+  .heading-anchor-link {
+    opacity: 0.75 !important;
+    padding: 0.25rem;
+    min-width: 32px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .code-copy-btn {
+    opacity: 0.85 !important;
+    min-height: 36px;
+    padding: 0.35rem 0.65rem;
+  }
+}
+
 /* Monospace standard */
 code, pre, .font-mono {
   font-family: var(--font-mono);
