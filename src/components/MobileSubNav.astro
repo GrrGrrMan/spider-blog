@@ -124,7 +124,7 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
     };
 
     trigger.addEventListener('click', openToc);
-    closeBtn?.addEventListener('click', closeToc);
+    closeBtn?.addEventListener('click', () => closeToc());
     dialog.addEventListener('click', (e) => {
       if (e.target === dialog) closeToc();
     });

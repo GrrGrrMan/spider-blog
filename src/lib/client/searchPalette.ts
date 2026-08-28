@@ -254,7 +254,7 @@ export function initSearchPalette(): void {
   };
 
   searchBtn?.addEventListener('click', openSearch);
-  closeBtn?.addEventListener('click', closeSearch);
+  closeBtn?.addEventListener('click', () => closeSearch());
 
   const onModalBackdropClick = (e: MouseEvent) => {
     if (e.target === modal) closeSearch();

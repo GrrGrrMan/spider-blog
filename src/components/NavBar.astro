@@ -283,7 +283,7 @@ const navLinks = [
     };
 
     openBtn.addEventListener('click', openDrawer);
-    closeBtn?.addEventListener('click', closeDrawer);
+    closeBtn?.addEventListener('click', () => closeDrawer());
     drawer.addEventListener('click', (e) => {
       if (e.target === drawer) closeDrawer();
     });
