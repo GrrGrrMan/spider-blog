@@ -186,8 +186,14 @@ pre.astro-code[data-language="mermaid"]::after {
   font-family: 'JetBrains Mono', monospace !important;
 }
 
-/* Fullscreen Modal Dialog Scroll & Gesture Isolation */
-dialog#diagram-modal {
+/* Fullscreen Modal Dialog State & Gesture Isolation */
+dialog#diagram-modal:not([open]) {
+  display: none !important;
+}
+
+dialog#diagram-modal[open] {
+  display: flex !important;
+  flex-direction: column !important;
   overscroll-behavior: contain;
 }
 

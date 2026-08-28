@@ -13,27 +13,40 @@ Industrial accident zones, collapsed structures, subterranean cave systems, dens
 Traditional robotic exploration platforms face critical mechanical limitations in these terrains:
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1e293b', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#334155', 'lineColor': '#64748b', 'textColor': '#f8fafc', 'fontSize': '13px'}}}%%
 flowchart TD
-    subgraph WheeledTracked ["Wheeled & Tracked Systems"]
+    subgraph WheeledTracked ["Wheeled & Tracked Systems (Terrain Bound)"]
         W1["Fixed ground clearance"]
         W2["High-centers on boulders and debris"]
         W3["Requires continuous traction plane"]
         W4["Zero vertical obstacle stepping capability"]
     end
 
-    subgraph AerialDrones ["Aerial Drones (UAVs)"]
+    subgraph AerialDrones ["Aerial Drones / UAVs (Endurance Bound)"]
         D1["Flight endurance limited by battery mass (< 25 min)"]
         D2["Air turbulence in confined subterranean conduits"]
         D3["Catastrophic failure on rotor blade impact"]
         D4["Incapable of physical ground sampling contact"]
     end
 
-    subgraph HexapodPlatform ["18-DoF Biomimetic Hexapod"]
+    subgraph HexapodPlatform ["18-DoF Biomimetic Hexapod (Adaptive Locomotion)"]
         H1["Discrete footholds on isolated stable surfaces"]
         H2["Dynamic chassis clearance scaling (hipstance)"]
         H3["Zero turning radius omnidirectional stepping"]
         H4["Continuous static stability support triangle"]
     end
+
+    classDef redNode fill:#3b1219,stroke:#f43f5e,stroke-width:1.5px,color:#ffe4e6;
+    classDef amberNode fill:#38220f,stroke:#f59e0b,stroke-width:1.5px,color:#fef3c7;
+    classDef cyanNode fill:#083344,stroke:#06b6d4,stroke-width:1.5px,color:#ecfeff;
+
+    class W1,W2,W3,W4 redNode;
+    class D1,D2,D3,D4 amberNode;
+    class H1,H2,H3,H4 cyanNode;
+
+    style WheeledTracked fill:#1a0f13,stroke:#e11d48,stroke-width:2px,color:#fda4af
+    style AerialDrones fill:#24180d,stroke:#d97706,stroke-width:2px,color:#fcd34d
+    style HexapodPlatform fill:#0c242c,stroke:#0891b2,stroke-width:2px,color:#67e8f9
 ```
 
 The core objective of this project is to develop an **accessible, 18-Degree-of-Freedom (18-DoF) biomimetic hexapod platform** capable of traversing non-planar, discontinuous, and hazardous terrain where conventional wheeled and aerial vehicles fail.
@@ -45,6 +58,7 @@ The core objective of this project is to develop an **accessible, 18-Degree-of-F
 Unlike wheeled vehicles that require continuous rolling contact, a hexapod interacts with terrain through **discrete ground contact points**. By employing three revolute joints per leg—Coxa (Yaw), Femur (Pitch Lift), and Tibia (Pitch Reach)—the chassis gains 6-DoF spatial adaptability:
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1e293b', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#334155', 'lineColor': '#38bdf8', 'textColor': '#f8fafc', 'fontSize': '13px'}}}%%
 flowchart TD
     subgraph JointChain ["18-DoF Kinematic Joint Topology (Per Leg)"]
         direction LR
@@ -66,6 +80,22 @@ flowchart TD
 
     TIBIA --> ClearanceScaling
     TIBIA --> ObstacleElevation
+
+    classDef coxaNode fill:#0c2d48,stroke:#00a8ff,stroke-width:1.5px,color:#e1f5fe;
+    classDef femurNode fill:#1e1b4b,stroke:#818cf8,stroke-width:1.5px,color:#e0e7ff;
+    classDef tibiaNode fill:#2e1065,stroke:#c084fc,stroke-width:1.5px,color:#f3e8ff;
+    classDef emeraldNode fill:#064e3b,stroke:#10b981,stroke-width:1.5px,color:#d1fae5;
+    classDef amberNode fill:#451a03,stroke:#f59e0b,stroke-width:1.5px,color:#fef3c7;
+
+    class COXA coxaNode;
+    class FEMUR femurNode;
+    class TIBIA tibiaNode;
+    class CRAWL,ELEV emeraldNode;
+    class NOM,LEDGE amberNode;
+
+    style JointChain fill:#0a192f,stroke:#0284c7,stroke-width:2px,color:#7dd3fc
+    style ClearanceScaling fill:#06231d,stroke:#059669,stroke-width:2px,color:#6ee7b7
+    style ObstacleElevation fill:#26180b,stroke:#d97706,stroke-width:2px,color:#fcd34d
 ```
 
 ### Dynamic terrain traversal capabilities
@@ -84,10 +114,11 @@ flowchart TD
 Initial prototypes evaluated natural language task decomposition using browser speech recognition, WebSockets, and cloud-hosted LLMs (Groq LLaMA 3.3 70B via Function Calling).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1e293b', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#334155', 'lineColor': '#06b6d4', 'textColor': '#f8fafc', 'fontSize': '13px'}}}%%
 flowchart LR
     subgraph CloudBench ["Phase 1: Cloud Architecture (Bench Prototype)"]
         SPEECH["Web Audio API"] --> CLOUD_LLM["Groq LLaMA 3.3 70B<br/>(Mandatory Internet)"]
-        CLOUD_LLM -->|Network Latency & Token Costs| MQTT_C["MQTT Broker"]
+        CLOUD_LLM -->|Network Latency & Costs| MQTT_C["MQTT Broker"]
         MQTT_C --> ESP32_C["ESP32-S3 Stand"]
     end
 
@@ -96,6 +127,17 @@ flowchart LR
         SBC -->|Deterministic Local Planning| ESP32_E["ESP32-S3 RTOS"]
         ESP32_E --> SERVOS["High-Torque Actuators"]
     end
+
+    classDef cloudNode fill:#3b1219,stroke:#f43f5e,stroke-width:1.5px,color:#ffe4e6;
+    classDef edgeNode fill:#064e3b,stroke:#10b981,stroke-width:1.5px,color:#d1fae5;
+    classDef edgeCore fill:#083344,stroke:#06b6d4,stroke-width:1.5px,color:#ecfeff;
+
+    class SPEECH,CLOUD_LLM,MQTT_C,ESP32_C cloudNode;
+    class SENSORS,ESP32_E,SERVOS edgeNode;
+    class SBC edgeCore;
+
+    style CloudBench fill:#1a0f13,stroke:#e11d48,stroke-width:2px,color:#fda4af
+    style LocalEdge fill:#051d18,stroke:#059669,stroke-width:2px,color:#6ee7b7
 ```
 
 > [!WARNING]
@@ -125,6 +167,23 @@ $$\tau_{\text{required}} = \left(\frac{1.310\text{ kg} \times 9.81\text{ m/s}^2}
 ## 5. Engineering expansion roadmap
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'fontFamily': 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+    'fontSize': '13px',
+    'primaryColor': '#1e293b',
+    'primaryTextColor': '#ffffff',
+    'primaryBorderColor': '#38bdf8',
+    'lineColor': '#38bdf8',
+    'cScale0': '#0284c7',
+    'cScaleLabel0': '#ffffff',
+    'cScale1': '#0d9488',
+    'cScaleLabel1': '#ffffff',
+    'cScale2': '#7c3aed',
+    'cScaleLabel2': '#ffffff'
+  }
+}}%%
 timeline
     title Platform Development Roadmap
     Phase 1 (Completed) : Acrylic & PETG 1.0 Prototypes : 4S Inrush Burnout Post-Mortem : Monocoque Chassis 2.0/3.0 : 100Hz RTOS IK Engine : DTC Stand Validation

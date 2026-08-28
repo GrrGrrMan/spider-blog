@@ -13,7 +13,12 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
 
   if (!isModalDismissBound) {
     const closeModal = () => {
-      modal.close();
+      if (modal.open) {
+        modal.close();
+      }
+      activeModalController?.destroy();
+      activeModalController = null;
+      modalViewport.innerHTML = '';
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
@@ -23,8 +28,7 @@ export function setupModalTriggers(renderedSvgEl: SVGSVGElement, triggerBtn: HTM
       if (e.target === modal) closeModal();
     });
     modal.addEventListener('close', () => {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
+      closeModal();
     });
     modal.addEventListener(
       'wheel',
